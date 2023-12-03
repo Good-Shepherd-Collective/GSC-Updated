@@ -7,17 +7,60 @@ const pageTitle = "Tag Index";
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <section>
-    <div class="px-8 md:px-12 mx-auto max-w-7xl py-12 lg:py-32">
-      <ol role="list" class="flex flex-wrap gap-3">
-        {
-          tags.map((tag) => (
-            <li class="inline-flex items-center border rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ">
-              <a href={`/tags/${tag}`}>{tag}</a>
-            </li>
-          ))
-        }
-      </ol>
+  <section
+    class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
+  >
+    <div class="border-x border-zinc-700 h-14"></div>
+  </section>
+  <section
+    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
+  >
+    <div class="border-x border-zinc-700">
+      <div
+        class="p-px lg:rounded-t-[3rem] overflow-hidden bg-gradientTopRight ring-1 ring-zinc-700"
+      >
+        <div
+          class="bg-black/50 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
+        >
+          <div
+            class="mx-auto 2xl:max-w-7xl py-24 lg:px-16 md:px-12 px-8 xl:px-24 items-center relative 0 w-full"
+          >
+            <div>
+              <h2
+                class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
+              >
+               All blog tags
+              </h2>
+            </div>
+          </div>
+          <ol role="list" class="flex flex-col gap-px">
+            {
+              tags.map((tag) => (
+                <li>
+                  <a
+                    class="text-sm lg:text-5xl py-2 px-8 group border focus:ring-1 h-12 lg:px-20 uppercase tracking-tighter lg:h-24 border-transparent bg-black/80 hover:bg-black/90  text-white duration-200 focus:ring-offset-2 focus:ring-white hover:text-white inline-flex items-center justify-between w-full"
+                    href={`/tags/${tag}`}
+                  >
+                    {tag} <span>&rarr;</span>
+                    <span class="text-white group-hover:text-cyan-400">
+                      &rarr;
+                    </span>
+                    <span class="text-white group-hover:text-violet-400">
+                      &rarr;
+                    </span>
+                    <span class="text-white group-hover:text-pink-400">
+                      &rarr;
+                    </span>
+                    <span class="text-white group-hover:text-orange-300">
+                      &rarr;
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
