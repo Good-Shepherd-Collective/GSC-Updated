@@ -1,43 +1,42 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 const { frontmatter } = Astro.props;
-import { AstroSeo } from "@astrolib/seo";
 ---
 
-<AstroSeo
-  title={frontmatter.title}
-  description={frontmatter.description}
-  canonical="https://www.lexingtonthemes.com"
-  openGraph={{
-    url: "https://www.lexingtonthemes.com",
-    title: "Title",
-    description: "{frontmatter.description}",
-    images: [
-      {
-        url: "https://www.lexingtonthemes.com/opengraph/social-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Social open graph",
-        type: "image/jpeg",
-      },
-      {
-        url: "https://www.lexingtonthemes.com/opengraph/twitter-og.jpg",
-        width: 4096,
-        height: 4096,
-        alt: "Twitter open graph",
-        type: "image/jpeg",
-      },
-      { url: "https://www.lexingtonthemes.com/opengraph/social-og.jpg" },
-      { url: "https://www.lexingtonthemes.com/opengraph/twitter-og.jpg" },
-    ],
-    site_name: "YourSitesName",
-  }}
-  twitter={{
-    handle: "@TwitterHandle",
-    site: "@site",
-    cardType: "summary_large_image",
-  }}
-/>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const headings = document.querySelectorAll(
+      ".prose-styles h1,.prose-styles h2, .prose-styles h3"
+    );
+    const tocContainer = document.getElementById("table-of-contents");
+    if (tocContainer && headings.length > 0) {
+      const tocList = document.createElement("ul");
+      tocList.classList.add(
+        "divide-y",
+        "divide-zinc-800",
+        "border-zinc-800",
+        "text-sm",
+        "[&>*:nth-child(1)]:uppercase"
+      );
+      headings.forEach((heading) => {
+        const listItem = document.createElement("li");
+        listItem.classList.add("p-4");
+        const link = document.createElement("a");
+        link.textContent = heading.textContent;
+        link.href = `#${heading.id}`;
+        link.classList.add(
+          "text-zinc-400",
+          "hover:underline",
+          "hover:text-accent-600"
+        );
+        listItem.appendChild(link);
+        tocList.appendChild(listItem);
+      });
+      tocContainer.appendChild(tocList);
+      tocContainer.classList.remove("hidden");
+    }
+  });
+</script>
 <BaseLayout>
   <section
     class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
@@ -87,8 +86,27 @@ import { AstroSeo } from "@astrolib/seo";
   <section
     class="md:px-12 sm:px-8 relative border-b border-zinc-700 2xl:border-x"
   >
-    <div class="border-x border-zinc-700 p-8 lg:px-20">
-      <div class="prose-styles"><slot /></div>
+    <div
+      class="border-x border-zinc-700  grid grid-cols-1 bg-zinc-700 gap-px lg:grid-cols-4"
+    >
+      <div class="lg:col-span-1 bg-black">
+        <div
+          id="table-of-contents"
+          class="hidden lg:block sticky border-b border-zinc-800 top-20"
+        >
+          <div class="p-4 border-b border-zinc-800">
+            <h3 class="text-white text-base uppercase font-display">
+              Table of contents
+            </h3>
+          </div>
+          <!--
+        //Your table of contents content here
+      -->
+        </div>
+      </div>
+      <div class="lg:col-span-3 p-8 lg:px-20 bg-black">
+        <div class="prose-styles"><slot /></div>
+      </div>
     </div>
   </section>
 </BaseLayout>
