@@ -1,7 +1,32 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import Error404 from "@/components/infopages/Error404.astro";
 ---
+
 <BaseLayout>
-    <Error404/>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-t border-zinc-800">
+      <div class="p-8 lg:px-10">
+        <h2 class="text-4xl md:text-6xl xl:text-7xl text-white">
+          Oops! We've searched every corner of our digital universe, but the
+          page you're looking for must be out in the real world.
+        </h2>
+        <p class="mt-4 text-zinc-400 tracking-wide">
+          Maybe it's hiding in a cozy café sipping on a latte or taking a
+          leisurely stroll through the internet park. In the meantime, let's
+          find you a nice spot back on our homepage. Or, if you're feeling
+          adventurous, you can use our search bar—no hiking gear required!
+        </p>
+      </div>
+      <div class="border-t border-zinc-800">
+        <a
+          href="#_"
+          title="link to your page"
+          aria-label="your label"
+          class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-green-600 ease-in-out transform duration-500 ring-inset ring-green-600 inline-flex items-center font-medium     bg-black text-white justify-between ring-2 hover:ring-green-600 w-full">
+          <span class="rotate-180">➜</span>
+          Go home
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

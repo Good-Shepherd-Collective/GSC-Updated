@@ -1,0 +1,18 @@
+---
+const { name, role, avatar, url } = Astro.props;
+---
+
+<a
+  href={url}
+  title={name}
+  aria-label={name}>
+  <img
+    class="aspect-[4/4] object-cover "
+    src={avatar}
+    alt={name}
+  />
+  <article class=" bg-black p-8 lg:px-10">
+    <p class="text-white text-2xl">{name}</p>
+    <p class="text-zinc-400">{role}</p>
+  </article>
+</a>

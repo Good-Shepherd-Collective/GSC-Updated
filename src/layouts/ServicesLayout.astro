@@ -1,0 +1,28 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800 divide-y divide-zinc-800">
+      <div class="grid grid-cols-1 lg:grid-cols-2 bg-zinc-800 gap-px">
+        <div class="p-8 lg:px-10 bg-black">
+          <h1 class="text-4xl  text-white">
+            {frontmatter.service}
+          </h1>
+        </div>
+        <div class="p-8 lg:px-10 bg-blue-400">
+          <p class=" text-black font-medium  tracking-wide">{frontmatter.description}</p>
+        </div>
+      </div>
+      <div class="p-8 lg:px-10">
+        <div class="max-w-xl">
+          <div class="prose-styles">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

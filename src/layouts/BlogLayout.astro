@@ -1,0 +1,86 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const headings = document.querySelectorAll(
+      ".prose-styles h1,.prose-styles h2, .prose-styles h3"
+    );
+    const tocContainer = document.getElementById("table-of-contents");
+    if (tocContainer && headings.length > 0) {
+      const tocList = document.createElement("ul");
+      tocList.classList.add(
+        "divide-y",
+        "divide-zinc-800",
+        "border-zinc-800",
+        "text-sm",
+        "font-medium",
+      );
+      headings.forEach((heading) => {
+        const listItem = document.createElement("li");
+        listItem.classList.add("p-4");
+        const link = document.createElement("a");
+        link.textContent = heading.textContent;
+        link.href = `#${heading.id}`;
+        link.classList.add(
+          "text-zinc-400",
+          "hover:text-green-600",
+          "hover:text-accent-600"
+        );
+        listItem.appendChild(link);
+        tocList.appendChild(listItem);
+      });
+      tocContainer.appendChild(tocList);
+      tocContainer.classList.remove("hidden");
+    }
+  });
+</script>
+<BaseLayout>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="grid grid-cols-1 lg:grid-cols-2 bg-zinc-800 gap-px">
+        <div class="bg-black p-8 lg:px-10">
+          <span class="text-white">
+            ⏤ {frontmatter.pubDate.toString().slice(0, 10)} by: {
+              frontmatter.author
+            }
+          </span>
+          <h1 class="text-4xl md:text-6xl xl:text-7xl text-white mt-12">
+            {frontmatter.title}
+          </h1>
+          <p class="text-zinc-300 text-balance mt-4">
+            {frontmatter.description}
+          </p>
+        </div>
+        <img
+          class="h-full w-full object-cover object-center"
+          src={frontmatter.image.url}
+          alt={frontmatter.image.alt}
+        />
+      </div>
+    </div>
+  </section>
+  <section class="md:px-12 sm:px-8">
+    <div
+      class="border-x grid grid-cols-1 bg-zinc-700 border-t border-zinc-800 gap-px lg:grid-cols-4">
+      <div class="lg:col-span-1 bg-black">
+        <div
+          id="table-of-contents"
+          class="hidden lg:block sticky border-b border-zinc-800 top-20">
+          <div class="px-4 py-4 border-b bg-green-600 border-zinc-800">
+            <h3 class="text-white text-base uppercase    ">
+              Table of contents
+            </h3>
+          </div>
+          <!--
+        //Your table of contents content here
+      -->
+        </div>
+      </div>
+      <div class="lg:col-span-3 p-8 lg:px-10 bg-black">
+        <div class="prose-styles"><slot /></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

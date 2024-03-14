@@ -5,62 +5,30 @@ const allPosts = await getCollection("posts");
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
 const pageTitle = "Tag Index";
 ---
-
 <BaseLayout pageTitle={pageTitle}>
-  <section
-    class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
-  >
-    <div class="border-x border-zinc-700 h-14"></div>
-  </section>
-  <section
-    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
-  >
-    <div class="border-x border-zinc-700">
-      <div
-        class="p-px lg:rounded-t-[3rem] overflow-hidden bg-gradientTopRight ring-1 ring-zinc-700"
-      >
-        <div
-          class="bg-black/50 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
-        >
-          <div
-            class="mx-auto 2xl:max-w-7xl py-24 lg:px-16 md:px-12 px-8 xl:px-24 items-center relative 0 w-full"
-          >
-            <div>
-              <h2
-                class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
-              >
-               All blog tags
-              </h2>
-            </div>
-          </div>
-          <ol role="list" class="flex flex-col gap-px">
-            {
-              tags.map((tag) => (
-                <li>
-                  <a
-                    class="text-sm lg:text-5xl py-2 px-8 group border focus:ring-1 h-12 lg:px-20 uppercase tracking-tighter lg:h-24 border-transparent bg-black/80 hover:bg-black/90  text-white duration-200 focus:ring-offset-2 focus:ring-white hover:text-white inline-flex items-center justify-between w-full"
-                    href={`/tags/${tag}`}
-                  >
-                    {tag} <span>&rarr;</span>
-                    <span class="text-white group-hover:text-cyan-400">
-                      &rarr;
-                    </span>
-                    <span class="text-white group-hover:text-violet-400">
-                      &rarr;
-                    </span>
-                    <span class="text-white group-hover:text-pink-400">
-                      &rarr;
-                    </span>
-                    <span class="text-white group-hover:text-orange-300">
-                      &rarr;
-                    </span>
-                  </a>
-                </li>
-              ))
-            }
-          </ol>
-        </div>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="p-8 lg:px-10">
+        <h2
+          class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12">
+          Tag index
+        </h2>
       </div>
+      <ol
+        role="list"
+        class="flex flex-col gap-px border-t border-zinc-800">
+        {
+          tags.map((tag) => (
+            <li>
+              <a
+                class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-black hover:bg-zinc-800  text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-2 ring-zinc-800 w-full"
+                href={`/tags/${tag}`}>
+                {tag} <span>➜</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 </BaseLayout>

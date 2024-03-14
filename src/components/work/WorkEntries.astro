@@ -1,0 +1,22 @@
+---
+const { logo, url, company, work } = Astro.props;
+---
+
+<a href={url}>
+  <div
+    class="h-full pb-0 overflow-hidden bg-black flex flex-col justify-between">
+    <div class="p-8 lg:px-10 text-center order-last">
+      <h2 class="text-xl mt-4 tracking-wide font-medium text-white">
+        {company}
+      </h2>
+      <p class="mt-1 text-sm text-zinc-400">{work}</p>
+    </div>
+    <div class="border-b border-zinc-800 p-8 lg:px-10 ">
+      <img
+        class="size-32 mx-auto w-full h-full"
+        alt={company}
+        src={logo}
+      />
+    </div>
+  </div>
+</a>

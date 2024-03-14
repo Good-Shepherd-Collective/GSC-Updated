@@ -1,0 +1,49 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800 divide-y divide-zinc-800">
+      <div
+        class="flex-wrap p-8 lg:px-10 flex gap-2 items-center justify-between">
+        <h1 class="text-4xl text-white">
+          {frontmatter.name}
+        </h1>
+
+        <p class="text-zinc-400">
+          {frontmatter.intro}
+        </p>
+        <p class="text-zinc-400">
+          {frontmatter.role}
+        </p>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 *:flex-col *:flex *:gap-4 *:items-start *:justify-between bg-zinc-800 gap-px *:p-8 *:lg:px-10 *:bg-black *:w-full">
+        <div>
+          <p class="text-white">Education</p>
+          <ul class="text-zinc-400">
+            {frontmatter.education.map((item) => <li>⏤ {item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <p class="text-white">Experience</p>
+          <ul class="text-zinc-400">
+            {frontmatter.experience.map((item) => <li>⏤ {item}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      <img
+        class="aspect-video max-h-[70vh] w-full object-cover"
+        src={frontmatter.avatar.url}
+        alt={frontmatter.avatar.alt}
+      />
+
+      <div class="p-8 lg:px-10 text-xl max-w-xl">
+        <div class="prose-styles"><slot /></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

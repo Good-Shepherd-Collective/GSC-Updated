@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+const allPosts = await getCollection("team");
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import TeamEntries from "@/components/team/TeamEntries.astro";
+---
+<BaseLayout>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="grid grid-cols-1 lg:grid-cols-2 bg-zinc-800 gap-px">
+        <div class="p-8 lg:px-10 bg-black">
+          <h1 class="text-4xl md:text-6xl xl:text-7xl text-white">Our team</h1>
+        </div>
+        <div class="p-8 lg:px-10 bg-blue-400 h-full">
+          <p class="text-white tracking-wide text-pretty">
+            Welcome to our Team page! At the heart of our creative agency lies a
+            diverse group of passionate professionals, each bringing their
+            unique talents, visions, and experiences to the forefront. From
+            visionary designers and innovative developers to strategic
+            marketers, our team collaborates closely to push the boundaries of
+            creativity and deliver exceptional results. Dive in to meet the
+            brilliant minds that make our projects come to life and discover the
+            stories behind their passion for creating outstanding digital
+            experiences. Join us on this journey of creativity, innovation, and
+            excellence.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-zinc-800">
+        {
+          allPosts.map((post) => (
+            <TeamEntries
+              url={"/team/" + post.slug}
+              name={post.data.name}
+              role={post.data.role}
+              avatar={post.data.avatar.url}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EntriesOne from "@/components/entries/EntriesOne.astro";
+import TagEntries from "@/components/blog/TagEntries.astro";
 import { getCollection } from "astro:content";
 export async function getStaticPaths() {
   const allPosts = await getCollection("posts");
@@ -24,60 +24,47 @@ const { posts } = Astro.props;
 ---
 
 <BaseLayout pageTitle={tag}>
-  <section
-  class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
->
-  <div class="border-x border-zinc-700 h-14"></div>
-</section>
-<section
-    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
-  >
-    <div class="border-x border-zinc-700">
-      <div
-        class="p-px lg:rounded-t-[3rem] overflow-hidden bg-gradientTopRight ring-1 ring-zinc-700"
-      >
-        <div
-          class="bg-black/50 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
-        >
-          <div
-            class="mx-auto 2xl:max-w-7xl py-24 lg:px-16 md:px-12 px-8 xl:px-24 items-center relative 0 w-full"
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="h-full flex flex-col">
+        <div class="p-8 lg:px-10 bg-black h-full">
+          <h2 class="text-4xl md:text-6xl xl:text-7xl text-white">
+            Blog posts tagged with <span class="text-green-600 block"
+              >{tag}</span
+            >
+          </h2>
+          <p class="mt-4 text-zinc-400 tracking-wide">
+            Tips and trickd about this and that all day everyday.
+          </p>
+        </div>
+        <div class="h-full flex w-full bg-black border-t border-zinc-800">
+          <a
+            href="/blog/blog-one"
+            class="flex mx-auto p-8 lg:px-20 w-full justify-between h-full focus:ring-2 bg-zinc-800 rounded-full text-white ease-in-out transform duration-500 ring-inset ring-zinc-800 hover:bg-black text-2xl items-center ring-2"
+            >Read all our posts <span>➜</span></a
           >
-            <div>
-              <h2
-                class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
-              >
-         Blog posts tagged with {tag}
-              </h2>
-
-            </div>
-
-          </div>
         </div>
       </div>
     </div>
   </section>
-  <section
-    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
-  >
-    <div class="border-x border-zinc-700">
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-t border-zinc-800">
       <ul
-        class="grid grid-cols-1 gap-px bg-zinc-700 lg:grid-cols-3 sm:grid-cols-2 "
-      >
-      {
-        posts.map((post) => (
-          <EntriesOne
-            url={"/posts/" + post.slug}
-            title={post.data.title}
-            description={post.data.description}
-            alt={post.data.title}
-            pubDate={post.data.pubDate.toString().slice(0, 10)}
-            author={post.data.author}
-            image={post.data.image.url}
-          />
-        ))
-      }
+        class="grid grid-cols-1 gap-px bg-zinc-700 ">
+        {
+          posts.map((post) => (
+            <TagEntries
+              url={"/posts/" + post.slug}
+              title={post.data.title}
+              description={post.data.description}
+              alt={post.data.title}
+              pubDate={post.data.pubDate.toString().slice(0, 10)}
+              author={post.data.author}
+              image={post.data.image.url}
+            />
+          ))
+        }
       </ul>
     </div>
   </section>
-
 </BaseLayout>

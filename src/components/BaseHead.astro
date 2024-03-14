@@ -12,6 +12,7 @@ const {
 } = Astro.props;
 const sanitizedTitle = title.toLowerCase().replaceAll(" ", "-");
 ---
+
 <Metas
   title={title}
   description={description.substring(0, 100)}
@@ -22,14 +23,14 @@ const sanitizedTitle = title.toLowerCase().replaceAll(" ", "-");
   author={author}
   twitterImage={twitterImage}
 />
-<Favicons/>
-<link rel="preconnect" href="https://rsms.me/" />
-<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<Favicons />
+
 <link
-  href="https://api.fontshare.com/v2/css?f[]=jet-brains-mono@1,2&display=swap"
+  href="https://api.fontshare.com/v2/css?f[]=clash-display@1&display=swap"
   rel="stylesheet"
 />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<script
+  defer
+  src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+></script>

@@ -1,78 +1,79 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EntriesTwo from "@/components/entries/EntriesTwo.astro";
+import EntriesTwo from "@/components/blog/EntriesTwo.astro";
 const allPosts = await getCollection("posts");
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
 ---
 
 <BaseLayout>
-  <section
-    class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
-  >
-    <div class="border-x border-zinc-700 h-14"></div>
-  </section>
-  <section
-    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
-  >
-    <div class="border-x border-zinc-700">
-      <div
-        class="p-px lg:rounded-t-[3rem] overflow-hidden bg-gradientTopRight ring-1 ring-zinc-700"
-      >
-        <div
-          class="bg-black/50 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
-        >
-          <div
-            class="mx-auto 2xl:max-w-7xl py-24 lg:px-16 md:px-12 text-center px-8 xl:px-24 items-center relative 0 w-full"
-          >
-          <h2
-            class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
-          >
-          Writings from
-            <span >StudioMax.</span>
-          </h2>
-          <ol role="list" class="flex flex-wrap gap-1 mt-8 justify-center">
-            {
-              tags.map((tag) => (
-                <li>
-                  <a
-                    class="inline-flex items-center justify-center gap-2 rounded-full px-3 py-1 text-xs leading-6 text-white ring-1 ring-zinc-700 shadow-inset ring-inset hover:text-cyan-400 duration-200 bg-black/50"
-                    href={`/tags/${tag}`}
-                  >
-                    {tag}
-                  </a>
-                </li>
-              ))
-            }
-          </ol>
-
-
-          </div>
-        </div>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
+      <div class="p-8 lg:px-10">
+        <h2 class="text-4xl md:text-6xl xl:text-7xl text-white">
+          Writings from StudioMax
+        </h2>
       </div>
+      <ol
+        role="list"
+        class="flex flex-wrap gap-4 p-8 lg:px-10">
+        {
+          tags.map((tag) => (
+            <li>
+              <a
+                class=" text-white"
+                href={`/tags/${tag}`}>
+                {tag}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <form
+        class="bg-zinc-800 flex flex-col lg:flex-row w-full border-t border-zinc-800">
+        <div class="w-full">
+          <label
+            for="email-address"
+            class="sr-only"
+            >Email address</label
+          >
+          <input
+            id="email-address"
+            name="email-address"
+            type="email"
+            autocomplete="email"
+            placeholder="Your email"
+            required
+            aria-required="true"
+            class="block w-full appearance-none border border-none h-full autofill:bg-zinc-800 p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-blue-400 focus:ring-2 ring-inset"
+          />
+        </div>
+        <div class="bg-black">
+          <button
+            type="submit"
+            class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium     bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full">
+            Subscribe <span>➜</span>
+          </button>
+        </div>
+      </form>
     </div>
   </section>
-  <section
-    class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
-  >
-    <div class="border-x border-zinc-700">
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800">
       <ul
-        class="grid grid-cols-1 gap-px bg-zinc-700 lg:grid-cols-4 sm:grid-cols-2 "
-      >
+        class="grid grid-cols-1 gap-px bg-zinc-700 lg:grid-cols-4 sm:grid-cols-2">
         {
-          allPosts
-            .slice(0,4)
-            .map((post) => (
-              <EntriesTwo
-                url={"/posts/" + post.slug}
-                title={post.data.title}
-                description={post.data.description}
-                alt={post.data.title}
-                pubDate={post.data.pubDate.toString().slice(0, 10)}
-                author={post.data.author}
-                image={post.data.image.url}
-              />
-            ))
+          allPosts.slice(0, 4).map((post) => (
+            <EntriesTwo
+              url={"/posts/" + post.slug}
+              title={post.data.title}
+              description={post.data.description}
+              alt={post.data.title}
+              pubDate={post.data.pubDate.toString().slice(0, 10)}
+              author={post.data.author}
+              image={post.data.image.url}
+            />
+          ))
         }
       </ul>
     </div>

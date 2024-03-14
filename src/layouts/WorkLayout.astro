@@ -1,0 +1,61 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-800 divide-y divide-zinc-800">
+      <div class="p-8 lg:p-10">
+        <div class="flex-wrap flex gap-2 items-center justify-between">
+          <h1 class="text-4xl lg:text-8xl text-white">
+            {frontmatter.company}
+          </h1>
+          <img
+            src={frontmatter.logo.url}
+            alt={frontmatter.logo.alt}
+            class="object-cover rounded-full shrink-0 size-8 lg:size-16 drop-shadow-3xl"
+          />
+        </div>
+      </div>
+      <div class="p-8 lg:px-10">
+        <div class="flex flex-col md:flex-row justify-between">
+          <p class="text-white">Year</p>
+          <p class="text-zinc-400 font-normal">{frontmatter.year}</p>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between">
+          <p class="text-white">Client</p>
+          <p class="text-zinc-400 font-normal">{frontmatter.client}</p>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between">
+          <p class="text-white">Work</p>
+          <p class="text-zinc-400 font-normal">{frontmatter.work}</p>
+        </div>
+      </div>
+      <div
+        class="flex flex-col md:flex-row justify-between border-t border-zinc-800 p-8 lg:px-10">
+        <p class="text-white">Credits</p>
+        <div
+          class="flex flex-col md:flex-row justify-between gap-8 items-start">
+          <div class="w-full">
+            {
+              frontmatter.credits.map((credit) => (
+                <div class="flex flex-col md:flex-row gap-8 justify-between">
+                  <p class="text-white ">{credit.name}</p>
+                  <p class="text-gray-400 font-normal">{credit.role}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <div class="p-8 lg:px-10 bg-black">
+        <div class="max-w-xl">
+          <div class="prose-styles">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

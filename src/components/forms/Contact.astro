@@ -1,96 +1,107 @@
-<section
-  class="md:px-12 sm:px-8 relative border-zinc-700 2xl:border-x hidden md:block"
->
-  <div class="border-x border-zinc-700 h-14"></div>
-</section>
-<section
-  class="md:px-12 sm:px-8 relative border-y border-zinc-700 2xl:border-x"
->
-  <div class="border-x border-zinc-700">
-    <div
-      class="p-px lg:rounded-t-[3rem] overflow-hidden bg-gradientTopRight ring-1 ring-zinc-700"
-    >
+<section class="md:px-12 sm:px-8">
+  <div class="border-x border-zinc-800">
+    <div class="mx-auto items-start w-full">
       <div
-        class="bg-black/50 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
-      >
-        <div
-          class="mx-auto 2xl:max-w-7xl py-24 lg:px-16 md:px-12 px-8 xl:px-24 items-center relative 0 w-full"
-        >
-          <div>
-            <h2
-              class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
-            >
-              All blog tags
-            </h2>
-          </div>
+        class="grid grid-cols-1 lg:grid-cols-2 items-start bg-blue-800 gap-px">
+        <div class="p-8 lg:px-10 bg-green-600 h-full flex flex-col justify-between">
+          <h1 class="text-4xl md:text-6xl xl:text-7xl text-white">
+            We'd Love to Hear from You
+          </h1>
+          <p class="mt-8 text-base font-medium text-white tracking-wide">
+            Thank you for your interest in reaching out to us. We value your
+            feedback, inquiries, and suggestions. Our dedicated team is here to
+            assist you and ensure that your experience with our platform is
+            exceptional.
+          </p>
         </div>
-        <form class="flex flex-col w-full">
-          <div class="space-y-px">
-           <div class="grid grid-cols-1 lg:grid-cols-2 gap-px">
-              <div>
-                <label for="email-address" class="sr-only">Your name</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  autocomplete="text"
-                  class="block w-full appearance-none border border-transparent  p-8 lg:px-20 bg-black/80 backdrop-blur-3xl placeholder-zinc-500 text-white focus:border-white/10 focus:outline-none focus:ring-white/10 sm:text-2xl focus:ring-1 ring-inset"
-                  placeholder="Your email"
-                />
-              </div>
-              <div>
-                <label for="Your name" class="sr-only">Company name</label>
-                <input
-                  id="companyname"
-                  name="companyname"
-                  type="text"
-                  class="block w-full appearance-none border border-transparent  p-8 lg:px-20 bg-black/80 backdrop-blur-3xl placeholder-zinc-500 text-white focus:border-white/10 focus:outline-none focus:ring-white/10 sm:text-2xl focus:ring-1 ring-inset"
-                  placeholder="Company name"
-                />
-              </div>
-           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-px">
-              <div>
-                <label for="phone" class="sr-only">Phone number</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="text"
-                  required
-                  class="block w-full appearance-none border border-transparent  p-8 lg:px-20 bg-black/80 backdrop-blur-3xl placeholder-zinc-500 text-white focus:border-white/10 focus:outline-none focus:ring-white/10 sm:text-2xl focus:ring-1 ring-inset"
-                  placeholder="Your phone"
-                />
-              </div>
-              <div>
-                <label for="email-address" class="sr-only">Email address</label>
-                <input
-                  id="email-address"
-                  name="email-address"
-                  type="email"
-                  autocomplete="email"
-                  required
-                  class="block w-full appearance-none border border-transparent  p-8 lg:px-20 bg-black/80 backdrop-blur-3xl placeholder-zinc-500 text-white focus:border-white/10 focus:outline-none focus:ring-white/10 sm:text-2xl focus:ring-1 ring-inset"
-                  placeholder="Your email"
-                />
-              </div>
+        <form class="bg-zinc-800 space-y-px">
+          <div>
+            <label
+              for="name"
+              class="sr-only"
+              >Your name</label
+            >
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              aria-required="true"
+              placeholder="Your name"
+              required
+              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-green-600  focus:ring-2 ring-inset"
+            />
           </div>
-            <div>
-              <label for="message" class="sr-only">your message</label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows="2"
-                class="block w-full appearance-none border border-transparent  p-8 lg:px-20 bg-black/80 backdrop-blur-3xl placeholder-zinc-500 text-white focus:border-white/10 focus:outline-none focus:ring-white/10 sm:text-2xl focus:ring-1 ring-inset"
-                placeholder="Your message ( optional )"></textarea>
-            </div>
+          <div>
+            <label
+              for="companyname"
+              class="sr-only"
+              >Company name</label
+            >
+            <input
+              id="companyname"
+              name="companyname"
+              type="text"
+              aria-required="true"
+              placeholder="Company name"
+              required
+              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-green-600  focus:ring-2 ring-inset"
+            />
           </div>
-          <div class="border-t border-zinc-700 ">
+          <div>
+            <label
+              for="phone"
+              class="sr-only"
+              >Phone number</label
+            >
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              aria-required="true"
+              placeholder="Your phone"
+              required
+              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-green-600  focus:ring-2 ring-inset"
+            />
+          </div>
+          <div>
+            <label
+              for="email-address"
+              class="sr-only"
+              >Email address</label
+            >
+            <input
+              id="email-address"
+              name="email-address"
+              type="email"
+              autocomplete="email"
+              placeholder="Your email"
+              required
+              aria-required="true"
+              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-green-600  focus:ring-2 ring-inset"
+            />
+          </div>
+
+          <div>
+            <label
+              for="message"
+              class="sr-only"
+              >Your message</label
+            >
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Your message (optional)"
+              rows="8"
+              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-green-600  focus:ring-2 ring-inset"
+            ></textarea>
+          </div>
+
+          <div class="bg-black">
             <button
               type="submit"
-              class="text-sm py-2 w-full px-8 lg:px-10 uppercase border justify-center focus:ring-2 border-transparent bg-black text-white duration-200 focus:ring-offset-2 focus:ring-white hover:text-sky-500 inline-flex items-center lg:text-4xl ring-1 md:text-xl ring-transparent h-16 lg:h-28"
-            >
-              Contact us
+              class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-green-600 ease-in-out transform duration-500 ring-inset ring-green-600 inline-flex items-center font-medium     bg-black text-white justify-between ring-2 hover:ring-green-600 w-full">
+              Contact us <span>➜</span>
             </button>
           </div>
         </form>

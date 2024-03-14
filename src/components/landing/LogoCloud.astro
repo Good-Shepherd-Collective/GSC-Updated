@@ -1,46 +1,29 @@
-<section
-  class="md:px-12 sm:px-8 relative border-b border-zinc-700 2xl:border-x"
->
-  <div class="border-x border-zinc-700">
-    <div
-      class=" grid grid-cols-2 gap-px overflow-hidden bg-zinc-700 sm:mx-0 sm:rounded-2xl md:grid-cols-4 "
-    >
-      <div class="bg-black p-8 sm:p-10">
-        <img
-          class="max-h-8 w-full object-contain grayscale"
-          src="/brands/1.svg"
-          alt="#"
-          width="158"
-          height="48"
-        />
-      </div>
-      <div class="bg-black p-6 sm:p-10 items-center flex">
-        <img
-          class="max-h-8 w-full object-contain grayscale"
-          src="/brands/2.svg"
-          alt="#"
-          width="158"
-          height="48"
-        />
-      </div>
-      <div class="bg-black p-6 sm:p-10 items-center flex">
-        <img
-          class="max-h-8 w-full object-contain grayscale"
-          src="/brands/3.svg"
-          alt="#"
-          width="158"
-          height="48"
-        />
-      </div>
-      <div class="bg-black p-6 sm:p-10 items-center flex">
-        <img
-          class="max-h-8 w-full object-contain grayscale"
-          src="/brands/4.svg"
-          alt=""
-          width="158"
-          height="48"
-        />
-      </div>
+---
+// Define an array of logo details
+const logos = [
+  { src: "/brands/1.svg", alt: "Brand 1" },
+  { src: "/brands/2.svg", alt: "Brand 2" },
+  { src: "/brands/3.svg", alt: "Brand 3" },
+  { src: "/brands/4.svg", alt: "Brand 4" },
+];
+---
+
+<section class="md:px-12 sm:px-8 relative 2xl:max-w-7xl">
+  <div class="border-x border-b border-zinc-800">
+    <div class="grid grid-cols-2 gap-px bg-zinc-800 sm:mx-0 md:grid-cols-4">
+      {
+        logos.map((logo) => (
+          <div class="bg-black p-6 sm:p-10 items-center flex">
+            <img
+              class="max-h-8 w-full object-contain "
+              src={logo.src}
+              alt={logo.alt}
+              width="158"
+              height="48"
+            />
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>

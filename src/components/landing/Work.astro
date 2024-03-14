@@ -1,87 +1,46 @@
-<section
-  class="md:px-12 sm:px-8 relative border-b border-zinc-700 scroll-mt-24 2xl:border-x"
-  id="work"
->
-  <div class="border-x border-zinc-700">
+---
+import { getCollection } from "astro:content";
+const allPosts = await getCollection("work");
+import WorkEntries from "../work/WorkEntries.astro";
+---
+
+<section class="md:px-12 sm:px-8">
+  <div class="border-x border-y border-zinc-800">
     <div class="mx-auto 2xl:max-w-7xl items-center w-full">
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:items-center divide-y lg:divide-y-0 lg:divide-x divide-zinc-700"
-      >
-        <div class="p-8 lg:px-24">
-          <h2
-            class="text-3xl tracking-tighter font-light lg:text-4xl text-white"
-          >
+        class="grid grid-cols-1 md:grid-cols-2 lg:items-center gap-px bg-zinc-800">
+        <div class="p-8 lg:px-10 bg-black h-full">
+          <h2 class="text-3xl tracking-wide xl:text-4xl text-white">
             Recent projects
-          </h2><p class="mt-5 text-white">
+          </h2><p class="mt-5 text-white tracking-wide">
             Presenting a snapshot of <span>my most recent work.</span>
           </p>
         </div>
-        <div class="h-full flex w-full duration-200">
+        <div class="h-full flex w-full bg-black">
           <a
-            href="/work/all-work"
-            class="items-center inline-flex mx-auto p-8 lg:px-24 w-full justify-between rounded-4xl h-full text-3xl tracking-tighter hover:bg-gradientTopRight font-light lg:text-4xl text-white hover:bg-white"
-            >See more work <span aria-hidden="true">→</span></a
+            href="/work/home"
+            class="flex mx-auto p-8 lg:px-20 w-full justify-between h-full focus:ring-2 bg-zinc-800 rounded-full text-white ease-in-out transform duration-500 ring-inset ring-zinc-800 hover:bg-black text-2xl items-center ring-2"
+            >See more work <span>➜</span></a
           >
         </div>
       </div>
     </div>
   </div>
 </section>
-<section
-  class="md:px-12 sm:px-8 relative border-b border-zinc-700 scroll-mt-24 2xl:border-x"
->
-  <div class="border-x border-zinc-700">
-    <div class="grid grid-cols-1 list-none md:grid-cols-3 gap-px bg-zinc-700">
-      <div
-        class="h-full pb-0 overflow-hidden bg-black flex flex-col justify-between"
-      >
-        <div class="p-8 lg:px-24 overflow-hidden">
-          <p
-            class="inline-flex items-center justify-center gap-2 rounded-full px-3 py-1 text-xs leading-6 text-white ring-1 ring-zinc-700 shadow-inset ring-inset"
-          >
-            Design - Development
-          </p>
-          <h2 class="text-xl mt-4 tracking-tighter font-medium text-white">
-            Super wooper
-          </h2>
-          <p class="mt-1 text-sm text-zinc-400">Marketing company</p>
-        </div>
-        <img    src="/assets/work1.jpg" alt="" />
-      </div>
-      <div
-        class="h-full pb-0 overflow-hidden bg-black flex flex-col justify-between"
-      >
-        <div class="p-8 lg:px-24 overflow-hidden">
-          <p
-            class="inline-flex items-center justify-center gap-2 rounded-full px-3 py-1 text-xs leading-6 text-white ring-1 ring-zinc-700 shadow-inset ring-inset"
-          >
-            Design
-          </p>
-          <h2 class="text-xl mt-4 tracking-tighter font-medium text-white">
-            Gisto Gusto
-          </h2>
-          <p class="mt-1 text-sm text-zinc-400">Landing page for typeface</p>
-        </div>
-        <img    src="/assets/work2.jpg" alt="" />
-      </div>
-      <div
-        class="h-full pb-0 overflow-hidden bg-black flex flex-col justify-between"
-      >
-        <div class="p-8 lg:px-24 overflow-hidden">
-          <p
-            class="inline-flex items-center justify-center gap-2 rounded-full px-3 py-1 text-xs leading-6 text-white ring-1 ring-zinc-700 shadow-inset ring-inset"
-          >
-            Design
-          </p>
-          <h2 class="text-xl mt-4 tracking-tighter font-medium text-white">
-            Superbito
-          </h2>
-          <p class="mt-1 text-sm text-zinc-400">
-           website for a studio
-          </p>
-        </div>
-        <img    src="/assets/work3.jpg" alt="" />
-      </div>
+<section class="md:px-12 sm:px-8">
+  <div class="border-x border-b border-zinc-800">
+    <div class="grid grid-cols-1 list-none md:grid-cols-4 gap-px bg-zinc-800">
+      {
+        allPosts.slice().map((post) => (
+          <WorkEntries
+            url={"/work/" + post.slug}
+            company={post.data.company}
+            work={post.data.work}
+            alt={post.data.company}
+            logo={post.data.logo.url}
+          />
+        ))
+      }
     </div>
   </div>
 </section>

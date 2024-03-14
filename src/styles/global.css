@@ -1,24 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root { font-family: 'Inter', sans-serif; }
-@supports (font-variation-settings: normal) {
-  :root { font-family: 'Inter var', sans-serif; }
-}
+
 :root {
-  --astro-code-color-text: #f5bb92;
-  --astro-code-color-background: #000000;
-  --astro-code-token-constant: #6f71ea;
-  --astro-code-token-string: gray;
-  --astro-code-token-comment: #f5bb92;
-  --astro-code-token-keyword: smoke;
-  --astro-code-token-parameter: #8182f6;
-  --astro-code-token-function: hotpink;
-  --astro-code-token-string-expression: #5bc4f2;
-  --astro-code-token-punctuation: #f5bb92;
-  --astro-code-token-link: #ffffff;
+  --astro-code-color-text: theme(textColor.zinc.400);;
+  --astro-code-color-background: theme(textColor.zinc.900);;
+  --astro-code-token-constant: theme(textColor.violet.400);;
+  --astro-code-token-string: theme(textColor.zinc.400);;
+  --astro-code-token-comment: #theme(textColor.zinc.500);;
+  --astro-code-token-keyword: theme(textColor.white);;
+  --astro-code-token-parameter:theme(textColor.violet.200);;
+  --astro-code-token-function: theme(textColor.green.300);;
+  --astro-code-token-string-expression: theme(textColor.blue.400);;
+  --astro-code-token-punctuation: #theme(textColor.green.400);;
+  --astro-code-token-link: theme(textColor.white);;
 }
 
 .prose-styles {
-  @apply text-zinc-400 hover:prose-a:text-white max-w-7xl mt-24 mx-auto prose prose-a:font-semibold prose-a:text-blue-300 prose-headings:font-medium  prose-pre:border prose-pre:border-zinc-800 prose-headings:text-white prose-strong:text-white prose-img:border prose-img:border-zinc-800  prose-img:rounded-3xl  prose-img:bg-zinc-800 prose-blockquote:text-blue-300 prose-blockquote:border-zinc-800 prose-blockquote:border-l-2 prose-code:text-white prose-table:border-zinc-800;
+  @apply text-zinc-400
+  hover:prose-a:text-white max-w-7xl  mx-auto prose prose-a:italic prose-a:text-white prose-headings:font-medium  prose-pre:border prose-pre:border-zinc-800 prose-headings:text-white prose-strong:text-white prose-img:border prose-img:border-zinc-800  prose-img:rounded-3xl  prose-img:bg-zinc-800 prose-blockquote:text-blue-300 prose-blockquote:border-zinc-800 prose-blockquote:border-l-2 prose-code:text-white prose-table:border-zinc-800 ;
 }
