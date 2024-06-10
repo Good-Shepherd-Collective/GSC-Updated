@@ -1,0 +1,280 @@
+---
+import fetch from '@11ty/eleventy-fetch';
+import { Image } from 'astro:assets';
+import map from "src/images/map.png";
+
+async function fetchData() {
+  try {
+    const urls = [
+      'https://api.acleddata.com/acled/read/?key=NKGMxfd9aYKKxOBAX4qa&email=cody@goodshepherdcollective.org&iso=275',
+      'https://api.acleddata.com/acled/read/?key=NKGMxfd9aYKKxOBAX4qa&email=cody@goodshepherdcollective.org&country=Israel'
+    ];
+
+    // Fetch and cache the responses
+    const responses = await Promise.all(urls.map(url => 
+      fetch(url, {
+        duration: '1d', // Cache the data for 1 day
+        type: 'json'    // Specify that we expect JSON data
+      })
+    ));
+
+    // Extract the JSON data from the responses
+    const combinedData = responses.reduce((acc, curr) => {
+      return [...acc, ...curr.data];
+    }, []);
+
+    return convertToGeoJSON(combinedData);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}.${day}.${year}.`;
+}
+
+function convertToGeoJSON(data) {
+  return {
+    type: 'FeatureCollection',
+    features: data.map(item => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [parseFloat(item.longitude), parseFloat(item.latitude)]
+      },
+      properties: {
+        event_date: formatDate(item.event_date),
+        location: item.location,
+        source: item.source,
+        notes: item.notes
+      }
+    }))
+  };
+}
+
+const geojsonData = await fetchData();
+const geojsonDataSerialized = JSON.stringify(geojsonData);
+
+---
+
+<section class="md:px-12 sm:px-8 text-white">
+    <div class="border-x border-zinc-800">
+    <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10">Mapping colonial violence</h2>
+
+    <div class="map-container">
+    
+        <div id="map"><Image class="map-placeholder"
+        src={map}
+        alt="A map placeholder"
+        width="900"
+        height="900"
+        loading="lazy"
+        decoding="async"
+        /> </div>
+        <div id="text">
+        <h1 class="map__title">About this map</h1>
+        <p class="event__data">Click on the red dot to zoom and view the data.<br><br>This map, by its nature, is not exhaustive. The phenomenon of underreporting is a significant issue, particularly with regard to Israeli settler-colonial aggression, much of which remains undocumented and unreported. It is imperative to interpret this map as representing a fraction of the incidents of violence associated with the Israeli state. The Good Shepherd Collective has utilized data compiled by the Armed Conflict Location and Event Data Project (ACLED) to depict various incidents across historical Palestine. The narrative descriptions provided herein are attributed to ACLED and don't reflect the language used by the GSC. </p>
+        <div class="map__info">
+        </div>
+        </div>
+    </div>
+    </div>
+    </section>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+<!-- <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js" defer></script> -->
+
+<script define:vars={{ geojsonDataSerialized }} type="module">
+  if (typeof window !== 'undefined') {
+    const loadMapboxScript = () => {
+      // Create a new script element for Mapbox GL JS
+      const script = document.createElement('script');
+      script.src = "https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js";
+      script.onload = initializeMapbox; // Initialize Mapbox once the script is loaded
+      document.head.appendChild(script);
+    };
+
+    const initializeMapbox = () => {
+      // console.log('Mapbox script loaded, initializing map.');
+
+      // Initialize Mapbox with the provided access token
+      mapboxgl.accessToken = ('pk.eyJ1IjoiZ29vZC1zaGVwaGVyZC1jb2xsZWN0aXZlIiwiYSI6ImNsaDUwdXY0ZDIzNnUzZG9nZ3BhYXhuaTQifQ.FX0JA3BbKdy5-IJ5gkDpKw')
+
+      const bounds = [
+  [31.000, 27.000], // Southwest coordinates (further southwest)
+  [37.500, 36.500]  // Northeast coordinates (further northeast)
+];
+
+
+
+      // Create the Mapbox map instance
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v10',
+        center: [35.217018, 31.771959],
+        zoom: 7,
+        attributionControl: false,
+        maxBounds: bounds
+      });
+
+      // Mapbox map load event
+      map.on('load', () => {
+        // console.log('Mapbox map loaded successfully.');
+
+        const placeholder = document.querySelector('.map-placeholder');
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.removeChild(placeholder);
+        }
+
+        try {
+          // Parse the GeoJSON data
+          const geojsonData = JSON.parse(geojsonDataSerialized);
+          // console.log('Parsed GeoJSON data:', geojsonData);
+
+          // Add the GeoJSON data as a source to the map
+          map.addSource('your-data-source', {
+            type: 'geojson',
+            data: geojsonData,
+          });
+
+          // Add a layer to the map using the GeoJSON data source
+          map.addLayer({
+            id: 'your-data-layer',
+            type: 'circle',
+            source: 'your-data-source',
+            paint: {
+              'circle-radius': 4,
+              'circle-color': 'black',
+              'circle-opacity': 0.3,
+              'circle-blur': 0,
+              'circle-stroke-width': 1,
+              'circle-stroke-color': '#7f0d15'
+            },
+          });
+
+          // Set up event handlers for map interactions
+          map.on('mouseenter', 'your-data-layer', () => {
+            map.getCanvas().style.cursor = 'pointer';
+          });
+
+          map.on('mouseleave', 'your-data-layer', () => {
+            map.getCanvas().style.cursor = '';
+          });
+
+          map.on('click', 'your-data-layer', (e) => {
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const properties = e.features[0].properties;
+
+            // Update the content of the designated information area
+            document.querySelector('#text h1').textContent = properties.location;
+            document.querySelector('.event__data').innerHTML = `
+              <div class="event__date" style="margin-bottom: 1.5rem !important;"><strong>Event Date:</strong> ${properties.event_date}</div>
+              <div style="margin-bottom: 1.5rem !important;"><strong>Notes:</strong> ${properties.notes}</div>
+              <div><strong>Source:</strong> ${properties.source}</div>
+            `;
+
+            // Fly to the clicked location
+            map.flyTo({
+              center: coordinates,
+              zoom: 14,
+              essential: true,
+            });
+          });
+          
+
+          // Error handling for the map
+          map.on('error', (error) => {
+            // console.error('Error loading map:', error);
+          });
+        } catch (error) {
+          // console.error('Error parsing GeoJSON data or setting up the map:', error);
+        }
+        
+      });
+    };
+
+    // Intersection Observer to load Mapbox when the map container enters the viewport
+    const mapContainer = document.getElementById('map');
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadMapboxScript();
+          observer.unobserve(entry.target); // Stop observing after loading the script
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(mapContainer); // Start observing the map container
+  }
+
+  
+</script>
+
+<style>
+  .map-placeholder{
+    object-fit: cover;
+  }
+
+    .map__info{
+      margin-top: auto;
+      margin-bottom: 0;
+    }
+  
+    .event__data {
+      font-size: .9rem;
+      color: var(--black);
+      font-family: var(--data) !important;
+      margin-bottom: 1.5rem !important;
+      display: block;
+    }
+  
+    
+  
+     .map-container{
+      width: 100%;
+      display: grid;
+      grid-template-areas: "map text";
+      grid-template-columns: 1fr 1fr;
+      z-index: 0 !important; 
+     }
+  
+      #map{
+        grid-area: map;
+        width: 100%;
+        height: 600px;
+        z-index: 0;
+        
+      }
+  
+      #text{
+        
+        display: grid;
+        height: 100%;
+        position: relative;
+        grid-area: text;
+        
+        padding: 2rem;
+        
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+      }
+       
+
+  
+  
+    @media (max-width: 900px){
+      .map-container{
+        grid-template-areas: "map map" "text text";
+        grid-template-columns: 1fr 1fr;
+      }
+      #map{
+        grid-area: map;
+        width: 100%;
+        height: 50vh;
+      }
+    }
+
+  </style>

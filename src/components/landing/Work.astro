@@ -1,46 +1,107 @@
 ---
-import { getCollection } from "astro:content";
-const allPosts = await getCollection("work");
-import WorkEntries from "../work/WorkEntries.astro";
+const API_URL = "https://login.goodshepherdcollective.org/wp-json/wp/v2/posts?per_page=4&_embed";
+
+// Function to calculate reading time
+function calculateReadingTime(text) {
+  const wordsPerMinute = 200;
+  const textWithoutHtml = text.replace(/<[^>]*>/g, "");
+  const wordCount = textWithoutHtml.split(/\s+/).length;
+  const readingTime = Math.ceil(wordCount / wordsPerMinute);
+  return readingTime;
+}
+
+// Function to decode HTML entities
+function decodeHtml(html) {
+  return html
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8211;/g, "–")
+    .replace(/&#8230;/g, "…")
+    .replace(/&#038;/g, "&");
+}
+
+// Fetch blog posts from the API
+async function fetchGSCblog() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const posts = await response.json();
+    return posts.map((post) => {
+      const readingTime = calculateReadingTime(post.content.rendered || "");
+      const postDate = new Date(post.date);
+      const formattedDate = postDate.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+      const featuredImage = post.acf && post.acf.gsc_featured_image
+        ? post.acf.gsc_featured_image
+        : "";
+
+      return {
+        id: post.id,
+        link: post.link,
+        title: decodeHtml(post.title.rendered),
+        formattedDate,
+        readingTime,
+        featuredImage,
+      };
+    });
+  } catch (error) {
+    console.error("Fetch error from posts:", error);
+    return [];
+  }
+}
+
+const posts = await fetchGSCblog();
 ---
 
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-y border-zinc-800">
     <div class="mx-auto 2xl:max-w-7xl items-center w-full">
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:items-center gap-px bg-zinc-800">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:items-center gap-px bg-zinc-800">
         <div class="p-8 lg:px-10 bg-black h-full">
           <h2 class="text-3xl tracking-wide xl:text-4xl text-white">
-            Recent projects
-          </h2><p class="mt-5 text-white tracking-wide">
-            Presenting a snapshot of <span>my most recent work.</span>
+            Join us
+          </h2>
+          <p class="mt-5 text-white tracking-wide">
+            Ensure you stay up to date <span>with our work and analysis.</span>
           </p>
         </div>
         <div class="h-full flex w-full bg-black">
           <a
             href="/work/home"
             class="flex mx-auto p-8 lg:px-20 w-full justify-between h-full focus:ring-2 bg-zinc-800 rounded-full text-white ease-in-out transform duration-500 ring-inset ring-zinc-800 hover:bg-black text-2xl items-center ring-2"
-            >See more work <span>➜</span></a
           >
+            Sign up <span>➜</span>
+          </a>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
+    <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10">Updates from the ground</h2>
     <div class="grid grid-cols-1 list-none md:grid-cols-4 gap-px bg-zinc-800">
-      {
-        allPosts.slice().map((post) => (
-          <WorkEntries
-            url={"/work/" + post.slug}
-            company={post.data.company}
-            work={post.data.work}
-            alt={post.data.company}
-            logo={post.data.logo.url}
-          />
-        ))
-      }
+      {posts.length > 0 ? posts.map((post) => (
+        <article class=" bg-black text-white">
+          {post.featuredImage && (
+            <img src={post.featuredImage} alt={post.title} class="w-full h-48 object-cover mb-4" />
+          )}
+          <div class="p-4">
+          <a href={post.link} class="text-xl font-semibold">{post.title}</a>
+          <p class="mt-2 text-sm">{post.formattedDate} <br> {post.readingTime} min read</p>
+        </div>
+        </article>
+      )) : <p>Loading...</p>}
     </div>
   </div>
 </section>

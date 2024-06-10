@@ -4,16 +4,20 @@
       x-data="{ open: false }"
       class="relative flex flex-col w-full px-8 mx-auto bg-black border-x border-zinc-800 border-b md:items-center md:justify-between md:flex-row">
       <div class="flex flex-row items-center justify-between md:justify-start">
+        <img
+          src="src/images/gsc_logo.svg"
+          alt="logo"
+          class="w-11 h-11">
         <a
           href="/"
           title="link to your page"
           aria-label="your label"
-          class="text-white hover:text-white/50 gap-4 items-center tracking-tighter uppercase inline-flex font-medium ml-2 text-sm">
-          StudioMax
+          class="text-white hover:text-white/50 gap-4 items-center tracking-wide uppercase inline-flex font-medium ml-2 text-sm">
+          Good Shepherd Collective
         </a>
         <button
           @click="open = !open"
-          class="inline-flex items-center justify-center p-2 text-white hover:text-blue-500 focus:outline-none focus:text-white md:hidden"
+          class="inline-flex items-center justify-center p-2 text-white hover:text-red-500 focus:outline-none focus:text-white md:hidden"
           ><svg
             class="size-6"
             stroke="currentColor"
@@ -47,7 +51,7 @@
               href="/system/overview"
               title="link to your page"
               aria-label="your label"
-              class="hover:text-blue-500">
+              class="hover:text-red-500">
               Overview</a
             >
           </li><li>
@@ -55,16 +59,16 @@
               href="/system/style-guide"
               title="link to your page"
               aria-label="your label"
-              class="hover:text-blue-500">
+              class="hover:text-red-500">
               StyleGuide</a
             >
           </li><li>
             <a
-              href="https://lexingtonthemes.lemonsqueezy.com/checkout"
-              title="link to your page"
-              aria-label="your label"
-              class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-green-600 hover:bg-green-600 hover:text-white">
-              Buy StudioMax</a
+              href="#"
+              title="Support the GSC in Palestine"
+              aria-label="Donate button"
+              class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-600 hover:bg-red-600 hover:text-white">
+              Support</a
             >
           </li>
         </ul>

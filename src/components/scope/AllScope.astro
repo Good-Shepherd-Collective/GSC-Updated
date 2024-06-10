@@ -1,62 +1,242 @@
 ---
-const devwork = [
-  "Components",
-  "Blogs",
-  "Design to code",
-  "Landing pages",
-  "Website templates",
-  "Convert to Tailwind CSS",
-  "Convert to Astro",
-];
-const designwork = [
-  "Redesigns",
-  "Refactors",
-  "Components",
-  "Landing pages",
-  "Full website",
-  "Open Graphs",
-  "Social media assets",
-];
+import fetch from '@11ty/eleventy-fetch';
+
+async function fetchSummaryData() {
+  const url = 'https://data.techforpalestine.org/api/v3/summary.json';
+  try {
+    const response = await fetch(url, {
+      duration: '1d', // Cache data for 1 day
+      type: 'json'    // Specify that we expect JSON data
+    });
+
+    if (response) {
+      return response;
+    } else {
+      console.error("Invalid response format");
+      return null;
+    }
+  } catch (error) {
+    console.error("Fetching summary data failed:", error);
+    return null;
+  }
+}
+
+const summaryData = await fetchSummaryData();
+
+if (!summaryData) {
+  console.error("Failed to fetch or process summary data.");
+} else {
+  console.log("Summary Data:", summaryData);
+}
+
+console.log("Script start NAD again");
+
+async function fetchDailyReports() {
+  try {
+    const response = await fetch(
+      "https://us-east-1.aws.data.mongodb-api.com/app/daily_reports-qqsah/endpoint/daily_report",
+      {
+        duration: '1d', // Cache the data for 1 day
+        type: 'json'    // Specify that we expect JSON data
+      }
+    );
+
+    const parsedData = JSON.parse(response.body);
+
+    console.log("NAD data:", parsedData);
+
+    parsedData.forEach(report => {
+      report.data.forEach(item => {
+        if (item.Value === null) {
+          item.Value = 0;
+        }
+      });
+    });
+    return parsedData;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return [];
+  }
+}
+
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}.${day}.${year}`;
+}
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${month}.${day}.${year} ${hours}:${minutes}`;
+}
+
+// Fetch and process data server-side
+const reports = await fetchDailyReports();
+const serializedReports = JSON.stringify(reports);
+
+// Prepare data for each category
+const categories = ["Settler attacks", "Road closures", "Confiscation of property", "Injuries", "Temporary checkpoints"];
+const categoryData = categories.map(category => {
+  const mostRecentReport = reports.reduce((latest, report) => {
+    
+    const latestDate = new Date(latest.metadata.Date);
+    const currentDate = new Date(report.metadata.Date);
+
+    // console.log("Comparing dates:", latestDate, "and", currentDate)
+    return currentDate > latestDate ? report : latest;
+  }, reports[0]);
+
+  let categoryItem = mostRecentReport.data.find(item => item["Description English"] === category);
+  if (!categoryItem) {
+    categoryItem = { "Description English": category, "Value": "0" };
+  }
+
+  return {
+    category,
+    value: categoryItem["Value"],
+    date: mostRecentReport.metadata.Date // Use the 'Date' directly from the metadata
+  };
+});
+
+console.log("Category NAD Data:", categoryData);
+// Find the most recent report
+const mostRecentReport = reports.reduce((latest, report) => {
+  const latestDate = new Date(latest.metadata.Date);
+  const currentDate = new Date(report.metadata.Date);
+  return currentDate > latestDate ? report : latest;
+}, reports[0]);
+
+async function fetchData() {
+  const url = 'https://us-east-1.aws.data.mongodb-api.com/app/home_demolitions-guyba/endpoint/demolition_data_partial';
+  try {
+    const response = await fetch(url, {
+      duration: "1d", // Cache data for 1 day
+      type: "json"    // Parse response as JSON
+    });
+
+    // Ensure that the body is parsed correctly
+    if (response.body) {
+      return JSON.parse(response.body);
+    } else {
+      console.error("Invalid response body format");
+      return null;
+    }
+  } catch (error) {
+    console.error("Fetching data failed:", error);
+    return null;
+  }
+}
+
+function processYearToDateData(rawData) {
+  const startDate = new Date(new Date().getFullYear(), 0, 1); // Start of current year
+  const yearToDateData = rawData.reduce((acc, doc) => {
+    const incidentDate = new Date(doc.Dateofincident);
+    if (incidentDate >= startDate && incidentDate <= new Date()) {
+      acc.displacedPeople += doc.NumberofDisplacedPeople || 0;
+      acc.structures += doc.TotalNumberofStructures || 0;
+      acc.menDisplaced += doc['Men Displaced'] || 0;
+      acc.womenDisplaced += doc['Women Displaced'] || 0;
+      acc.childrenDisplaced += doc['Children Displaced'] || 0;
+    }
+    return acc;
+  }, {
+    displacedPeople: 0,
+    structures: 0,
+    menDisplaced: 0,
+    womenDisplaced: 0,
+    childrenDisplaced: 0
+  });
+
+  return yearToDateData;
+}
+
+async function getDemolitionData() {
+  const rawData = await fetchData();
+  if (!rawData || !Array.isArray(rawData)) {
+    console.error("Unexpected response format or error occurred");
+    return null;
+  }
+
+  return processYearToDateData(rawData);
+}
+
+const demolitionData = await getDemolitionData();
+
+// Format the date for display
+const mostRecentDate = mostRecentReport.metadata.Date;
+const formattedMostRecentDate = formatDate(mostRecentDate);
+console.log("Most Recent Date:", mostRecentDate);
+const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["Timestamp"]);
 ---
 
+
 <section class="md:px-12 sm:px-8">
-  <div
-    class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:grid-cols-4 border-zinc-800 border-x border-b">
-    <div class="col-span-full lg:col-span-2 ">
-      <div class="w-full h-full items-center inline-flex p-8 lg:px-10">
-        <h2 class="text-4xl tracking-wide  md:text-5xl xl:text-7xl text-white">
-          Exploring a diverse range of services to elevate your brand presence
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:grid-cols-4 border-zinc-800 border-x border-b">
+    <!-- Gaza Genocide Section -->
+    <div class="col-span-full lg:col-span-2">
+      <div class="w-full h-full p-8 lg:px-10 gradient-grid">
+        <h2 class="text-4xl tracking-wide md:text-5xl xl:text-7xl text-white font-bold">
+          Gaza Genocide
         </h2>
+        <div class="text-white mt-4 text-2xl tracking-wide">
+          From the most recent report on, {summaryData.gaza.last_update}, the Israeli regime, backed by the United States, has carried out
+{summaryData.gaza.massacres} massacres. As a result, at least {summaryData.gaza.killed.total} have been killed. This includes
+{summaryData.gaza.killed.children} children and
+{summaryData.gaza.killed.women} women. The Israeli state has also targeted critical workers of civil defense, such as firefighters and medics. As of now, Israel's assault has claimed the lives of {summaryData.gaza.killed.civil_defence} from the civil defense, another {summaryData.gaza.killed.press} of the press, and killed {summaryData.gaza.killed.medical} of the medical personal. 
+        </div>
       </div>
     </div>
+    
+    <!-- West Bank & East Jerusalem Section -->
     <div class="bg-black">
-      <div
-        class="p-8 inline-flex items-center border-b bg-green-600 border-zinc-800 w-full">
-        <p class="text-2xl text-white    ">Design</p>
+      <div class="p-8 inline-flex items-center border-b bg-blue-200 border-zinc-800 w-full flex-col">
+        <p class="text-2xl text-black">Violence across the West Bank & East Jerusalem</p>
       </div>
       <div class="divide-y divide-zinc-800">
-        {
-          designwork.map((item) => (
-            <div class="px-8 py-4 ">
-              <p class="f  text-zinc-400 text-sm">⏤{item}</p>
-            </div>
-          ))
-        }
+        {categoryData.map(({ category, value, date }) => (
+          <div class="px-8 py-4" key={category}>
+            <p class="f text-white text-sm">{category} ⏤ {value}</p>
+          </div>
+        ))}
+        <div><p class="f text-blue-200 text-sm px-8 py-4">Data accessed {formatDate(mostRecentDate)}</p></div>
+        <div class="flex items-center justify-center h-full"><p class="f text-white text-sm px-8 py-4">More info &nbsp; &nbsp;| &nbsp; &nbsp;Copy Data</p></div>
       </div>
     </div>
+
+    <!-- Home Demolition Data Section -->
     <div class="bg-black">
-      <div
-        class="p-8 inline-flex items-center border-b bg-blue-400 border-zinc-800 w-full">
-        <p class="text-2xl text-white    ">Development</p>
+      <div class="p-8 inline-flex items-center border-b bg-blue-800 border-zinc-800 w-full">
+        <p class="text-2xl text-white">Home Demolitions in the West Bank & East Jerusalem</p>
       </div>
       <div class="divide-y divide-zinc-800">
-        {
-          devwork.map((item) => (
-            <div class="px-8 py-4 ">
-              <p class="f  text-zinc-400 text-sm">⏤{item}</p>
-            </div>
-          ))
-        }
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Displaced People — {demolitionData.displacedPeople}</p>
+        </div>
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Total Structures — {demolitionData.structures}</p>
+        </div>
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Men Displaced — {demolitionData.menDisplaced}</p>
+        </div>
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Women Displaced — {demolitionData.womenDisplaced}</p>
+        </div>
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Children Displaced — {demolitionData.childrenDisplaced}</p>
+        </div>
+        <div class="px-8 py-4">
+          <p class="f text-white text-sm">Data accessed</p>
+        </div>
+        <div class="flex items-center justify-center h-full"><p class="f text-white text-sm px-8 py-4">More info &nbsp; &nbsp;| &nbsp; &nbsp;Copy Data</p></div>
+
+        
       </div>
     </div>
   </div>
