@@ -1,89 +1,8 @@
----
-const pricingPlans = [
-  {
-    title: "Design + Dev",
-    priceInfo: {
-      price: "$3999",
-      period: "/monthly",
-      note: "USD + Local tax",
-    },
-    description:
-      "Ideal for startups requiring design and front-end development services.",
-    features: [
-      "Astro.js & Tailwind CSS Code",
-      "Clean & accessible code",
-      "Essential SEO",
-      "Ongoing support and maintenance",
-    ],
-    toolsLogos: [
-      { src: "/toolsLogo/figma.svg", alt: "Figma" },
-      { src: "/toolsLogo/astro.svg", alt: "Astro" },
-      { src: "/toolsLogo/tailwind.svg", alt: "Tailwind CSS" },
-    ],
-    callToAction: {
-      text: "Get started",
-      link: "#_",
-    },
-    buttonClass:
-      "text-white ring-green-600 hover:bg-green-600 hover:text-white",
-  },
-  {
-    title: "Design",
-    priceInfo: {
-      price: "$2499",
-      period: "/monthly",
-      note: "USD + Local tax",
-    },
-    description:
-      "Ideal for emerging businesses requiring continuous design assistance.",
-    features: [
-      "Design in Figma",
-      "1 request at the time",
-      "Unlimited feedback",
-      "Delivery within 2-3 days",
-    ],
-    toolsLogos: [{ src: "/toolsLogo/figma.svg", alt: "Figma" }],
-    callToAction: {
-      text: "Get started",
-      link: "#_",
-    },
-    buttonClass: "text-white ring-blue-400 hover:bg-blue-400 hover:text-white",
-  },
-  {
-    title: "One off",
-    priceInfo: {
-      price: "$1499",
-      note: "USD + Local tax",
-    },
-    description:
-      "Anyone who wants to work with studiomax but only needs a quick landing page or redesign!",
-    features: [
-      "2-3 days turnaround time",
-      "Only design or development",
-      "Only two revisions included",
-    ],
-    toolsLogos: [
-      { src: "/toolsLogo/figma.svg", alt: "Figma" },
-      { src: "/toolsLogo/astro.svg", alt: "Astro" },
-      { src: "/toolsLogo/tailwind.svg", alt: "Tailwind CSS" },
-    ],
-    callToAction: {
-      text: "Get started",
-      link: "#_",
-    },
-    buttonClass:
-      "text-white ring-violet-400 hover:bg-violet-400 hover:text-white",
-  },
-];
----
-
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
-    <div
-      class="grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-zinc-800 overflow-hidden">
+    <div class="grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-zinc-800 overflow-hidden">
       <section class="h-full col-span-full lg:col-span-1">
-        <div
-          class="bg-zinc-800 flex flex-col justify-between h-full backdrop-blur-2xl">
+        <div class="bg-zinc-800 flex flex-col justify-between h-full backdrop-blur-2xl">
           <div class="lg:p-10 p-8">
             <div>
               <p class="text-2xl tracking-wide text-white">
@@ -91,93 +10,114 @@ const pricingPlans = [
                 boost your online visibility at any phase.
               </p>
             </div>
-            <p class="text-base text-balance text-zinc-300 lg:mt-8 mt-4">
-Join us!            </p>
+            <p class="text-base text-balance text-zinc-300 lg:mt-8 mt-4">Join us!</p>
           </div>
           <div class="w-full border-t bg-black border-zinc-800">
             <div class="lg:p-10 p-8">
               <p class="text-xl text-white">⏤ One spot left</p>
-
               <div class="mt-4 flex flex-col">
                 <span class="text-xs text-zinc-400 tracking-wide font-normal">
-                  Project management with <span
-                    class="italic text-white font-medium">Trello</span
-                  >, secure payments with <span
-                    class="italic text-white font-medium">Stripe</span
-                  > and the freedom of
-                  <span class="italic text-white font-medium">
-                    Canceling your subscription anytime:</span
-                  >
+                  Project management with <span class="italic text-white font-medium">Trello</span>, secure payments with <span class="italic text-white font-medium">Stripe</span> and the freedom of
+                  <span class="italic text-white font-medium">Canceling your subscription anytime:</span>
                 </span>
               </div>
             </div>
             <div class="border-t border-zinc-800">
-              <a
-                class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-zinc-800 hover:bg-transparent text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-1 ring-zinc-800 w-full"
-                href="#_"
-                >Book an intro call <span>➜</span></a
-              >
+              <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-zinc-800 hover:bg-transparent text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-1 ring-zinc-800 w-full" href="#_">Book an intro call <span>➜</span></a>
             </div>
           </div>
         </div>
       </section>
-      {
-        pricingPlans.map((plan) => (
-          <section class="flex flex-col h-full justify-between bg-black">
-            <div class="p-8 lg:p-10">
-              <div class="flex flex-col gap-2">
-                <div class="flex flex-col gap-2">
-                  <p class="text-lg text-white mt-4    tracking-wide uppercase">
-                    {plan.title}
-                  </p>
-                  <div class="order-first flex gap-3">
-                    {plan.toolsLogos.map((logo) => (
-                      <img
-                        class="size-5"
-                        src={logo.src}
-                        alt={logo.alt}
-                      />
-                    ))}
-                  </div>
-                  <p class="text-3xl  text-white mt-2 ">
-                    {plan.priceInfo.price}
-                    <span class="text-sm text-zinc-400 ">
-                      {plan.priceInfo.period}
-                    </span>
-                    <span class="text-zinc-400 italic pt-2 block text-xs">
-                      {plan.priceInfo.note}
-                    </span>
-                  </p>
-                </div>
-                <p class="text-sm text-white tracking-wide  mt-8">
-                  {plan.description}
-                </p>
+
+      <!-- Design + Dev Plan -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2">
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Political Prisoners</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5" style="filter: invert(1);" src="src/images/Imprisoned.svg" width="40" height="40" alt="Political Prisoners" />
               </div>
-              <div class="mt-6">
-                <p class="text-sm uppercase text-white  font-medium">
-                  What you get:
-                </p>
-                <ul
-                  class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3"
-                  role="list">
-                  {plan.features.map((feature) => (
-                    <li class="flex flex-row items-start gap-2">
-                      ⏤<span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+              <p class="text-3xl text-white mt-2">9,500<span class="text-sm text-zinc-400">/total</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Languishing in colonial prisons</p>
+            </div>
+            <p class="text-sm text-white tracking-wide mt-8">It's critical to remember, that within a system of settler-colonialism, every Palestinian in Israeli jails are by definition political prisoners.</p>
+          </div>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Behind the numbers</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              <li class="flex flex-row items-start gap-2">⏤<span>7,500 men</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>1,000 women</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>800 children</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>470 life imprisonment</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>800 killed in Israeli prisons</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-green-600 hover:bg-green-600 hover:text-white" href="#">Get started <span>➜</span></a>
+        </div>
+      </section>
+
+      <!-- Design Plan -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2">
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Nonprofit industry</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5"  src="src/images/money.svg" width="40" height="40" alt="money" />
               </div>
+              <p class="text-3xl text-white mt-2">$1.7 trillion<span class="text-sm text-zinc-400">/last 10 years</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Federal + Local taxes diverted to colonialism</p>
             </div>
-            <div class="w-full mt-8 border-t  border-zinc-800  ">
-              <a
-                class={` text-sm py-2 h-16 px-10  focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full   items-center  ring-inset font-medium  justify-between ring-2 ${plan.buttonClass}`}
-                href={plan.callToAction.link}>
-                {plan.callToAction.text} <span>➜</span>
-              </a>
+            <p class="text-sm text-white tracking-wide mt-8">Historically, international charitable structures have been utilized to finance imperialism and colonalism. </p>
+          </div>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Top institutions</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              <li class="flex flex-row items-start gap-2">⏤<span>$48.6 Billion JNF</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>$43.3 Billion Friends of the IDF</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>$28.7 Billion JStreet</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>$18.9 Billion World Zionist Congress</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>$12.9 Billion AIPAC</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-blue-400 hover:bg-blue-400 hover:text-white" href="#">Get started <span>➜</span></a>
+        </div>
+      </section>
+
+      <!-- One off Plan -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2">
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Destruction of Gaza</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5" src="src/images/bomb.svg" width="40" height="40" alt="Figma" />
+              </div>
+              <p class="text-3xl text-white mt-2">300,000<span class="text-sm text-zinc-400">/structures</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Destruction during the genocide</p>
             </div>
-          </section>
-        ))
-      }
+            <p class="text-sm text-white tracking-wide mt-8">The dismantling of live-giving infrastructure, such as homes, hospitals, and schools is crucial in enacting genocide across a wide geographic area.</p>
+          </div>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Structures destroyed:</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              <li class="flex flex-row items-start gap-2">⏤<span>138,300 residential buildings"</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>1,500 civic buildings"</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>450 educational buildings</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>600 mosques destroyed</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-violet-400 hover:bg-violet-400 hover:text-white" href="#">Get started <span>➜</span></a>
+        </div>
+      </section>
+
     </div>
   </div>
 </section>

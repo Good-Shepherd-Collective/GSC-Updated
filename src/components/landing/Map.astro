@@ -62,13 +62,13 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
 
 ---
 
-<section class="md:px-12 sm:px-8 text-white">
-    <div class="border-x border-zinc-800">
+<section class="md:px-12 sm:px-8 text-white border-zinc-800">
+    <div class="border-x border border-zinc-800">
     <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10">Mapping colonial violence</h2>
 
-    <div class="map-container">
+    <div class="map-container border-t  border-zinc-800">
     
-        <div id="map"><Image class="map-placeholder"
+        <div id="map" ><Image class="map-placeholder border-zinc-800"
         src={map}
         alt="A map placeholder"
         width="900"
@@ -77,8 +77,8 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
         decoding="async"
         /> </div>
         <div id="text">
-        <h1 class="map__title">About this map</h1>
-        <p class="event__data">Click on the red dot to zoom and view the data.<br><br>This map, by its nature, is not exhaustive. The phenomenon of underreporting is a significant issue, particularly with regard to Israeli settler-colonial aggression, much of which remains undocumented and unreported. It is imperative to interpret this map as representing a fraction of the incidents of violence associated with the Israeli state. The Good Shepherd Collective has utilized data compiled by the Armed Conflict Location and Event Data Project (ACLED) to depict various incidents across historical Palestine. The narrative descriptions provided herein are attributed to ACLED and don't reflect the language used by the GSC. </p>
+        <h1 class="text-3xl tracking-wide text-balance md:text-4xl text-white">About this map</h1>
+        <p class="event__data tracking-wide">Click on the red dot to zoom and view the data.<br><br>This map, by its nature, is not exhaustive. The phenomenon of underreporting is a significant issue, particularly with regard to Israeli settler-colonial aggression, much of which remains undocumented and unreported. It is imperative to interpret this map as representing a fraction of the incidents of violence associated with the Israeli state. The Good Shepherd Collective has utilized data compiled by the Armed Conflict Location and Event Data Project (ACLED) to depict various incidents across historical Palestine. The narrative descriptions provided herein are attributed to ACLED and don't reflect the language used by the GSC. </p>
         <div class="map__info">
         </div>
         </div>
@@ -172,9 +172,9 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
             // Update the content of the designated information area
             document.querySelector('#text h1').textContent = properties.location;
             document.querySelector('.event__data').innerHTML = `
-              <div class="event__date" style="margin-bottom: 1.5rem !important;"><strong>Event Date:</strong> ${properties.event_date}</div>
-              <div style="margin-bottom: 1.5rem !important;"><strong>Notes:</strong> ${properties.notes}</div>
-              <div><strong>Source:</strong> ${properties.source}</div>
+              <div class="event__date tracking-wide" style="margin-bottom: 1.5rem !important;"><strong>Event Date:</strong> ${properties.event_date}</div>
+              <div style="margin-bottom: 1.5rem !important;" class="tracking-wide"><strong>Notes:</strong> ${properties.notes}</div>
+              <div class="tracking-wide"><strong>Source:</strong> ${properties.source}</div>
             `;
 
             // Fly to the clicked location
@@ -225,9 +225,6 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
     }
   
     .event__data {
-      font-size: .9rem;
-      color: var(--black);
-      font-family: var(--data) !important;
       margin-bottom: 1.5rem !important;
       display: block;
     }
