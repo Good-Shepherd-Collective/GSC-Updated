@@ -67,21 +67,18 @@
   <div class="border-x border-zinc-800 border-y">
     <div class="p-8 lg:px-10 flex flex-col gap-6 text-center uppercase">
       <p class="text-sm text-white tracking-wide">
-        © 2022 studiomax Design. All rights reserved
-      </p>
-      <p class="text-base text-zinc-400 lg:col-span-2 text-balance">
-        Studiomax is not affiliated with Stripe, Breeew, Astro, or Tailwind
-        Labs, nor is it endorsed or sponsored by them. Designed and built by
-        <a
-          href="https://michaelandreuzza.com/"
-          title="link to your page"
-          aria-label="your label"
-          class="text-sm text-white hover:text-accent-300"
-          >Michael Andreuzza</a
-        >, this website was crafted using Astro & Tailwind CSS. Crafted in Åland
-        Islands, Finland.
+        © <span id="current-year"></span> Good Shepherd Collective. All rights reserved
       </p>
      
     </div>
   </div>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+      yearElement.textContent = new Date().getFullYear();
+    }
+  });
+</script>

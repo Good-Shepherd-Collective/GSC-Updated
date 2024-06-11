@@ -1,86 +1,94 @@
 ---
+// src/layouts/BlogLayout.astro
 import BaseLayout from "./BaseLayout.astro";
-const { frontmatter } = Astro.props;
 ---
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const headings = document.querySelectorAll(
-      ".prose-styles h1,.prose-styles h2, .prose-styles h3"
-    );
-    const tocContainer = document.getElementById("table-of-contents");
-    if (tocContainer && headings.length > 0) {
-      const tocList = document.createElement("ul");
-      tocList.classList.add(
-        "divide-y",
-        "divide-zinc-800",
-        "border-zinc-800",
-        "text-sm",
-        "font-medium",
-      );
-      headings.forEach((heading) => {
-        const listItem = document.createElement("li");
-        listItem.classList.add("p-4");
-        const link = document.createElement("a");
-        link.textContent = heading.textContent;
-        link.href = `#${heading.id}`;
-        link.classList.add(
-          "text-zinc-400",
-          "hover:text-green-600",
-          "hover:text-accent-600"
-        );
-        listItem.appendChild(link);
-        tocList.appendChild(listItem);
-      });
-      tocContainer.appendChild(tocList);
-      tocContainer.classList.remove("hidden");
-    }
-  });
-</script>
+
 <BaseLayout>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800">
-      <div class="grid grid-cols-1 lg:grid-cols-2 bg-zinc-800 gap-px">
-        <div class="bg-black p-8 lg:px-10">
-          <span class="text-white">
-            ⏤ {frontmatter.pubDate.toString().slice(0, 10)} by: {
-              frontmatter.author
-            }
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-px">
+        <div class="bg-zinc-50 p-8 lg:px-10">
+          <span class="text-zinc-800">
+            Meta data, date, author, etc. can be added here
           </span>
-          <h1 class="text-4xl md:text-6xl xl:text-7xl text-white mt-12">
-            {frontmatter.title}
+          <h1 class="text-4xl md:text-6xl xl:text-7xl text-zinc-800 mt-12">
+            Blog post title here
           </h1>
-          <p class="text-zinc-300 text-balance mt-4">
-            {frontmatter.description}
+          <p class="text-zinc-600 text-balance mt-4">
+            Blog post introduction or summary here
           </p>
         </div>
         <img
           class="h-full w-full object-cover object-center"
-          src={frontmatter.image.url}
-          alt={frontmatter.image.alt}
+          src="https://images.unsplash.com/reserve/LJIZlzHgQ7WPSh5KVTCB_Typewriter.jpg?q=80&w=2796&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Typewriter"
         />
       </div>
     </div>
   </section>
+
   <section class="md:px-12 sm:px-8">
-    <div
-      class="border-x grid grid-cols-1 bg-zinc-700 border-t border-zinc-800 gap-px lg:grid-cols-4">
-      <div class="lg:col-span-1 bg-black">
-        <div
-          id="table-of-contents"
-          class="hidden lg:block sticky border-b border-zinc-800 top-20">
-          <div class="px-4 py-4 border-b bg-green-600 border-zinc-800">
-            <h3 class="text-white text-base uppercase    ">
-              Table of contents
-            </h3>
-          </div>
-          <!--
-        //Your table of contents content here
-      -->
+    <div class="border-x grid grid-cols-1 lg:grid-cols-1 border-t border-zinc-800 gap-px bg-zinc-50">
+      <div class="lg:col-start-1 lg:col-span-1 p-8 lg:px-10">
+        <div class="blog-styles mx-auto" style="max-width: 55rem; margin: 0 auto;">
+          <h1>Heading 1</h1>
+          <h2>Heading 2</h2>
+          <h3>Heading 3</h3>
+          <h4>Heading 4</h4>
+          <h5>Heading 5</h5>
+          <h6>Heading 6</h6>
+          <p>This is a paragraph</p>
+          <blockquote>This is a blockquote</blockquote>
+          <pre>This is a preformatted text</pre>
+          <code>This is a code block</code>
+          <ul>
+            <li>This is a list item</li>
+            <li>This is a list item</li>
+            <li>This is a list item</li>
+          </ul>
+          <ol>
+            <li>This is a list item</li>
+            <li>This is a list item</li>
+            <li>This is a list item</li>
+          </ol>
+          <table>
+            <thead>
+              <tr>
+                <th>Table Header</th>
+                <th>Table Header</th>
+                <th>Table Header</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Table Data</td>
+                <td>Table Data</td>
+                <td>Table Data</td>
+              </tr>
+              <tr>
+                <td>Table Data</td>
+                <td>Table Data</td>
+                <td>Table Data</td>
+              </tr>
+              <tr>
+                <td>Table Data</td>
+                <td>Table Data</td>
+                <td>Table Data</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <a href="#">This is a link</a>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vel diam diam. Praesent fringilla a est nec dictum. Maecenas scelerisque dolor nec velit tempor, ut egestas ex interdum. Suspendisse varius, dolor vitae iaculis elementum, est tellus dignissim nisi, sed interdum nibh dolor ut lorem. Nunc eu varius dui. Cras laoreet ipsum vitae lectus luctus consectetur. Nulla ultrices orci in nunc consequat fringilla a a lacus. Vivamus feugiat rhoncus interdum. Sed a bibendum mauris, sit amet lacinia leo. Praesent in urna eget lorem sagittis hendrerit ultricies vel lorem.
+          </p>
+          <p>
+            Maecenas eros massa, finibus non porta ut, placerat sit amet mauris. Maecenas nec leo elit. Donec urna ante, scelerisque sit amet aliquam tincidunt, finibus sit amet nisi. Nunc bibendum nunc sed viverra rutrum. Pellentesque sit amet ligula in tellus egestas lobortis. Nulla facilisi. Pellentesque sed metus fermentum, rhoncus mauris eu, pharetra sem. Integer sapien orci, egestas quis erat non, pretium tincidunt magna. Praesent malesuada cursus odio ac placerat. Nullam dolor mauris, euismod at mollis quis, dapibus vitae massa. Curabitur id risus ultricies, consectetur magna vel, venenatis ligula. Vivamus et feugiat erat. Duis tincidunt consequat consectetur. Vivamus erat velit, laoreet a ex vel, laoreet interdum mauris. Integer sed nunc sit amet odio ullamcorper semper.
+          </p>
+          <p>
+            Cras tincidunt ornare quam, faucibus lobortis massa ornare eu. Proin porta nunc sed massa sagittis porttitor. Suspendisse potenti. Donec a justo ac nisi eleifend iaculis in a sem. Vivamus erat justo, porttitor ac dignissim vel, sodales vel sem. Donec viverra non justo vitae pharetra. Nunc at ornare enim. Sed vehicula velit nec dolor consequat, non vestibulum ligula dignissim. Sed odio enim, ornare sed bibendum at, condimentum in nulla. Sed laoreet, tellus ut scelerisque rhoncus, mi dui convallis massa, ac egestas libero elit sed sapien. Quisque sit amet tincidunt neque. Nunc luctus magna non metus vulputate luctus. Suspendisse non orci massa. Quisque vehicula iaculis dolor, eget imperdiet nulla interdum vitae. Proin eget leo ut tellus vulputate egestas ac vitae diam.
+          </p>
         </div>
       </div>
-      <div class="lg:col-span-3 p-8 lg:px-10 bg-black">
-        <div class="prose-styles"><slot /></div>
-      </div>
+      <!-- Sidebar or additional content can go here if needed -->
     </div>
   </section>
 </BaseLayout>

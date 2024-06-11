@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 const defaultTheme = require("tailwindcss/defaultTheme");
 const colors = require("tailwindcss/colors");
 
@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: ["Clash Display", ...defaultTheme.fontFamily.sans],
+      serif: ["Merriweather", ...defaultTheme.fontFamily.serif],
     },
     colors: {
       white: colors.white,
@@ -54,14 +55,13 @@ module.exports = {
         950: "hsl(268, 74%, 23%)",
       },
       red: {
-        DEFAULT: "hsl(356, 82%, 27%)", // Main red color
-        // Optional: Define additional shades if needed
+        DEFAULT: "hsl(356, 82%, 27%)",
         50: "hsl(356, 100%, 97%)",
         100: "hsl(356, 95%, 90%)",
         200: "hsl(356, 87%, 82%)",
         300: "hsl(356, 83%, 70%)",
         400: "hsl(356, 79%, 56%)",
-        500: "hsl(356, 82%, 27%)", // Same as DEFAULT
+        500: "hsl(356, 82%, 27%)",
         600: "hsl(356, 82%, 23%)",
         700: "hsl(356, 80%, 20%)",
         800: "hsl(356, 75%, 16%)",
@@ -75,6 +75,37 @@ module.exports = {
         "5xl": "3rem",
         "6xl": "5rem",
       },
+      typography: (theme) => ({
+        blog: {
+          css: {
+            fontFamily: theme('fontFamily.serif').join(', '),
+            color: theme('colors.zinc.800'),
+            h1: {
+              fontFamily: theme('fontFamily.serif').join(', '),
+              color: theme('colors.zinc.800'),
+            },
+            h2: {
+              fontFamily: theme('fontFamily.serif').join(', '),
+              color: theme('colors.zinc.800'),
+            },
+            h3: {
+              fontFamily: theme('fontFamily.serif').join(', '),
+              color: theme('colors.zinc.800'),
+            },
+            p: {
+              fontFamily: theme('fontFamily.serif').join(', '),
+              color: theme('colors.zinc.800'),
+            },
+            a: {
+              color: theme('colors.blue.500'),
+              '&:hover': {
+                color: theme('colors.blue.700'),
+              },
+            },
+            // Extend other elements as needed
+          },
+        },
+      }),
     },
   },
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],

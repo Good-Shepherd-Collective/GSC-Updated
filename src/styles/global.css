@@ -1,26 +1,79 @@
+/* src/styles/global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --astro-code-color-text: theme(textColor.zinc.400);;
-  --astro-code-color-background: theme(textColor.zinc.900);;
-  --astro-code-token-constant: theme(textColor.violet.400);;
-  --astro-code-token-string: theme(textColor.zinc.400);;
-  --astro-code-token-comment: #theme(textColor.zinc.500);;
-  --astro-code-token-keyword: theme(textColor.white);;
-  --astro-code-token-parameter:theme(textColor.violet.200);;
-  --astro-code-token-function: theme(textColor.green.300);;
-  --astro-code-token-string-expression: theme(textColor.blue.400);;
-  --astro-code-token-punctuation: #theme(textColor.green.400);;
-  --astro-code-token-link: theme(textColor.white);;
+  --astro-code-color-text: theme(textColor.zinc.400);
+  --astro-code-color-background: theme(textColor.zinc.900);
+  --astro-code-token-constant: theme(textColor.violet.400);
+  --astro-code-token-string: theme(textColor.zinc.400);
+  --astro-code-token-comment: theme(textColor.zinc.500);
+  --astro-code-token-keyword: theme(textColor.white);
+  --astro-code-token-parameter: theme(textColor.violet.200);
+  --astro-code-token-function: theme(textColor.green.300);
+  --astro-code-token-string-expression: theme(textColor.blue.400);
+  --astro-code-token-punctuation: theme(textColor.green.400);
+  --astro-code-token-link: theme(textColor.white);
 }
 
 .prose-styles {
-  @apply text-zinc-400
-  hover:prose-a:text-white max-w-7xl  mx-auto prose prose-a:italic prose-a:text-white prose-headings:font-medium  prose-pre:border prose-pre:border-zinc-800 prose-headings:text-white prose-strong:text-white prose-img:border prose-img:border-zinc-800  prose-img:rounded-3xl  prose-img:bg-zinc-800 prose-blockquote:text-blue-300 prose-blockquote:border-zinc-800 prose-blockquote:border-l-2 prose-code:text-white prose-table:border-zinc-800 ;
+  @apply text-zinc-400 hover:prose-a:text-white max-w-7xl mx-auto prose prose-a:italic prose-a:text-white prose-headings:font-medium prose-pre:border prose-pre:border-zinc-800 prose-headings:text-white prose-strong:text-white prose-img:border prose-img:border-zinc-800 prose-img:rounded-3xl prose-img:bg-zinc-800 prose-blockquote:text-blue-300 prose-blockquote:border-zinc-800 prose-blockquote:border-l-2 prose-code:text-white prose-table:border-zinc-800;
+}
+
+.blog-styles {
+  @apply text-zinc-800 max-w-7xl mx-auto prose prose-lg;
+
+  /* Apply serif font for blog content */
+  h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, strong, em, i, b {
+    @apply font-serif;
+  }
+
+  /* Keep tables sans-serif */
+  table {
+    @apply font-sans;
+  }
+
+  /* Make fonts slightly larger */
+  @apply prose-lg;
+
+  /* Adjust <a> elements */
+  a {
+    color: theme('colors.zinc.900');
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s; /* Transition for the text color (optional) */
+  
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px; /* Adjust if you want more or less space between text and underline */
+      width: 100%;
+      height: 2px; /* Thickness of the underline */
+      background: currentColor; /* Matches the text color initially */
+      transform: scaleX(0); /* Start with no underline */
+      transform-origin: left; /* Animates from left to right */
+      transition: transform 0.3s, background-color 0.3s; /* Transition for the underline */
+    }
+  
+    &:hover::after {
+      transform: scaleX(1); /* Full underline on hover */
+      background-color: theme('colors.red.600'); /* Underline color on hover */
+    }
+  } /* This closing brace was missing */
 }
 
 .gradient-grid {
   background-image: radial-gradient(circle at center center, transparent 0%, rgba(255, 255, 255, 0) 99%), repeating-linear-gradient(0deg, rgba(205, 205, 205, 0) 1px, rgba(205, 205, 205, 0.042) 1.5px, transparent 1.5px, transparent 6px), repeating-linear-gradient(90deg, rgba(205, 205, 205, 0) 0px, rgba(205, 205, 205, .2) 1px, transparent 1px, transparent 6px), linear-gradient(90deg, #fff0, #fff0);
+}
+
+.diagonal-stripes {
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.polka {
+  background-image: radial-gradient(#ffffff18 1.2px, #fefefe00 1.2px);
+  background-size: 5px 5px;
 }
