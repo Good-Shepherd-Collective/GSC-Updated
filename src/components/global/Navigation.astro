@@ -1,8 +1,18 @@
+---
+// src/components/global/Navigation.astro
+
+export interface Props {
+  isBlogPost?: boolean;
+}
+
+const { isBlogPost } = Astro.props;
+---
+
 <div class="2xl:max-w-7xl mx-auto lg:px-12">
   <div class="w-full mx-auto">
     <div
       x-data="{ open: false }"
-      class="relative flex flex-col w-full px-8 mx-auto bg-black border-x border-zinc-800 border-b md:items-center md:justify-between md:flex-row">
+      class={`relative flex flex-col w-full px-8 mx-auto border-x border-b md:items-center md:justify-between md:flex-row ${isBlogPost ? 'bg-white border-zinc-200' : 'bg-black border-zinc-800'}`}>
       <div class="flex flex-row items-center justify-between md:justify-start">
         <img
           src="src/images/gsc_logo.svg"
@@ -12,12 +22,12 @@
           href="/"
           title="link to your page"
           aria-label="your label"
-          class="text-white hover:text-white/50 gap-4 items-center tracking-wide uppercase inline-flex font-medium ml-2 text-sm">
+          class={`gap-4 items-center tracking-wide uppercase inline-flex font-medium ml-2 text-sm ${isBlogPost ? 'text-black hover:text-black/50' : 'text-white hover:text-white/50'}`}>
           Good Shepherd Collective
         </a>
         <button
           @click="open = !open"
-          class="inline-flex items-center justify-center p-2 text-white hover:text-red-500 focus:outline-none focus:text-white md:hidden"
+          class={`inline-flex items-center justify-center p-2 focus:outline-none md:hidden ${isBlogPost ? 'text-black hover:text-red-500' : 'text-white hover:text-red-500'}`}
           ><svg
             class="size-6"
             stroke="currentColor"
@@ -43,31 +53,33 @@
       </div>
       <nav
         :class="{'flex': open, 'hidden': !open}"
-        class="flex-col flex-grow hidden py-12 bg-black md:py-0 md:flex md:items-end justify-center md:flex-row">
+        class={`flex-col flex-grow hidden py-12 md:py-0 md:flex md:items-end justify-center md:flex-row ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
         <ul
-          class="list-none text-sm md:ml-auto text-white items-center flex flex-col md:flex-row justify-center font-medium text-center md:text-left gap-6">
+          class={`list-none text-sm md:ml-auto items-center flex flex-col md:flex-row justify-center font-medium text-center md:text-left gap-6 ${isBlogPost ? 'text-black' : 'text-white'}`}>
           <li>
             <a
               href="/system/overview"
               title="link to your page"
               aria-label="your label"
-              class="hover:text-red-500">
+              class={`hover:text-red-500 ${isBlogPost ? 'hover:text-red-500' : ''}`}>
               About</a
             >
-          </li><li>
+          </li>
+          <li>
             <a
               href="/system/style-guide"
               title="link to your page"
               aria-label="your label"
-              class="hover:text-red-500">
+              class={`hover:text-red-500 ${isBlogPost ? 'hover:text-red-500' : ''}`}>
               Contact</a
             >
-          </li><li>
+          </li>
+          <li>
             <a
               href="#"
               title="Support the GSC in Palestine"
               aria-label="Donate button"
-              class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-600 hover:bg-red-600 hover:text-white">
+              class={`text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 ${isBlogPost ? 'text-black ring-red-600 hover:bg-red-600 hover:text-white' : 'text-white ring-red-600 hover:bg-red-600 hover:text-white'}`}>
               Support</a
             >
           </li>

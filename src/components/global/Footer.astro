@@ -1,75 +1,79 @@
+---
+// src/components/global/Footer.astro
+
+export interface Props {
+  isBlogPost?: boolean;
+}
+
+const { isBlogPost } = Astro.props;
+---
+
 <footer class="md:px-12 sm:px-8">
-  <div class="border-x border-zinc-800 border-t">
+  <div class={`border-x ${isBlogPost ? 'border-zinc-200' : 'border-zinc-800'} border-t`}>
     <ul
       role="list"
-      class="text-base gap-px  flex-col text-zinc-400 grid grid-cols-2 xl:grid-cols-3  text-center bg-zinc-800">
-      <li class=" bg-black group">
+      class={`text-base gap-px flex-col grid grid-cols-2 xl:grid-cols-3 text-center ${isBlogPost ? 'text-black bg-white' : 'text-zinc-400 bg-zinc-800'}`}>
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
         <a
           href="/system/overview"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
-          About</a
-        >
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          About
+        </a>
       </li>
-      <li class=" bg-black group">
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
         <a
           href="/system/style-guide"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
-          Contact</a
-        >
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          Contact
+        </a>
       </li>
-      <li class=" bg-black group">
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
         <a
           href="#"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
           Data Sets
         </a>
       </li>
-      <li class=" bg-black group">
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'} border-collapse`}>
         <a
           href="#"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
           Defund Racism
         </a>
       </li>
-
-
-
-      <li class=" bg-black group">
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
         <a
           href="https://x.com/shepherds4good"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
           @Twitter
         </a>
       </li>
-      <li class=" bg-black group">
+      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'} border-collapse`}>
         <a
           href="https://www.instagram.com/goodshepherdcollective"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-white w-full h-full flex justify-center p-8">
+          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
           @Instagram
         </a>
       </li>
     </ul>
   </div>
-</footer>
-<footer class="md:px-12 sm:px-8">
-  <div class="border-x border-zinc-800 border-y">
+  <div class={`border-x ${isBlogPost ? 'border-zinc-200' : 'border-zinc-800'} border-b`}>
     <div class="p-8 lg:px-10 flex flex-col gap-6 text-center uppercase">
-      <p class="text-sm text-white tracking-wide">
+      <p class={`text-sm ${isBlogPost ? 'text-black' : 'text-white'} tracking-wide`}>
         © <span id="current-year"></span> Good Shepherd Collective. All rights reserved
       </p>
-     
     </div>
   </div>
 </footer>

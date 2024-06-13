@@ -22,7 +22,7 @@
 }
 
 .blog-styles {
-  @apply text-zinc-800 max-w-7xl mx-auto prose prose-lg;
+  @apply text-zinc-800 max-w-7xl mx-auto prose prose-xl;
 
   /* Apply serif font for blog content */
   h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, strong, em, i, b {
@@ -35,7 +35,7 @@
   }
 
   /* Make fonts slightly larger */
-  @apply prose-lg;
+  @apply prose-xl;
 
   /* Adjust <a> elements */
   a {
@@ -62,8 +62,9 @@
       transform: scaleX(1); /* Full underline on hover */
       background-color: theme('colors.red.600'); /* Underline color on hover */
     }
-  } /* This closing brace was missing */
+  }
 }
+
 
 .gradient-grid {
   background-image: radial-gradient(circle at center center, transparent 0%, rgba(255, 255, 255, 0) 99%), repeating-linear-gradient(0deg, rgba(205, 205, 205, 0) 1px, rgba(205, 205, 205, 0.042) 1.5px, transparent 1.5px, transparent 6px), repeating-linear-gradient(90deg, rgba(205, 205, 205, 0) 0px, rgba(205, 205, 205, .2) 1px, transparent 1px, transparent 6px), linear-gradient(90deg, #fff0, #fff0);
