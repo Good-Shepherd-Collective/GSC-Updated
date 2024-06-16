@@ -1,8 +1,30 @@
 ---
 import fetch from '@11ty/eleventy-fetch';
 
+function formatNumber(value) {
+  return value.toLocaleString();
+}
+
 async function fetchSummaryData() {
   const url = 'https://data.techforpalestine.org/api/v3/summary.json';
+
+  // Helper function to format numbers with commas
+  function formatNumbersInObject(obj) {
+    // If the value is a number, format it
+    if (typeof obj === 'number') {
+      return obj.toLocaleString();
+    }
+    // If the value is an object or array, recursively format it
+    if (typeof obj === 'object' && obj !== null) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          obj[key] = formatNumbersInObject(obj[key]);
+        }
+      }
+    }
+    return obj;
+  }
+
   try {
     const response = await fetch(url, {
       duration: '1d', // Cache data for 1 day
@@ -10,7 +32,9 @@ async function fetchSummaryData() {
     });
 
     if (response) {
-      return response;
+      const data = response;
+      // Format numbers in the fetched data
+      return formatNumbersInObject(data);
     } else {
       console.error("Invalid response format");
       return null;
@@ -26,8 +50,9 @@ const summaryData = await fetchSummaryData();
 if (!summaryData) {
   console.error("Failed to fetch or process summary data.");
 } else {
-  console.log("Summary Data:", summaryData);
+  console.log("Formatted Summary Data:", summaryData);
 }
+
 
 console.log("Script start NAD again");
 
@@ -186,8 +211,8 @@ const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["
           Gaza Genocide
         </h2>
         <div class="text-white mt-4 text-2xl tracking-wide">
-          From the data accessed on {summaryData.gaza.last_update}, the Israeli regime, backed by the United States, has carried out
-{summaryData.gaza.massacres} massacres. As a result, Israeli military forces have killed some {summaryData.gaza.killed.total} Palestinians in the Gaza Strip alone. This includes {summaryData.gaza.killed.children} children and {summaryData.gaza.killed.women} women. The Israeli state has also targeted critical emergency services personnel, such as firefighters and medics. As of now, Israel's assault has claimed the lives of {summaryData.gaza.killed.civil_defence} workers from this critical sector and killed another {summaryData.gaza.killed.medical} medical personal. Additionally, Israel's longstanding policy to stop independent media from reporting essential facts and visual evidence, the Israeli military has assassinated {summaryData.gaza.killed.press} members of the press.  
+          From the data accessed on <span class="highlight">{formatDate (summaryData.gaza.last_update)}</span>, the Israeli regime, backed by the United States, has carried out
+          <span class="highlight">{summaryData.gaza.massacres}</span> massacres. As a result, Israeli military forces have killed some <span class="highlight">{summaryData.gaza.killed.total}</span> Palestinians in the Gaza Strip alone. This includes <span class="highlight">{summaryData.gaza.killed.children}</span> children and <span class="highlight">{summaryData.gaza.killed.women}</span> women. The Israeli state has also targeted critical emergency services personnel, such as firefighters and medics. As of now, Israel's assault has claimed the lives of <span class="highlight">{summaryData.gaza.killed.civil_defence}</span> workers from this critical sector and killed another <span class="highlight">{summaryData.gaza.killed.medical}</span> medical personal. Additionally, Israel's longstanding policy to stop independent media from reporting essential facts and visual evidence, the Israeli military has assassinated <span class="highlight">{summaryData.gaza.killed.press}</span> members of the press.  
         </div>
       </div>
     </div>
