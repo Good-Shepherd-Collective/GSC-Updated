@@ -41,26 +41,15 @@
   a {
     color: theme('colors.zinc.900');
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: underline;
     position: relative;
     transition: color 0.3s; /* Transition for the text color (optional) */
   
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -2px; /* Adjust if you want more or less space between text and underline */
-      width: 100%;
-      height: 2px; /* Thickness of the underline */
-      background: currentColor; /* Matches the text color initially */
-      transform: scaleX(0); /* Start with no underline */
-      transform-origin: left; /* Animates from left to right */
-      transition: transform 0.3s, background-color 0.3s; /* Transition for the underline */
-    }
+   
   
-    &:hover::after {
-      transform: scaleX(1); /* Full underline on hover */
-      background-color: theme('colors.red.600'); /* Underline color on hover */
+    &:hover {
+      
+      background-color: #feffd6; /* Underline color on hover */
     }
   }
 }
