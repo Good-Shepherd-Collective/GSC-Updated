@@ -39,7 +39,7 @@
 
   /* Adjust <a> elements */
   a {
-    color: theme('colors.zinc.900');
+    color: theme('colors.zinc.700');
     font-weight: 600;
     text-decoration: underline;
     position: relative;
