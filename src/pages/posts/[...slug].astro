@@ -1,15 +1,49 @@
 ---
-import { getCollection } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
+import { fetchGSCblog } from '../../utils/fetchGSCblog';
+
+interface Post {
+  id: number;
+  link: string;
+  title: string;
+  content: string;
+  formattedDate: string;
+  readingTime: number;
+  featuredImage: string;
+  slug: string;
+  author: string;
+  excerpt: string;
+  category: string;
+  tags: string;
+}
+
 export async function getStaticPaths() {
-  const blogEntries = await getCollection('posts');
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
+  const posts = await fetchGSCblog();
+  return posts.map(post => ({
+    params: { slug: post.slug }, props: { post }
   }));
 }
-const { entry } = Astro.props;
-const { Content } = await entry.render();
+
+const { slug } = Astro.params;
+const posts = await fetchGSCblog();
+const post = posts.find((post: Post) => post.slug === slug);
+
+if (!post) {
+  throw new Error(`Post with slug "${slug}" not found`);
+}
+
+const { title, content, formattedDate, readingTime, featuredImage, author, excerpt, category, tags } = post;
+const frontmatter = {
+  title,
+  date: formattedDate,
+  readingTime,
+  featuredImage,
+  author,
+  excerpt,
+  category,
+  tags
+};
 ---
-<BlogLayout frontmatter={entry.data}>
-  <Content />
+<BlogLayout { ...frontmatter }>
+  <div set:html={content}></div> <!-- Use set:html to render the content -->
 </BlogLayout>
