@@ -1,0 +1,307 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { processDemolitionData, formatAverageData } from "@/utils/home_demolitions.js";
+
+// Fetch and process demolition data
+const demolitionData = await processDemolitionData();
+
+// Define formatted averages and chart data
+let formattedFiveDayAverage, formattedThirtyDayAverage, chartData;
+
+if (demolitionData) {
+  formattedFiveDayAverage = formatAverageData(demolitionData.fiveDayAverage);
+  formattedThirtyDayAverage = formatAverageData(demolitionData.thirtyDayAverage);
+  chartData = demolitionData.chartData;
+} else {
+  // Provide default values or handle error
+  formattedFiveDayAverage = {
+    incidents: 0,
+    structures: 0,
+    displacedPeople: 0,
+    menDisplaced: 0,
+    womenDisplaced: 0,
+    childrenDisplaced: 0
+  };
+  formattedThirtyDayAverage = {
+    incidents: 0,
+    structures: 0,
+    displacedPeople: 0,
+    menDisplaced: 0,
+    womenDisplaced: 0,
+    childrenDisplaced: 0
+  };
+  chartData = [];
+}
+---
+
+<BaseLayout pageTitle="Home Demolitions">
+<div class="demolition__section">
+  <h2>Home demolition data</h2>
+  <p>Israel's policy of home demolitions vividly exemplifies the principles of settler colonialism, serving as a strategic tool to solidify dominion over land and resources for the benefit of settlers. This practice is not merely a bureaucratic process but intricately linked with larger objectives of territorial annexation and altering indigenous population demographics.</p>
+  <p>It's important to note that the data mentioned here covers only the demolitions in East Jerusalem and the West Bank, excluding those in the territories of 1948 Palestine and the Gaza Strip. For more information on the data and Israel's process of demolitions, <a href="/home-demolitions">click here</a>.</p>
+  <table class="hd__table">
+    <thead>
+      <tr>
+        <th class="hd__category">Category</th>
+        <th>Total</th>
+        <th>10d avg</th>
+        <th>90d avg</th>
+        <th style="text-align: left;">Trend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-cell="Category" class="hd__category">Demolitions</td>
+        <td data-cell="Total">{demolitionData?.totalIncidents}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-incidents">{formattedFiveDayAverage.incidents}</td>
+        <td data-cell="90d avg" id="thirty-day-average-incidents">{formattedThirtyDayAverage.incidents}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-incidents"></canvas></td>
+      </tr>
+      <tr>
+        <td data-cell="Category" class="hd__category">Structures Destroyed</td>
+        <td data-cell="Total">{demolitionData?.structures}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-structures">{formattedFiveDayAverage.structures}</td>
+        <td data-cell="90d avg" id="thirty-day-average-structures">{formattedThirtyDayAverage.structures}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-structures"></canvas></td>
+      </tr>
+      <tr>
+        <td data-cell="Category" class="hd__category">People Displaced</td>
+        <td data-cell="Total">{demolitionData?.displacedPeople}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-displacedPeople">{formattedFiveDayAverage.displacedPeople}</td>
+        <td data-cell="90d avg" id="thirty-day-average-displacedPeople">{formattedThirtyDayAverage.displacedPeople}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-displacedPeople"></canvas></td>
+      </tr>
+      <tr>
+        <td class="hd__category" data-cell="Category">Women Displaced</td>
+        <td data-cell="Total">{demolitionData?.womenDisplaced}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-womenDisplaced">{formattedFiveDayAverage.womenDisplaced}</td>
+        <td data-cell="90d avg" id="thirty-day-average-womenDisplaced">{formattedThirtyDayAverage.womenDisplaced}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-womenDisplaced"></canvas></td>
+      </tr>
+      <tr>
+        <td class="hd__category" data-cell="Category">Children Displaced</td>
+        <td data-cell="Total">{demolitionData?.childrenDisplaced}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-childrenDisplaced">{formattedFiveDayAverage.childrenDisplaced}</td>
+        <td data-cell="90d avg" id="thirty-day-average-childrenDisplaced">{formattedThirtyDayAverage.childrenDisplaced}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-childrenDisplaced"></canvas></td>
+      </tr>
+      <tr>
+        <td class="hd__category" data-cell="Category">Men Displaced</td>
+        <td data-cell="Total">{demolitionData?.menDisplaced}</td>
+        <td data-cell="10d avg" class="after" id="five-day-average-menDisplaced">{formattedFiveDayAverage.menDisplaced}</td>
+        <td data-cell="90d avg" id="thirty-day-average-menDisplaced">{formattedThirtyDayAverage.menDisplaced}</td>
+        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-menDisplaced"></canvas></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="time__stamp">East Jerusalem and West Bank only. `<span style="background-color: rgba(237, 237, 237, 0.342); border-radius: 3px; padding: 3px 5px 3px 5px;">Total</span>` is the aggregate of the last 365 days.</p>
+  <p class="time__stamp">Data updated: {demolitionData?.mostRecentTimestamp}</p>
+</div>
+<div id="data-Demolitions" style="display:none;">
+  {JSON.stringify(chartData)}
+</div>
+</BaseLayout>
+
+<script type="text/javascript">
+  async function loadChartJsAndInitializeCharts() {
+    const chartJsScript = document.createElement('script');
+    chartJsScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    document.body.appendChild(chartJsScript);
+
+    await new Promise((resolve, reject) => {
+      chartJsScript.onload = resolve;
+      chartJsScript.onerror = reject;
+    });
+
+    initializeCharts();
+  }
+
+  function extractChartDataForCategory(categoryId) {
+    const chartDataElement = document.getElementById('data-Demolitions');
+    if (!chartDataElement) {
+      console.error('Chart data element not found');
+      return { dataPoints: [], labels: [] };
+    }
+
+    try {
+      let chartData = JSON.parse(chartDataElement.textContent);
+      chartData = chartData.sort((a, b) => new Date(a.date) - new Date(b.date));
+      const labels = chartData.map(item => item.date);
+      const dataPoints = chartData.map(item => item[categoryId] !== undefined ? Number(item[categoryId]) : null);
+      return { dataPoints, labels };
+    } catch (error) {
+      console.error(`Error parsing data for ${categoryId}:`, error);
+      return { dataPoints: [], labels: [] };
+    }
+  }
+
+  function applyConditionalFormattingToTable() {
+    const categories = ['incidents', 'structures', 'displacedPeople', 'womenDisplaced', 'childrenDisplaced', 'menDisplaced'];
+    categories.forEach(category => {
+      const fiveDayAvgElement = document.getElementById(`five-day-average-${category}`);
+      const thirtyDayAvgElement = document.getElementById(`thirty-day-average-${category}`);
+
+      if (fiveDayAvgElement && thirtyDayAvgElement) {
+        const fiveDayAvg = parseFloat(fiveDayAvgElement.textContent);
+        const thirtyDayAvg = parseFloat(thirtyDayAvgElement.textContent);
+        const percentageChange = ((fiveDayAvg - thirtyDayAvg) / thirtyDayAvg * 100).toFixed(2);
+
+        const transparency = Math.min(1, Math.abs(percentageChange) / 100);
+        fiveDayAvgElement.style.backgroundColor = percentageChange > 0 ? `rgba(127, 13, 1, ${transparency})` : `rgba(40, 169, 224, ${transparency})`;
+        fiveDayAvgElement.setAttribute('data-after', percentageChange > 0 ? '↑' : '↓');
+        fiveDayAvgElement.style.fontWeight = transparency >= 0.6 ? '600' : 'normal';
+        fiveDayAvgElement.style.color = transparency >= 0.6 ? 'white' : '';
+      }
+    });
+  }
+
+  function initializeCharts() {
+    const categories = ['incidents', 'structures', 'displacedPeople', 'womenDisplaced', 'childrenDisplaced', 'menDisplaced'];
+    categories.forEach(category => {
+      const { dataPoints, labels } = extractChartDataForCategory(category);
+      const canvasId = `chart-${category}`;
+      const canvasElement = document.getElementById(canvasId);
+      if (!canvasElement) {
+        console.error(`Canvas element not found for ID: ${canvasId}`);
+        return;
+      }
+
+      const ctx = canvasElement.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: category.replace(/([A-Z])/g, ' $1').trim(),
+            data: dataPoints,
+            borderColor: "#7f0d15",
+            tension: 0.1,
+            borderJoinStyle: 'round',
+            borderWidth: 1.5,
+            pointRadius: .5,
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                display: false
+              },
+              grid: {
+                display: false,
+              }
+            },
+            y: {
+              ticks: {
+                display: false
+              },
+              grid: {
+                display: false,
+              }
+            }
+          }
+        }
+      });
+    });
+
+    applyConditionalFormattingToTable();
+  }
+
+  function handleIntersection(entries, observer) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadChartJsAndInitializeCharts();
+        observer.unobserve(entry.target);
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      threshold: 0.1
+    });
+
+    const demolitionSection = document.querySelector('.demolition__section');
+    if (demolitionSection) {
+      observer.observe(demolitionSection);
+    } else {
+      console.error('Demolition section not found');
+    }
+  });
+</script>
+
+<style>
+canvas {
+  height: 60px !important;
+  max-width: 330px !important;
+}
+
+.after::after {
+  content: attr(data-after);
+  margin-left: 10px;
+}
+
+.after {
+  font-weight: 600 !important;
+}
+
+.hd__table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.demolition__section {
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .data__table {
+    margin-top: 1rem;
+  }
+  th {
+    display: none !important;
+  }
+  td {
+    display: grid !important;
+    grid-template-columns: 13ch auto;
+  }
+  td:first-child {
+    padding-top: 1rem;
+  }
+  td:last-child {
+    padding-bottom: 1rem;
+  }
+  td::before {
+    content: attr(data-cell) ": ";
+    font-weight: 700;
+  }
+  .trend::before {
+    content: "Trend";
+  }
+  .aggregate td {
+    font-weight: 700;
+    border-bottom: none;
+  }
+  .aggregate td:last-child {
+    border-bottom: #222 solid 2px;
+  }
+  .aggregate td:first-child {
+    display: none !important;
+  }
+  .aggregate td:nth-child(2) {
+    padding-top: 1rem;
+    border-top: #222 solid 2px;
+  }
+  .after::after {
+    content: "";
+    margin-left: 0px;
+  }
+}
+</style>
