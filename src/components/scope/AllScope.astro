@@ -1,31 +1,24 @@
 ---
-//data section
 import fetch from '@11ty/eleventy-fetch';
+import fetchDailyReport, { formatDateToString, formatTimestamp } from '../../utils/wb_daily';
 
-function formatNumber(value) {
-  return value.toLocaleString();
+// Helper function to format numbers with commas
+function formatNumbersInObject(obj) {
+  if (typeof obj === 'number') {
+    return obj.toLocaleString();
+  }
+  if (typeof obj === 'object' && obj !== null) {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        obj[key] = formatNumbersInObject(obj[key]);
+      }
+    }
+  }
+  return obj;
 }
 
 async function fetchSummaryData() {
   const url = 'https://data.techforpalestine.org/api/v3/summary.json';
-
-  // Helper function to format numbers with commas
-  function formatNumbersInObject(obj) {
-    // If the value is a number, format it
-    if (typeof obj === 'number') {
-      return obj.toLocaleString();
-    }
-    // If the value is an object or array, recursively format it
-    if (typeof obj === 'object' && obj !== null) {
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          obj[key] = formatNumbersInObject(obj[key]);
-        }
-      }
-    }
-    return obj;
-  }
-
   try {
     const response = await fetch(url, {
       duration: '1d', // Cache data for 1 day
@@ -34,7 +27,6 @@ async function fetchSummaryData() {
 
     if (response) {
       const data = response;
-      // Format numbers in the fetched data
       return formatNumbersInObject(data);
     } else {
       console.error("Invalid response format");
@@ -54,68 +46,39 @@ if (!summaryData) {
   console.log("Formatted Summary Data:", summaryData);
 }
 
-
-console.log("Script start NAD again");
-
 async function fetchDailyReports() {
   try {
-    const response = await fetch(
-      "https://us-east-1.aws.data.mongodb-api.com/app/daily_reports-qqsah/endpoint/daily_report",
-      {
-        duration: '1d', // Cache the data for 1 day
-        type: 'json'    // Specify that we expect JSON data
-      }
-    );
+    const data = await fetchDailyReport();
+    console.log("Raw Daily Reports Data:", data); // Log raw data
 
-    const parsedData = JSON.parse(response.body);
-
-    console.log("NAD data:", parsedData);
-
-    parsedData.forEach(report => {
-      report.data.forEach(item => {
-        if (item.Value === null) {
-          item.Value = 0;
-        }
+    if (data) {
+      data.forEach(report => {
+        report.data.forEach(item => {
+          if (item.Value === null) {
+            item.Value = 0;
+          }
+        });
       });
-    });
-    return parsedData;
+      return data;
+    } else {
+      console.error("Invalid data format");
+      return [];
+    }
   } catch (error) {
     console.error("Fetch error:", error);
     return [];
   }
 }
 
-function formatDate(timestamp) {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${month}.${day}.${year}`;
-}
-
-function formatTimestamp(timestamp) {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${month}.${day}.${year} ${hours}:${minutes}`;
-}
-
-// Fetch and process data server-side
 const reports = await fetchDailyReports();
 const serializedReports = JSON.stringify(reports);
+console.log("Serialized Reports:", serializedReports); // Log serialized data
 
-// Prepare data for each category
-const categories = ["Settler attacks", "Road closures", "Confiscation of property", "Injuries", "Temporary checkpoints"];
+const categories = ["Settler attacks", "Road closures", "Confiscation of property", "Arrests", "Temporary checkpoints"];
 const categoryData = categories.map(category => {
   const mostRecentReport = reports.reduce((latest, report) => {
-    
     const latestDate = new Date(latest.metadata.Date);
     const currentDate = new Date(report.metadata.Date);
-
-    // console.log("Comparing dates:", latestDate, "and", currentDate)
     return currentDate > latestDate ? report : latest;
   }, reports[0]);
 
@@ -127,17 +90,11 @@ const categoryData = categories.map(category => {
   return {
     category,
     value: categoryItem["Value"],
-    date: mostRecentReport.metadata.Date // Use the 'Date' directly from the metadata
+    date: mostRecentReport.metadata.Date
   };
 });
 
-console.log("Category NAD Data:", categoryData);
-// Find the most recent report
-const mostRecentReport = reports.reduce((latest, report) => {
-  const latestDate = new Date(latest.metadata.Date);
-  const currentDate = new Date(report.metadata.Date);
-  return currentDate > latestDate ? report : latest;
-}, reports[0]);
+console.log("Category Data:", categoryData);
 
 async function fetchData() {
   const url = 'https://us-east-1.aws.data.mongodb-api.com/app/home_demolitions-guyba/endpoint/demolition_data_partial';
@@ -147,7 +104,6 @@ async function fetchData() {
       type: "json"    // Parse response as JSON
     });
 
-    // Ensure that the body is parsed correctly
     if (response.body) {
       return JSON.parse(response.body);
     } else {
@@ -194,14 +150,32 @@ async function getDemolitionData() {
 }
 
 const demolitionData = await getDemolitionData();
+console.log("Demolition Data:", demolitionData); // Log demolition data
 
-// Format the date for display
+const mostRecentReport = reports.reduce((latest, report) => {
+  const latestDate = new Date(latest.metadata.Date);
+  const currentDate = new Date(report.metadata.Date);
+  return currentDate > latestDate ? report : latest;
+}, reports[0]);
+
 const mostRecentDate = mostRecentReport.metadata.Date;
-const formattedMostRecentDate = formatDate(mostRecentDate);
-console.log("Most Recent Date:", mostRecentDate);
+const formattedMostRecentDate = formatDateToString(mostRecentDate);
+console.log("Most Recent Date:", mostRecentDate); // Log most recent date
+console.log("Formatted Most Recent Date:", formattedMostRecentDate); // Log formatted date
 const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["Timestamp"]);
----
+console.log("Formatted Most Recent Timestamp:", formattedMostRecentTimestamp); // Log formatted timestamp
 
+// Correctly format the date using UTC
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${month}.${day}.${year}`;
+}
+
+console.log("Formatted Date for Display:", formatDate(mostRecentDate)); // Log date used in rendering
+---
 
 <section class="md:px-12 sm:px-8">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:grid-cols-4 border-zinc-800 border-x border-b">
@@ -212,7 +186,7 @@ const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["
           Gaza Genocide
         </h2>
         <div class="text-white mt-4 text-2xl tracking-wide">
-          From the data accessed on <span class="highlight">{formatDate (summaryData.gaza.last_update)}</span>, the Israeli regime, backed by the United States, has carried out
+          From the data accessed on <span class="highlight">{formatDate(summaryData.gaza.last_update)}</span>, the Israeli regime, backed by the United States, has carried out
           <span class="highlight">{summaryData.gaza.massacres}</span> massacres. As a result, Israeli military forces have killed some <span class="highlight">{summaryData.gaza.killed.total}</span> Palestinians in the Gaza Strip alone. This includes <span class="highlight">{summaryData.gaza.killed.children}</span> children and <span class="highlight">{summaryData.gaza.killed.women}</span> women. The Israeli state has also targeted critical emergency services personnel, such as firefighters and medics. As of now, Israel's assault has claimed the lives of <span class="highlight">{summaryData.gaza.killed.civil_defence}</span> workers from this critical sector and killed another <span class="highlight">{summaryData.gaza.killed.medical}</span> medical personal. Additionally, Israel's longstanding policy to stop independent media from reporting essential facts and visual evidence, the Israeli military has assassinated <span class="highlight">{summaryData.gaza.killed.press}</span> members of the press.  
         </div>
       </div>
@@ -261,11 +235,7 @@ const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["
         </div>
         <div class="flex items-center h-full"><p class="f text-white text-sm pl-8 pr-4 py-4">More info</p><img class="copy-icon" src="/images/Arrow.svg"></div>
         <div class="flex items-center h-full"><p class="f text-white text-sm pl-8 pr-4 py-4 ">Copy Data</p><img class="copy-icon" src="/images/copy-symbol.svg"></div>
-
-        
       </div>
     </div>
   </div>
 </section>
-
-

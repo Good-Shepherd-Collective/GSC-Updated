@@ -22,6 +22,9 @@
     "@tailwindcss/typography": "^0.5.10",
     "astro": "^4.5.3",
     "astro-devtool-breakpoints": "^0.3.0",
-    "preact": "^10.19.6"
+    "fs-extra": "^11.2.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "preact": "^10.19.6",
+    "xlsx": "^0.18.5"
   }
 }
