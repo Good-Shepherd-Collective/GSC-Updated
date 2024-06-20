@@ -1,5 +1,6 @@
 ---
 import fetch from '@11ty/eleventy-fetch';
+import { processDemolitionData } from '../../utils/home_demolitions';
 import fetchDailyReport, { formatDateToString, formatTimestamp } from '../../utils/wb_daily';
 
 // Helper function to format numbers with commas
@@ -17,155 +18,7 @@ function formatNumbersInObject(obj) {
   return obj;
 }
 
-async function fetchSummaryData() {
-  const url = 'https://data.techforpalestine.org/api/v3/summary.json';
-  try {
-    const response = await fetch(url, {
-      duration: '1d', // Cache data for 1 day
-      type: 'json'    // Specify that we expect JSON data
-    });
-
-    if (response) {
-      const data = response;
-      return formatNumbersInObject(data);
-    } else {
-      console.error("Invalid response format");
-      return null;
-    }
-  } catch (error) {
-    console.error("Fetching summary data failed:", error);
-    return null;
-  }
-}
-
-const summaryData = await fetchSummaryData();
-
-if (!summaryData) {
-  console.error("Failed to fetch or process summary data.");
-} else {
-  console.log("Formatted Summary Data:", summaryData);
-}
-
-async function fetchDailyReports() {
-  try {
-    const data = await fetchDailyReport();
-    console.log("Raw Daily Reports Data:", data); // Log raw data
-
-    if (data) {
-      data.forEach(report => {
-        report.data.forEach(item => {
-          if (item.Value === null) {
-            item.Value = 0;
-          }
-        });
-      });
-      return data;
-    } else {
-      console.error("Invalid data format");
-      return [];
-    }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    return [];
-  }
-}
-
-const reports = await fetchDailyReports();
-const serializedReports = JSON.stringify(reports);
-console.log("Serialized Reports:", serializedReports); // Log serialized data
-
-const categories = ["Settler attacks", "Road closures", "Confiscation of property", "Arrests", "Temporary checkpoints"];
-const categoryData = categories.map(category => {
-  const mostRecentReport = reports.reduce((latest, report) => {
-    const latestDate = new Date(latest.metadata.Date);
-    const currentDate = new Date(report.metadata.Date);
-    return currentDate > latestDate ? report : latest;
-  }, reports[0]);
-
-  let categoryItem = mostRecentReport.data.find(item => item["Description English"] === category);
-  if (!categoryItem) {
-    categoryItem = { "Description English": category, "Value": "0" };
-  }
-
-  return {
-    category,
-    value: categoryItem["Value"],
-    date: mostRecentReport.metadata.Date
-  };
-});
-
-console.log("Category Data:", categoryData);
-
-async function fetchData() {
-  const url = 'https://us-east-1.aws.data.mongodb-api.com/app/home_demolitions-guyba/endpoint/demolition_data_partial';
-  try {
-    const response = await fetch(url, {
-      duration: "1d", // Cache data for 1 day
-      type: "json"    // Parse response as JSON
-    });
-
-    if (response.body) {
-      return JSON.parse(response.body);
-    } else {
-      console.error("Invalid response body format");
-      return null;
-    }
-  } catch (error) {
-    console.error("Fetching data failed:", error);
-    return null;
-  }
-}
-
-function processYearToDateData(rawData) {
-  const startDate = new Date(new Date().getFullYear(), 0, 1); // Start of current year
-  const yearToDateData = rawData.reduce((acc, doc) => {
-    const incidentDate = new Date(doc.Dateofincident);
-    if (incidentDate >= startDate && incidentDate <= new Date()) {
-      acc.displacedPeople += doc.NumberofDisplacedPeople || 0;
-      acc.structures += doc.TotalNumberofStructures || 0;
-      acc.menDisplaced += doc['Men Displaced'] || 0;
-      acc.womenDisplaced += doc['Women Displaced'] || 0;
-      acc.childrenDisplaced += doc['Children Displaced'] || 0;
-    }
-    return acc;
-  }, {
-    displacedPeople: 0,
-    structures: 0,
-    menDisplaced: 0,
-    womenDisplaced: 0,
-    childrenDisplaced: 0
-  });
-
-  return yearToDateData;
-}
-
-async function getDemolitionData() {
-  const rawData = await fetchData();
-  if (!rawData || !Array.isArray(rawData)) {
-    console.error("Unexpected response format or error occurred");
-    return null;
-  }
-
-  return processYearToDateData(rawData);
-}
-
-const demolitionData = await getDemolitionData();
-console.log("Demolition Data:", demolitionData); // Log demolition data
-
-const mostRecentReport = reports.reduce((latest, report) => {
-  const latestDate = new Date(latest.metadata.Date);
-  const currentDate = new Date(report.metadata.Date);
-  return currentDate > latestDate ? report : latest;
-}, reports[0]);
-
-const mostRecentDate = mostRecentReport.metadata.Date;
-const formattedMostRecentDate = formatDateToString(mostRecentDate);
-console.log("Most Recent Date:", mostRecentDate); // Log most recent date
-console.log("Formatted Most Recent Date:", formattedMostRecentDate); // Log formatted date
-const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata["Timestamp"]);
-console.log("Formatted Most Recent Timestamp:", formattedMostRecentTimestamp); // Log formatted timestamp
-
-// Correctly format the date using UTC
+// Helper function to format date
 function formatDate(dateString) {
   const date = new Date(dateString);
   const year = date.getUTCFullYear();
@@ -174,8 +27,54 @@ function formatDate(dateString) {
   return `${month}.${day}.${year}`;
 }
 
-console.log("Formatted Date for Display:", formatDate(mostRecentDate)); // Log date used in rendering
+async function fetchSummaryData() {
+  const url = 'https://data.techforpalestine.org/api/v3/summary.json';
+  try {
+    const response = await fetch(url, { duration: '1d', type: 'json' });
+    return response ? formatNumbersInObject(response) : null;
+  } catch (error) {
+    console.error("Fetching summary data failed:", error);
+    return null;
+  }
+}
+
+async function fetchDataAndReports() {
+  const [summaryData, dailyReports] = await Promise.all([fetchSummaryData(), fetchDailyReport()]);
+
+  if (!summaryData || !dailyReports) {
+    console.error("Failed to fetch or process data.");
+    return { summaryData: null, dailyReports: [] };
+  }
+
+  return { summaryData, dailyReports };
+}
+
+// Fetch data and reports
+const { summaryData, dailyReports } = await fetchDataAndReports();
+
+// Determine the most recent report if reports exist
+const mostRecentReport = dailyReports.length
+  ? dailyReports.reduce((latest, report) => new Date(report.metadata.Date) > new Date(latest.metadata.Date) ? report : latest, dailyReports[0])
+  : null;
+
+const mostRecentDate = mostRecentReport ? mostRecentReport.metadata.Date : '';
+
+const categories = ["Settler attacks", "Road closures", "Confiscation of property", "Arrests", "Temporary checkpoints"];
+const categoryData = categories.map(category => {
+  let categoryItem = mostRecentReport ? mostRecentReport.data.find(item => item["Description English"] === category) : null;
+  if (!categoryItem) {
+    categoryItem = { "Description English": category, "Value": "0" };
+  }
+  return {
+    category,
+    value: categoryItem["Value"],
+    date: mostRecentReport ? mostRecentReport.metadata.Date : ''
+  };
+});
+
+const demolitionData = await processDemolitionData();
 ---
+
 
 <section class="md:px-12 sm:px-8">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:grid-cols-4 border-zinc-800 border-x border-b">
