@@ -40,7 +40,7 @@ const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata.T
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
-        <h2 class="text-4xl md:text-6xl xl:text-7xl text-white" style="margin-bottom: 2.5rem;">Daily Report</h2>
+        <h2 class="text-4xl md:text-6xl xl:text-7xl text-white font-semibold" style="margin-bottom: 2.5rem;">Daily Report</h2>
         <p>This data set represents a small subsection of Israeli settler-colonial violence. These figures represent reporting from the West Bank and East Jerusalem and does not account for the colonial violence enacted upon Palestinians residing in the lands of occupied Palestine in 1948. However, the <code>Deaths</code> total includes the Palestinians Israel has killed in Gaza. The datum here is translated and compiled from Palestinian institutions. This particular data set is based on Palestinian Negotiations Affairs Department information. The <code>Total</code> amount reflects the aggregate of a single day on the date of {formattedMostRecentDate}.</p>
         {reports.length > 0 ? (
           <table class="nad">
@@ -58,8 +58,8 @@ const formattedMostRecentTimestamp = formatTimestamp(mostRecentReport.metadata.T
                 <tr key={`report-category-${category}`}>
                   <td data-cell="Category">{category}</td>
                   <td data-cell="Total" class="value">{value}</td>
-                  <td data-cell="5 day avg" class="average text-center" id={`five-day-average-${category}`}></td>
-                  <td data-cell="10 day avg" class="average text-center" id={`ten-day-average-${category}`}></td>
+                  <td data-cell="5 day avg" class="average " id={`five-day-average-${category}`}></td>
+                  <td data-cell="10 day avg" class="average " id={`ten-day-average-${category}`}></td>
                   <td class="trend">
                     <div class="trend-title"></div>
                     <canvas style="width: 300px;" data-cell="Trend" id={`chart-latest-${category}`} height="60"></canvas>
