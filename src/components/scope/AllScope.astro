@@ -104,14 +104,14 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
           </div>
         ))}
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <a href="https://goodshepherdcollective.org/data/wb_data" class="flex items-center h-full text-white hover:text-blue-700 transition-colors duration-300">
+          <a href="https://goodshepherdcollective.org/data/wb_data" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
             <p class="f text-sm pl-8 pr-4 py-4">More info</p>
             <img class="copy-icon" src="/images/Arrow.svg" alt="Arrow Icon">
           </a>
         </div>
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <button id="copyButtonWestBank" class="f text-white text-sm pl-8 pr-4 py-4 flex items-center hover:text-blue-700 transition-colors duration-300">
-            Copy Data
+          <button id="copyButtonWestBank" class="f text-white text-sm pl-8 pr-4 py-4 flex items-center hover:text-blue-200 transition-colors duration-300">
+            <span>Copy Data</span>
             <img class="copy-icon ml-2" src="/images/copy-symbol.svg" alt="Copy Icon">
           </button>
         </div>
@@ -141,14 +141,14 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
           <p class="f text-white text-sm">Children Displaced — {demolitionData?.childrenDisplaced || 0}</p>
         </div>
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <a href="https://goodshepherdcollective.org/data/home_demolitions" class="flex items-center h-full text-white hover:text-blue-700 transition-colors duration-300">
+          <a href="https://goodshepherdcollective.org/data/home_demolitions" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
             <p class="f text-sm pl-8 pr-4 py-4">More info</p>
             <img class="copy-icon" src="/images/Arrow.svg" alt="Arrow Icon">
           </a>
         </div>
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <button id="copyButtonHomeDemolitions" class="f text-white text-sm pl-8 pr-4 py-4 flex items-center hover:text-blue-700 transition-colors duration-300">
-            Copy Data
+          <button id="copyButtonHomeDemolitions" class="f text-white text-sm pl-8 pr-4 py-4 flex items-center hover:text-blue-200 transition-colors duration-300">
+            <span>Copy Data</span>
             <img class="copy-icon ml-2" src="/images/copy-symbol.svg" alt="Copy Icon">
           </button>
         </div>
@@ -157,26 +157,43 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
   </div>
 </section>
 
+
 <script>
-  // Function to copy data from a section
-  function copyData(sectionId) {
-    const section = document.querySelector(sectionId);
-    const textToCopy = Array.from(section.querySelectorAll('p')).map(p => p.textContent).join('\n');
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        console.log('Data copied to clipboard');
-      })
-      .catch(err => {
-        console.error('Failed to copy text:', err);
-      });
-  }
+  // Function to copy data from a section and change button text
+function copyData(sectionId, buttonId, url) {
+  const section = document.querySelector(sectionId);
+  const textToCopy = Array.from(section.querySelectorAll('p')).map(p => p.textContent).join('\n');
+  const textWithLink = `${textToCopy}\nMore info at ${url}`;
 
-  // Event listeners for copy buttons
-  document.getElementById('copyButtonWestBank').addEventListener('click', () => {
-    copyData('[data-section="west-bank"]');
-  });
+  navigator.clipboard.writeText(textWithLink)
+    .then(() => {
+      const copyButton = document.getElementById(buttonId);
+      copyButton.querySelector('span').textContent = 'Copied!';
+      setTimeout(() => {
+        copyButton.querySelector('span').textContent = 'Copy Data';
+      }, 2000); // Revert text after 2 seconds
+    })
+    .catch(err => {
+      console.error('Failed to copy text:', err);
+    });
+}
 
-  document.getElementById('copyButtonHomeDemolitions').addEventListener('click', () => {
-    copyData('[data-section="home-demolitions"]');
-  });
+// Event listeners for copy buttons
+document.getElementById('copyButtonWestBank').addEventListener('click', () => {
+  copyData('[data-section="west-bank"]', 'copyButtonWestBank', 'https://goodshepherdcollective.org/data/wb_data');
+});
+
+document.getElementById('copyButtonHomeDemolitions').addEventListener('click', () => {
+  copyData('[data-section="home-demolitions"]', 'copyButtonHomeDemolitions', 'https://goodshepherdcollective.org/data/home_demolitions');
+});
+
+
 </script>
+
+<style>
+  button:hover .copy-icon {
+    filter: brightness(0) saturate(100%) invert(82%) sepia(8%) saturate(1562%) hue-rotate(180deg) brightness(106%) contrast(98%);
+}
+
+</style>
+
