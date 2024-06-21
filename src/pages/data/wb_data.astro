@@ -5,6 +5,15 @@ import fetchDailyReport, {
   formatTimestamp,
 } from "src/utils/wb_daily.js";
 
+// Helper function to format date as mm-dd-yyyy
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
 // Fetch and format reports data
 const reports = await fetchDailyReport();
 const serializedReports = JSON.stringify(reports);
@@ -46,13 +55,18 @@ const mostRecentReport = reports.reduce((latest, report) => {
   return currentDate > latestDate ? report : latest;
 }, reports[0]);
 
-const formattedMostRecentDate = formatDateToString(
+const formattedMostRecentDate = formatDateMMDDYYYY(
   mostRecentReport.metadata.Date
 );
 const formattedMostRecentTimestamp = formatTimestamp(
   mostRecentReport.metadata.Timestamp
 );
+
+// Determine the date range for the trend
+const beginningDate = formatDateMMDDYYYY(reports[0].metadata.Date);
+const endDate = formatDateMMDDYYYY(reports[reports.length - 1].metadata.Date);
 ---
+
 
 <BaseLayout
   isBlogPost={true}
@@ -64,24 +78,26 @@ const formattedMostRecentTimestamp = formatTimestamp(
       <div style="max-width: 55rem; margin: 0 auto;">
         <h2
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
-          style="margin-bottom: 2.5rem;"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Daily Report
+          West Bank & East Jerusalem Report
         </h2>
         <p>
           This data set represents a small subsection of Israeli
           settler-colonial violence. These figures represent reporting from only
           the West Bank and East Jerusalem and do not account for the colonial
           violence enacted upon Palestinians who live within the 1948 borders of
-          historical Palestine.<br>
-          The Total amount in the first column reflects the aggregate of a
-          single day on the date of {formattedMostRecentDate}. The 5-day average represents the
-          average of the last five days, as the 10-day average represents the
-          average of the previous ten days. The Trend represents the trajectory
-          from date to date.<br>The datum here is translated and compiled from
+          historical Palestine.<br><br>
+          The <span class="highlight-red">Total</span> amount in the first column reflects the aggregate of a
+          single day on the date of <span class="highlight-red">{formattedMostRecentDate}</span>. The <span class="highlight-red">5-day average</span> represents the
+          average of the last five days, as the <span class="highlight-red">10-day average</span> represents the
+          average of the previous ten days. The <span class="highlight-red">Trend</span> represents the trajectory
+          from {beginningDate} to {endDate}.<br><br>The datum here is translated and compiled from
           Palestinian institutions. This particular data set is based on
           reporting from the Palestinian Negotiations Affairs Department.
         </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+        
         {
           reports.length > 0 ? (
             <table class="data-table">
@@ -89,8 +105,8 @@ const formattedMostRecentTimestamp = formatTimestamp(
                 <tr class="header border-y border-zinc-800">
                   <th>Category</th>
                   <th>Total</th>
-                  <th class="average">5 day avg</th>
-                  <th class="average">10 day avg</th>
+                  <th class="average">5-day avg</th>
+                  <th class="average">10-day avg</th>
                   <th style="width: 300px;">Trend</th>
                 </tr>
               </thead>
@@ -130,13 +146,18 @@ const formattedMostRecentTimestamp = formatTimestamp(
           )
         }
         <p class="time__stamp pt-8">
-          Data updated: {formattedMostRecentTimestamp}&nbsp;|&nbsp;<a
+          <a
             href="/data_sheets/wb_daily_report.csv"
             download="wb_daily_report.csv">Download as CSV</a
           >&nbsp;|&nbsp;
           <a
             href="/data_sheets/wb_daily_report.xlsx"
             download="wb_daily_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="/api/wb_data.json"
+            >.JSON endpoint</a
           >
         </p>
         <div
@@ -343,6 +364,7 @@ const formattedMostRecentTimestamp = formatTimestamp(
 </script>
 
 <style>
+
   .data-table {
     width: 100%;
     border-collapse: collapse;

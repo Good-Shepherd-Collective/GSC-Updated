@@ -75,6 +75,13 @@
   text-underline-offset: 5px;
 }
 
+.highlight-red {
+  text-decoration: underline;
+  text-decoration-color: rgb(127, 13, 1);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
 .copy-icon{
   width: 15px;
   height: 15px;
