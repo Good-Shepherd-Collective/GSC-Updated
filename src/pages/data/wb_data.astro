@@ -420,7 +420,9 @@ const endDate = formatDateMMDDYYYY(reports[reports.length - 1].metadata.Date);
     .average {
       text-align: left;
     }
-
+.value{
+  width: 100%;
+}
     .canvas-wrapper {
       width: 100%; /* Full width at media breakpoint */
     }
@@ -432,11 +434,12 @@ const endDate = formatDateMMDDYYYY(reports[reports.length - 1].metadata.Date);
 
     th {
       display: none !important;
+      
     }
 
     td {
       display: grid !important;
-      grid-template-columns: 13ch auto;
+      grid-template-columns: 9ch auto;
     }
 
     td:first-child {
@@ -444,14 +447,17 @@ const endDate = formatDateMMDDYYYY(reports[reports.length - 1].metadata.Date);
     }
 
     td:last-child {
-      padding-bottom: 1rem;
+      padding-bottom: 0rem;
     }
 
     td::before {
       content: attr(data-cell) ": ";
       font-weight: 700;
+      
     }
-
+.trend{
+  border-bottom: 2px solid #333;
+}
     .trend::before {
       content: "Trend";
     }
