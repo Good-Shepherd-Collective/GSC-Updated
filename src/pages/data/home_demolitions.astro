@@ -1,307 +1,334 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { processDemolitionData, formatAverageData } from "@/utils/home_demolitions.js";
+import { processDemolitionData } from "src/utils/home_demolitions.js";
+import { formatTimestamp } from "src/utils/wb_daily.js";
+
+// Helper function to format date as mm-dd-yyyy
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
 
 // Fetch and process demolition data
 const demolitionData = await processDemolitionData();
 
-// Define formatted averages and chart data
-let formattedFiveDayAverage, formattedThirtyDayAverage, chartData;
+const categories = [
+  "Total Incidents",
+  "Structures",
+  "Displaced People",
+  "Men Displaced",
+  "Women Displaced",
+  "Children Displaced"
+];
 
-if (demolitionData) {
-  formattedFiveDayAverage = formatAverageData(demolitionData.fiveDayAverage);
-  formattedThirtyDayAverage = formatAverageData(demolitionData.thirtyDayAverage);
-  chartData = demolitionData.chartData;
-} else {
-  // Provide default values or handle error
-  formattedFiveDayAverage = {
-    incidents: 0,
-    structures: 0,
-    displacedPeople: 0,
-    menDisplaced: 0,
-    womenDisplaced: 0,
-    childrenDisplaced: 0
+const categoryData = categories.map((category) => {
+  let value;
+  switch (category) {
+    case "Total Incidents":
+      value = demolitionData.totalIncidents;
+      break;
+    case "Structures":
+      value = demolitionData.structures;
+      break;
+    case "Displaced People":
+      value = demolitionData.displacedPeople;
+      break;
+    case "Men Displaced":
+      value = demolitionData.menDisplaced;
+      break;
+    case "Women Displaced":
+      value = demolitionData.womenDisplaced;
+      break;
+    case "Children Displaced":
+      value = demolitionData.childrenDisplaced;
+      break;
+    default:
+      value = "0";
+  }
+  return {
+    category,
+    value,
+    date: demolitionData.newestDateofincident
   };
-  formattedThirtyDayAverage = {
-    incidents: 0,
-    structures: 0,
-    displacedPeople: 0,
-    menDisplaced: 0,
-    womenDisplaced: 0,
-    childrenDisplaced: 0
-  };
-  chartData = [];
-}
+});
+
+const formattedMostRecentDate = formatDateMMDDYYYY(demolitionData.newestDateofincident);
+const formattedMostRecentTimestamp = formatTimestamp(demolitionData.mostRecentTimestamp);
+
+// Determine the date range for the trend
+const beginningDate = formatDateMMDDYYYY(demolitionData.oldestDateofincident);
+const endDate = formatDateMMDDYYYY(demolitionData.newestDateofincident);
 ---
 
-<BaseLayout pageTitle="Home Demolitions">
-<div class="demolition__section">
-  <h2>Home demolition data</h2>
-  <p>Israel's policy of home demolitions vividly exemplifies the principles of settler colonialism, serving as a strategic tool to solidify dominion over land and resources for the benefit of settlers. This practice is not merely a bureaucratic process but intricately linked with larger objectives of territorial annexation and altering indigenous population demographics.</p>
-  <p>It's important to note that the data mentioned here covers only the demolitions in East Jerusalem and the West Bank, excluding those in the territories of 1948 Palestine and the Gaza Strip. For more information on the data and Israel's process of demolitions, <a href="/home-demolitions">click here</a>.</p>
-  <table class="hd__table">
-    <thead>
-      <tr>
-        <th class="hd__category">Category</th>
-        <th>Total</th>
-        <th>10d avg</th>
-        <th>90d avg</th>
-        <th style="text-align: left;">Trend</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td data-cell="Category" class="hd__category">Demolitions</td>
-        <td data-cell="Total">{demolitionData?.totalIncidents}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-incidents">{formattedFiveDayAverage.incidents}</td>
-        <td data-cell="90d avg" id="thirty-day-average-incidents">{formattedThirtyDayAverage.incidents}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-incidents"></canvas></td>
-      </tr>
-      <tr>
-        <td data-cell="Category" class="hd__category">Structures Destroyed</td>
-        <td data-cell="Total">{demolitionData?.structures}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-structures">{formattedFiveDayAverage.structures}</td>
-        <td data-cell="90d avg" id="thirty-day-average-structures">{formattedThirtyDayAverage.structures}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-structures"></canvas></td>
-      </tr>
-      <tr>
-        <td data-cell="Category" class="hd__category">People Displaced</td>
-        <td data-cell="Total">{demolitionData?.displacedPeople}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-displacedPeople">{formattedFiveDayAverage.displacedPeople}</td>
-        <td data-cell="90d avg" id="thirty-day-average-displacedPeople">{formattedThirtyDayAverage.displacedPeople}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-displacedPeople"></canvas></td>
-      </tr>
-      <tr>
-        <td class="hd__category" data-cell="Category">Women Displaced</td>
-        <td data-cell="Total">{demolitionData?.womenDisplaced}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-womenDisplaced">{formattedFiveDayAverage.womenDisplaced}</td>
-        <td data-cell="90d avg" id="thirty-day-average-womenDisplaced">{formattedThirtyDayAverage.womenDisplaced}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-womenDisplaced"></canvas></td>
-      </tr>
-      <tr>
-        <td class="hd__category" data-cell="Category">Children Displaced</td>
-        <td data-cell="Total">{demolitionData?.childrenDisplaced}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-childrenDisplaced">{formattedFiveDayAverage.childrenDisplaced}</td>
-        <td data-cell="90d avg" id="thirty-day-average-childrenDisplaced">{formattedThirtyDayAverage.childrenDisplaced}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-childrenDisplaced"></canvas></td>
-      </tr>
-      <tr>
-        <td class="hd__category" data-cell="Category">Men Displaced</td>
-        <td data-cell="Total">{demolitionData?.menDisplaced}</td>
-        <td data-cell="10d avg" class="after" id="five-day-average-menDisplaced">{formattedFiveDayAverage.menDisplaced}</td>
-        <td data-cell="90d avg" id="thirty-day-average-menDisplaced">{formattedThirtyDayAverage.menDisplaced}</td>
-        <td data-cell="Trend"><div class="trend-title"></div><canvas id="chart-menDisplaced"></canvas></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="time__stamp">East Jerusalem and West Bank only. `<span style="background-color: rgba(237, 237, 237, 0.342); border-radius: 3px; padding: 3px 5px 3px 5px;">Total</span>` is the aggregate of the last 365 days.</p>
-  <p class="time__stamp">Data updated: {demolitionData?.mostRecentTimestamp}</p>
-</div>
-<div id="data-Demolitions" style="display:none;">
-  {JSON.stringify(chartData)}
-</div>
+<BaseLayout
+  isBlogPost={true}
+  title="Demolition Data Report"
+  description="Demolition data report for the specified region."
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h2
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          Demolition Data Report
+        </h2>
+        <p>
+          This dataset represents incidents of demolitions and the number of displaced people in the specified region. 
+          The data reflects the reporting as of <span class="highlight-red">{formattedMostRecentDate}</span>. The <span class="highlight-red">5-day average</span> and 
+          <span class="highlight-red">30-day average</span> provide insights into the trends over recent days. The <span class="highlight-red">Trend</span> 
+          represents the trajectory from {beginningDate} to {endDate}.
+        </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+        
+        {
+          demolitionData.chartData.length > 0 ? (
+            <table class="data-table">
+              <thead>
+                <tr class="header border-y border-zinc-800">
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th class="average">5-day avg</th>
+                  <th class="average">30-day avg</th>
+                  <th style="width: 300px;">Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categoryData.map(({ category, value }) => (
+                  <tr key={`report-category-${category}`}>
+                    <td data-cell="Category">{category}</td>
+                    <td data-cell="Total" class="value">
+                      {value}
+                    </td>
+                    <td
+                      data-cell="5 day avg"
+                      class="average"
+                      id={`five-day-average-${category}`}
+                    />
+                    <td
+                      data-cell="30 day avg"
+                      class="average"
+                      id={`thirty-day-average-${category}`}
+                    />
+                    <td class="trend">
+                      <div class="canvas-wrapper">
+                        <canvas
+                          class="line-chart-style"
+                          data-cell="Trend"
+                          id={`chart-latest-${category}`}
+                          height="60"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No reports available.</p>
+          )
+        }
+        <p class="pt-8">
+          <a
+            href="/data_sheets/demolition_data_report.csv"
+            download="demolition_data_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/demolition_data_report.xlsx"
+            download="demolition_data_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="/api/demolition_data.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={JSON.stringify(demolitionData.chartData)}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <script type="text/javascript">
-  async function loadChartJsAndInitializeCharts() {
-    const chartJsScript = document.createElement('script');
-    chartJsScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    document.body.appendChild(chartJsScript);
+  document.addEventListener("DOMContentLoaded", () => {
+    async function loadChartJsAndInitializeCharts() {
+      const chartJsScript = document.createElement("script");
+      chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      document.body.appendChild(chartJsScript);
 
-    await new Promise((resolve, reject) => {
-      chartJsScript.onload = resolve;
-      chartJsScript.onerror = reject;
-    });
+      await new Promise((resolve, reject) => {
+        chartJsScript.onload = resolve;
+        chartJsScript.onerror = reject;
+      });
 
-    initializeCharts();
-  }
-
-  function extractChartDataForCategory(categoryId) {
-    const chartDataElement = document.getElementById('data-Demolitions');
-    if (!chartDataElement) {
-      console.error('Chart data element not found');
-      return { dataPoints: [], labels: [] };
+      initializeCharts();
     }
 
-    try {
-      let chartData = JSON.parse(chartDataElement.textContent);
-      chartData = chartData.sort((a, b) => new Date(a.date) - new Date(b.date));
-      const labels = chartData.map(item => item.date);
-      const dataPoints = chartData.map(item => item[categoryId] !== undefined ? Number(item[categoryId]) : null);
-      return { dataPoints, labels };
-    } catch (error) {
-      console.error(`Error parsing data for ${categoryId}:`, error);
-      return { dataPoints: [], labels: [] };
+    function calculateAverage(values, days) {
+      const sum = values.reduce((a, b) => a + b, 0);
+      return (sum / days).toFixed(2);
     }
-  }
 
-  function applyConditionalFormattingToTable() {
-    const categories = ['incidents', 'structures', 'displacedPeople', 'womenDisplaced', 'childrenDisplaced', 'menDisplaced'];
-    categories.forEach(category => {
-      const fiveDayAvgElement = document.getElementById(`five-day-average-${category}`);
-      const thirtyDayAvgElement = document.getElementById(`thirty-day-average-${category}`);
-
-      if (fiveDayAvgElement && thirtyDayAvgElement) {
-        const fiveDayAvg = parseFloat(fiveDayAvgElement.textContent);
-        const thirtyDayAvg = parseFloat(thirtyDayAvgElement.textContent);
-        const percentageChange = ((fiveDayAvg - thirtyDayAvg) / thirtyDayAvg * 100).toFixed(2);
-
-        const transparency = Math.min(1, Math.abs(percentageChange) / 100);
-        fiveDayAvgElement.style.backgroundColor = percentageChange > 0 ? `rgba(127, 13, 1, ${transparency})` : `rgba(40, 169, 224, ${transparency})`;
-        fiveDayAvgElement.setAttribute('data-after', percentageChange > 0 ? '↑' : '↓');
-        fiveDayAvgElement.style.fontWeight = transparency >= 0.6 ? '600' : 'normal';
-        fiveDayAvgElement.style.color = transparency >= 0.6 ? 'white' : '';
+    function calculatePercentageIncrease(fiveDayAvg, thirtyDayAvg) {
+      if (thirtyDayAvg === 0) {
+        return 0;
       }
-    });
-  }
+      return (((fiveDayAvg - thirtyDayAvg) / thirtyDayAvg) * 100).toFixed(2);
+    }
 
-  function initializeCharts() {
-    const categories = ['incidents', 'structures', 'displacedPeople', 'womenDisplaced', 'childrenDisplaced', 'menDisplaced'];
-    categories.forEach(category => {
-      const { dataPoints, labels } = extractChartDataForCategory(category);
-      const canvasId = `chart-${category}`;
-      const canvasElement = document.getElementById(canvasId);
-      if (!canvasElement) {
-        console.error(`Canvas element not found for ID: ${canvasId}`);
-        return;
-      }
+    function prepareChartDataForCategory(data, categoryKey) {
+      const chartData = [];
+      const averages = { fiveDay: [], thirtyDay: [] };
 
-      const ctx = canvasElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: category.replace(/([A-Z])/g, ' $1').trim(),
-            data: dataPoints,
-            borderColor: "#7f0d15",
-            tension: 0.1,
-            borderJoinStyle: 'round',
-            borderWidth: 1.5,
-            pointRadius: .5,
-          }]
-        },
-        options: {
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                display: false
-              },
-              grid: {
-                display: false,
-              }
-            },
-            y: {
-              ticks: {
-                display: false
-              },
-              grid: {
-                display: false,
-              }
-            }
-          }
+      data.forEach((dayData, index) => {
+        const value = dayData[categoryKey] || 0;
+        chartData.push(value);
+
+        if (index >= 4) {
+          averages.fiveDay.push(calculateAverage(chartData.slice(-5), 5));
+        }
+        if (index >= 29) {
+          averages.thirtyDay.push(calculateAverage(chartData.slice(-30), 30));
         }
       });
-    });
 
-    applyConditionalFormattingToTable();
-  }
+      return { chartData, averages };
+    }
 
-  function handleIntersection(entries, observer) {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        loadChartJsAndInitializeCharts();
-        observer.unobserve(entry.target);
+    function applyConditionalFormatting(element, percentageIncrease) {
+      const transparency = Math.min(1, Math.abs(percentageIncrease) / 100);
+      if (percentageIncrease > 0) {
+        element.style.backgroundColor = `rgba(127, 13, 1, ${transparency})`;
+        element.setAttribute("data-after", "↑");
+      } else if (percentageIncrease < 0) {
+        element.style.backgroundColor = `rgba(40, 169, 224, ${transparency})`;
+        element.setAttribute("data-after", "↓");
+      } else {
+        element.style.backgroundColor = "";
+        element.removeAttribute("data-after");
       }
-    });
-  }
+      element.style.fontWeight = transparency >= 0.6 ? "600" : "normal";
+      element.style.color = transparency >= 0.6 ? "white" : "";
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
+    function initializeCharts() {
+      const chartDataDiv = document.getElementById("chartData");
+      const demolitionData = JSON.parse(chartDataDiv.getAttribute("data-reports"));
+
+      const categories = {
+        "Total Incidents": "incidents",
+        "Structures": "structures",
+        "Displaced People": "displacedPeople",
+        "Men Displaced": "menDisplaced",
+        "Women Displaced": "womenDisplaced",
+        "Children Displaced": "childrenDisplaced"
+      };
+      Object.entries(categories).forEach(([category, key]) => {
+        const { chartData, averages } = prepareChartDataForCategory(demolitionData, key);
+        const labels = demolitionData.map((data) => data.date);
+
+        const canvasId = `chart-latest-${category}`;
+        const canvasElement = document.getElementById(canvasId);
+        if (!canvasElement) {
+          return;
+        }
+        const ctx = canvasElement.getContext("2d");
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
+        gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: category,
+                data: chartData,
+                borderColor: "#7f0d15",
+                tension: 0.1,
+                borderJoinStyle: "round",
+                borderWidth: 1,
+                pointRadius: 0.5,
+                backgroundColor: gradient,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+            },
+          },
+        });
+
+        const fiveDayAvgElement = document.getElementById(
+          `five-day-average-${category}`
+        );
+        const thirtyDayAvgElement = document.getElementById(
+          `thirty-day-average-${category}`
+        );
+        if (fiveDayAvgElement && thirtyDayAvgElement) {
+          const fiveDayAvg = averages.fiveDay[averages.fiveDay.length - 1];
+          const thirtyDayAvg = averages.thirtyDay[averages.thirtyDay.length - 1];
+
+          fiveDayAvgElement.textContent = fiveDayAvg;
+          thirtyDayAvgElement.textContent = thirtyDayAvg;
+
+          const percentageIncrease = calculatePercentageIncrease(
+            parseFloat(fiveDayAvg),
+            parseFloat(thirtyDayAvg)
+          );
+          applyConditionalFormatting(fiveDayAvgElement, percentageIncrease);
+        }
+      });
+    }
+
+    function handleIntersection(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          loadChartJsAndInitializeCharts();
+          observer.unobserve(entry.target);
+        }
+      });
+    }
+
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
-      threshold: 0.1
+      threshold: 0.1,
     });
 
-    const demolitionSection = document.querySelector('.demolition__section');
-    if (demolitionSection) {
-      observer.observe(demolitionSection);
-    } else {
-      console.error('Demolition section not found');
-    }
+    const chartContainers = document.querySelectorAll(".data-table");
+    chartContainers.forEach((container) => observer.observe(container));
   });
 </script>
-
-<style>
-canvas {
-  height: 60px !important;
-  max-width: 330px !important;
-}
-
-.after::after {
-  content: attr(data-after);
-  margin-left: 10px;
-}
-
-.after {
-  font-weight: 600 !important;
-}
-
-.hd__table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.demolition__section {
-  width: 100%;
-}
-
-@media screen and (max-width: 768px) {
-  .data__table {
-    margin-top: 1rem;
-  }
-  th {
-    display: none !important;
-  }
-  td {
-    display: grid !important;
-    grid-template-columns: 13ch auto;
-  }
-  td:first-child {
-    padding-top: 1rem;
-  }
-  td:last-child {
-    padding-bottom: 1rem;
-  }
-  td::before {
-    content: attr(data-cell) ": ";
-    font-weight: 700;
-  }
-  .trend::before {
-    content: "Trend";
-  }
-  .aggregate td {
-    font-weight: 700;
-    border-bottom: none;
-  }
-  .aggregate td:last-child {
-    border-bottom: #222 solid 2px;
-  }
-  .aggregate td:first-child {
-    display: none !important;
-  }
-  .aggregate td:nth-child(2) {
-    padding-top: 1rem;
-    border-top: #222 solid 2px;
-  }
-  .after::after {
-    content: "";
-    margin-left: 0px;
-  }
-}
-</style>
