@@ -104,7 +104,7 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
           </div>
         ))}
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <a href="https://goodshepherdcollective.org/data/wb_data" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
+          <a href="/data/wb_data" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
             <p class="f text-sm pl-8 pr-4 py-4">More info</p>
             <img class="copy-icon" src="/images/Arrow.svg" alt="Arrow Icon">
           </a>
@@ -141,7 +141,7 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
           <p class="f text-white text-sm">Children Displaced — {demolitionData?.childrenDisplaced || 0}</p>
         </div>
         <div class="flex items-center h-full border-zinc-800 border-t">
-          <a href="https://goodshepherdcollective.org/data/home_demolitions" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
+          <a href="/data/home_demolitions" class="flex items-center h-full text-white hover:text-blue-200 transition-colors duration-300">
             <p class="f text-sm pl-8 pr-4 py-4">More info</p>
             <img class="copy-icon" src="/images/Arrow.svg" alt="Arrow Icon">
           </a>
@@ -180,11 +180,11 @@ function copyData(sectionId, buttonId, url) {
 
 // Event listeners for copy buttons
 document.getElementById('copyButtonWestBank').addEventListener('click', () => {
-  copyData('[data-section="west-bank"]', 'copyButtonWestBank', '/data/wb_data');
+  copyData('[data-section="west-bank"]', 'copyButtonWestBank', 'https://goodshepherdcollective.org/data/wb_data');
 });
 
 document.getElementById('copyButtonHomeDemolitions').addEventListener('click', () => {
-  copyData('[data-section="home-demolitions"]', 'copyButtonHomeDemolitions', '/data/home_demolitions');
+  copyData('[data-section="home-demolitions"]', 'copyButtonHomeDemolitions', 'https://goodshepherdcollective.org/data/home_demolitions');
 });
 
 
