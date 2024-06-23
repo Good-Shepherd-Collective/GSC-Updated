@@ -1,4 +1,3 @@
-// tailwind.config.js
 const defaultTheme = require("tailwindcss/defaultTheme");
 const colors = require("tailwindcss/colors");
 
@@ -67,6 +66,19 @@ module.exports = {
         800: "hsl(356, 75%, 16%)",
         900: "hsl(356, 70%, 14%)",
         950: "hsl(356, 60%, 8%)",
+      },
+      yellow: {
+        50: "hsl(43, 100%, 95%)",
+        100: "hsl(44, 90%, 86%)",
+        200: "hsl(43, 90%, 78%)",
+        300: "hsl(43, 80%, 64%)",
+        400: "hsl(43, 74%, 49%)",
+        500: "hsl(43, 74%, 37%)",  // goldenrod
+        600: "hsl(43, 72%, 30%)",
+        700: "hsl(43, 70%, 26%)",
+        800: "hsl(43, 60%, 22%)",
+        900: "hsl(43, 55%, 19%)",
+        950: "hsl(43, 50%, 10%)",
       },
     },
     extend: {

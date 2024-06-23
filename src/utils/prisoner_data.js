@@ -53,7 +53,7 @@ export async function getCombinedPrisonerData() {
 
   // Append child prisoner data if available
   if (childPrisonerData && childPrisonerData.length > 0) {
-    const count = childPrisonerData[0]?.summary[0]?.Summary_title_data ?? 0;
+    const count = parseInt(childPrisonerData[0]?.summary[0]?.Summary_title_data || "0", 10);
     data.push({
       label: "Child Political Prisoners",
       count: count,

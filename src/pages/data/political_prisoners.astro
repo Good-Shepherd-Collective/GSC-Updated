@@ -1,0 +1,106 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCombinedPrisonerData } from "@/utils/prisoner_data.js";
+
+// Fetch the combined prisoner data
+const combinedData = await getCombinedPrisonerData();
+
+// Prepare the formatted date
+const formattedMostRecentDate = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Extract data for each category
+const politicalPrisoners = combinedData.find(item => item.label === 'Political Prisoners') || { count: 0 };
+const femalePrisoners = combinedData.find(item => item.label === 'Female Political Prisoner') || { count: 0 };
+const administrativeDetention = combinedData.find(item => item.label === 'Administrative Detention') || { count: 0 };
+const lifeImprisonment = combinedData.find(item => item.label === 'Life imprisonment') || { count: 0 };
+const minors = combinedData.find(item => item.label === 'Minors') || { count: 0 };
+const sickPrisoners = combinedData.find(item => item.label === 'Sick Prisoners') || { count: 'N/A' };
+const killedInPrisons = combinedData.find(item => item.label.includes('killed in Israeli political prisons')) || { count: 0 };
+const childPoliticalPrisoners = combinedData.find(item => item.label === 'Child Political Prisoners') || { count: 0 };
+
+const serializedReports = JSON.stringify(combinedData);
+---
+
+<BaseLayout
+  isBlogPost={true}
+  title="Daily Report"
+  description="Daily report of settler-colonial violence in the West Bank and East Jerusalem."
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h2
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          Political Prisoners
+        </h2>
+        <p>
+          This data set represents the political prisoners.
+        </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+
+        <table class="data-table">
+          <thead>
+            <tr class="header border-y border-zinc-800">
+              <th>Category</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-cell="Category">Political Prisoners</td>
+              <td data-cell="Total" class="value">{politicalPrisoners.count}</td>
+            </tr>
+            <tr>
+              <td data-cell="Category">Female Political Prisoners</td>
+              <td data-cell="Total" class="value">{femalePrisoners.count}</td>
+            </tr>
+            <tr>
+              <td data-cell="Category">Administrative Detention</td>
+              <td data-cell="Total" class="value">{administrativeDetention.count}</td>
+            </tr>
+            <tr>
+              <td data-cell="Category">Life Imprisonment</td>
+              <td data-cell="Total" class="value">{lifeImprisonment.count}</td>
+            </tr>
+            <tr>
+              <td data-cell="Category">Minors</td>
+              <td data-cell="Total" class="value">{minors.count}</td>
+            </tr>
+            <tr>
+              <td data-cell="Category">Killed in Israeli Prisons</td>
+              <td data-cell="Total" class="value">{killedInPrisons.count}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="pt-8">
+          <a
+            href="/data_sheets/wb_daily_report.csv"
+            download="wb_daily_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/wb_daily_report.xlsx"
+            download="wb_daily_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="/api/wb_data.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={serializedReports}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

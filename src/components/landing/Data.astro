@@ -1,3 +1,18 @@
+---
+import { getCombinedPrisonerData } from '../../utils/prisoner_data.js';
+
+// Fetch the combined data
+const combinedData = await getCombinedPrisonerData();
+
+// Extract relevant data
+const politicalPrisoners = combinedData.find(item => item.label === 'Political Prisoners') || { count: 0 };
+const femalePrisoners = combinedData.find(item => item.label === 'Female Political Prisoner') || { count: 0 };
+const minors = combinedData.find(item => item.label === 'Minors') || { count: 0 };
+const lifeImprisonment = combinedData.find(item => item.label === 'Life imprisonment') || { count: 0 };
+const killedInPrisons = combinedData.find(item => item.label.includes('killed in Israeli political prisons')) || { count: 0 };
+const sickPrisoners = combinedData.find(item => item.label === 'Sick Prisoners') || { count: 'N/A' };
+const childPoliticalPrisoners = combinedData.find(item => item.label === 'Child Political Prisoners') || { count: 0 };
+---
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
     <div class="grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-zinc-800 overflow-hidden">
@@ -26,37 +41,37 @@
         </div>
       </section>
 
-      <!-- Political Prisoners + Nonprofits + Gaza Infrastructure -->
-      <section class="flex flex-col h-full justify-between bg-black">
-        <div class="p-8 lg:p-10">
-          <div class="flex flex-col gap-2">
-            <div class="flex flex-col gap-2">
-              <p class="text-lg text-white mt-4 tracking-wide uppercase">Political Prisoners</p>
-              <div class="order-first flex gap-3">
-                <img class="size-5" style="filter: invert(1);" src="/images/Imprisoned.svg" width="40" height="40" alt="Political Prisoners" />
-              </div>
-              <p class="text-3xl text-white mt-2">9,500<span class="text-sm text-zinc-400">/total</span></p>
-              <p class="text-xs text-zinc-400 mt-1">Languishing in colonial prisons</p>
-            </div>
-            <p class="text-sm text-white tracking-wide mt-8">It's critical to remember, that within a system of settler-colonialism, every Palestinian in Israeli jails are by definition political prisoners.</p>
-          </div>
-          <div class="mt-6">
-            <p class="text-sm uppercase text-white font-medium">Behind the numbers</p>
-            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
-              <li class="flex flex-row items-start gap-2">⏤<span>7,500 men</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>1,000 women</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>800 children</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>470 life imprisonment</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>800 killed in Israeli prisons</span></li>
-            </ul>
-          </div>
+      <!-- Political Prisoners  -->
+<section class="flex flex-col h-full justify-between bg-black">
+  <div class="p-8 lg:p-10">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2">
+        <p class="text-lg text-white mt-4 tracking-wide uppercase">Political Prisoners</p>
+        <div class="order-first flex gap-3">
+          <img class="size-5" style="filter: invert(1);" src="/images/Imprisoned.svg" width="40" height="40" alt="Political Prisoners" />
         </div>
-        <div class="w-full mt-8 border-t border-zinc-800">
-          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-700 hover:bg-red-700 hover:text-white" href="#">More info <span>➜</span></a>
-        </div>
-      </section>
+        <p class="text-3xl text-yellow-300 mt-2">{politicalPrisoners.count}<span class="text-sm text-yellow-200">/total</span></p>
+        <p class="text-xs text-zinc-400 mt-1">Languishing in colonial prisons</p>
+      </div>
+      <p class="text-sm text-white tracking-wide mt-8">It's critical to remember, that within a system of settler-colonialism, every Palestinian in Israeli jails are by definition political prisoners.</p>
+    </div>
+    <div class="mt-6">
+      <p class="text-sm uppercase text-white font-medium">Behind the numbers</p>
+      <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+        <li class="flex flex-row items-start gap-2">⏤<span>{politicalPrisoners.count - femalePrisoners.count - minors.count} men</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{femalePrisoners.count} women</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{minors.count} children</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{lifeImprisonment.count} life imprisonment</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{killedInPrisons.count} killed in Israeli prisons</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="w-full mt-8 border-t border-zinc-800">
+    <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-700 hover:bg-red-700 hover:text-white" href="data/political_prisoners">More info <span>➜</span></a>
+  </div>
+</section>
 
-      <!-- Design Plan -->
+      <!-- Nonprofits -->
       <section class="flex flex-col h-full justify-between bg-black">
         <div class="p-8 lg:p-10">
           <div class="flex flex-col gap-2">
@@ -86,7 +101,7 @@
         </div>
       </section>
 
-      <!-- One off Plan -->
+      <!-- Gaza Destruction -->
       <section class="flex flex-col h-full justify-between bg-black">
         <div class="p-8 lg:p-10">
           <div class="flex flex-col gap-2">
