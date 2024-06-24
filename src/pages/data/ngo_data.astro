@@ -24,7 +24,7 @@ const chartData = filteredData.map(ngo => {
   const { name, state, filings } = ngo;
 
   // Log each filing to ensure correct extraction
-  console.log(`Filings for NGO ${name}:`, filings);
+  // console.log(`Filings for NGO ${name}:`, filings);
 
   // Reverse years and revenues to show the most recent year on the far right
   const years = filings.map(filing => filing.year || 'N/A').reverse();
@@ -33,7 +33,7 @@ const chartData = filteredData.map(ngo => {
   return { name, state: state || 'N/A', years, revenues };
 });
 
-console.log("Filtered Chart Data:", chartData);
+// console.log("Filtered Chart Data:", chartData);
 ---
 <BaseLayout
   isBlogPost={true}
@@ -118,21 +118,21 @@ console.log("Filtered Chart Data:", chartData);
 
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", async () => {
-    console.log("DOM fully loaded and script executed.");
+    // console.log("DOM fully loaded and script executed.");
 
     async function loadChartJsAndInitializeCharts() {
-      console.log("Loading Chart.js...");
+     // console.log("Loading Chart.js...");
       const chartJsScript = document.createElement("script");
       chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
       document.body.appendChild(chartJsScript);
 
       await new Promise((resolve, reject) => {
         chartJsScript.onload = () => {
-          console.log("Chart.js loaded successfully.");
+         // console.log("Chart.js loaded successfully.");
           resolve();
         };
         chartJsScript.onerror = (error) => {
-          console.error("Error loading Chart.js:", error);
+         // console.error("Error loading Chart.js:", error);
           reject();
         };
       });
@@ -145,13 +145,13 @@ console.log("Filtered Chart Data:", chartData);
       const chartDataDiv = document.getElementById("chartData");
 
       if (!chartDataDiv) {
-        console.error("chartDataDiv not found!");
+       // console.error("chartDataDiv not found!");
         return;
       }
 
       const chartData = chartDataDiv.getAttribute("data-reports");
       if (!chartData) {
-        console.error("No data-reports attribute found on chartDataDiv!");
+      //  console.error("No data-reports attribute found on chartDataDiv!");
         return;
       }
 
@@ -159,24 +159,24 @@ console.log("Filtered Chart Data:", chartData);
       try {
         parsedChartData = JSON.parse(chartData);
       } catch (error) {
-        console.error("Error parsing chart data:", error);
+      //  console.error("Error parsing chart data:", error);
         return;
       }
       console.log("Parsed chart data:", parsedChartData);
 
       parsedChartData.forEach((ngo, index) => {
-        console.log(`Setting up chart for NGO ${ngo.name} at index ${index}...`);
-        console.log(`Years: ${ngo.years}`);
-        console.log(`Revenues: ${ngo.revenues}`);
+       // console.log(`Setting up chart for NGO ${ngo.name} at index ${index}...`);
+       // console.log(`Years: ${ngo.years}`);
+       // console.log(`Revenues: ${ngo.revenues}`);
 
         const canvasElement = document.querySelector(`canvas[data-ngo-index='${index}']`);
         if (!canvasElement) {
-          console.warn(`Canvas element not found for index ${index}`);
+         // console.warn(`Canvas element not found for index ${index}`);
           return;
         }
 
         const ctx = canvasElement.getContext("2d");
-        console.log(`Canvas context for index ${index}:`, ctx);
+       // console.log(`Canvas context for index ${index}:`, ctx);
 
         // Create the gradient for the chart background
         const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
@@ -237,7 +237,7 @@ console.log("Filtered Chart Data:", chartData);
             },
           },
         });
-        console.log(`Chart created for NGO ${ngo.name}`);
+       // console.log(`Chart created for NGO ${ngo.name}`);
       });
     }
 

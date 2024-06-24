@@ -1,0 +1,284 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getGazaDestructionData } from "src/utils/gaza-destruction.js";
+
+// Fetch and process Gaza destruction data
+const { latestReport, fullData } = await getGazaDestructionData();
+
+// Category data extraction from latest report
+const categoryData = [
+  { category: "Civic Buildings Destroyed", value: latestReport.civic_buildings.ext_destroyed, average: latestReport.civic_buildings['daily_average_ext_destroyed'], estimatedCost: latestReport.civic_buildings['estimated_cost_ext_destroyed'] },
+  { category: "Educational Buildings Destroyed", value: latestReport.educational_buildings.ext_destroyed, average: latestReport.educational_buildings['daily_average_ext_destroyed'], estimatedCost: latestReport.educational_buildings['estimated_cost_ext_destroyed'] },
+  { category: "Educational Buildings Damaged", value: latestReport.educational_buildings.ext_damaged, average: latestReport.educational_buildings['daily_average_ext_damaged'], estimatedCost: latestReport.educational_buildings['estimated_cost_ext_damaged'] },
+  { category: "Mosques Destroyed", value: latestReport.places_of_worship.ext_mosques_destroyed, average: latestReport.places_of_worship['daily_average_ext_mosques_destroyed'], estimatedCost: latestReport.places_of_worship['estimated_cost_ext_mosques_destroyed'] },
+  { category: "Mosques Damaged", value: latestReport.places_of_worship.ext_mosques_damaged, average: latestReport.places_of_worship['daily_average_ext_mosques_damaged'], estimatedCost: latestReport.places_of_worship['estimated_cost_ext_mosques_damaged'] },
+  { category: "Churches Destroyed", value: latestReport.places_of_worship.ext_churches_destroyed, average: latestReport.places_of_worship['daily_average_ext_churches_destroyed'], estimatedCost: latestReport.places_of_worship['estimated_cost_ext_churches_destroyed'] },
+  { category: "Residential Destroyed", value: latestReport.residential.ext_destroyed, average: latestReport.residential['daily_average_ext_destroyed'], estimatedCost: latestReport.residential['estimated_cost_ext_destroyed'] }
+];
+
+// Format date
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
+const formattedMostRecentDate = latestReport ? formatDateMMDDYYYY(latestReport.report_date) : "N/A";
+const serializedReports = JSON.stringify(fullData);
+---
+
+<BaseLayout
+  isBlogPost={true}
+  title="Daily Report"
+  description="Damage as the result of the Israeli genocide of Gaza"
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h2
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          Gaza damage report
+        </h2>
+        <p>
+          This data set represents a small subsection of Israeli
+          settler-colonial violence. These figures represent reporting from only
+          Gaza.
+        </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+        
+        {latestReport ? (
+          <table class="data-table">
+            <thead>
+              <tr class="header border-y border-zinc-800">
+                <th>Category</th>
+                <th>Total</th>
+                <th class="average">5-day avg</th>
+                <th class="average">Estimated Cost</th>
+                <th style="width: 300px;">Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categoryData.map(({ category, value, average, estimatedCost }) => (
+                <tr key={`report-category-${category}`}>
+                  <td data-cell="Category">{category}</td>
+                  <td data-cell="Total" class="value">{value}</td>
+                  <td data-cell="5 day avg" class="average">{average?.toFixed(2) || 'N/A'}</td>
+                  <td data-cell="Estimated Cost" class="average">${estimatedCost?.toLocaleString() || 'N/A'}</td>
+                  <td class="trend">
+                    <div class="canvas-wrapper">
+                      <canvas
+                        class="line-chart-style"
+                        data-cell="Trend"
+                        id={`chart-latest-${category.replace(/\bext\b/g, '').replace(/\s/g, '-').toLowerCase()}`}
+                        height="60"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No reports available.</p>
+        )}
+        <p class="pt-8">
+          <a
+            href="/data_sheets/wb_daily_report.csv"
+            download="wb_daily_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/wb_daily_report.xlsx"
+            download="wb_daily_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="https://data.techforpalestine.org/api/v3/infrastructure-damaged.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={serializedReports}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+
+<script type="text/javascript">
+
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("DOM fully loaded and parsed.");
+
+  async function loadChartJsAndInitializeCharts() {
+    console.log("Loading Chart.js...");
+
+    const chartJsScript = document.createElement("script");
+    chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+    document.body.appendChild(chartJsScript);
+
+    await new Promise((resolve, reject) => {
+      chartJsScript.onload = () => {
+        console.log("Chart.js loaded successfully.");
+        resolve();
+      };
+      chartJsScript.onerror = (error) => {
+        console.error("Error loading Chart.js:", error);
+        reject(error);
+      };
+    });
+
+    initializeCharts();
+  }
+
+  function prepareChartDataForCategory(reports, field) {
+    const chartData = [];
+
+    reports.forEach((report) => {
+      const value = field.split('.').reduce((obj, part) => obj?.[part], report) || 0;
+      chartData.push(value);
+    });
+
+    console.log(`Prepared chart data for ${field}:`, chartData);
+    return { chartData };
+  }
+
+  function generateCanvasId(category) {
+    // Normalize and remove 'ext' prefix
+    return `chart-latest-${category.replace(/\bext\b/g, '').replace(/\s+/g, '-').replace(/^-|-$/g, '').toLowerCase()}`;
+  }
+
+  function initializeCharts() {
+    console.log("Initializing charts...");
+
+    const chartDataDiv = document.getElementById("chartData");
+    if (!chartDataDiv) {
+      console.error("chartDataDiv not found!");
+      return;
+    }
+
+    const serializedReports = chartDataDiv.getAttribute("data-reports");
+    if (!serializedReports) {
+      console.error("No data-reports attribute found on chartDataDiv!");
+      return;
+    }
+
+    let reports;
+    try {
+      reports = JSON.parse(serializedReports);
+      console.log("Parsed reports data:", reports);
+    } catch (error) {
+      console.error("Error parsing reports data:", error);
+      return;
+    }
+
+    const categories = [
+      "civic_buildings.ext_destroyed",
+      "educational_buildings.ext_destroyed",
+      "educational_buildings.ext_damaged",
+      "places_of_worship.ext_mosques_destroyed",
+      "places_of_worship.ext_mosques_damaged",
+      "places_of_worship.ext_churches_destroyed",
+      "residential.ext_destroyed"
+    ];
+
+    categories.forEach((field) => {
+      // Process category to match how it's used in the HTML
+      let category = field.replace(/\bext\b/g, '').replace(/_/g, ' ').replace(/\./g, ' ').toLowerCase();
+      category = category.replace('places of worship ', '');
+
+      console.log(`Processing category: ${category}`);
+
+      const { chartData } = prepareChartDataForCategory(reports, field);
+      const labels = reports.map((report) => report.report_date);
+
+      const canvasId = generateCanvasId(category);
+      const canvasElement = document.getElementById(canvasId);
+      if (!canvasElement) {
+        console.warn(`Canvas element not found for ID: ${canvasId}`);
+        return;
+      }
+      console.log(`Found canvas for ${category}:`, canvasElement);
+
+      const ctx = canvasElement.getContext("2d");
+      console.log(`Canvas context for ${category}:`, ctx);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+      gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
+      gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)");
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: category,
+              data: chartData,
+              borderColor: "#7f0d15",
+              tension: 0.1,
+              borderJoinStyle: "round",
+              borderWidth: 1,
+              pointRadius: 0.5,
+              backgroundColor: gradient,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+            y: {
+              ticks: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
+    });
+  }
+
+  function handleIntersection(entries, observer) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        console.log("Chart container is in view. Loading Chart.js...");
+        loadChartJsAndInitializeCharts();
+        observer.unobserve(entry.target);
+      }
+    });
+  }
+
+  const observer = new IntersectionObserver(handleIntersection, {
+    root: null,
+    threshold: 0.1,
+  });
+
+  const chartContainers = document.querySelectorAll(".data-table");
+  chartContainers.forEach((container) => observer.observe(container));
+  console.log("Intersection observers initialized.");
+});
+
+</script>

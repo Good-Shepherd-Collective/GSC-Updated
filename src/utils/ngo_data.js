@@ -202,7 +202,7 @@ async function fetchNonprofitData(ein) {
           type: "json", // Specify that we expect JSON data
         }
       );
-      console.log(`Data fetched for EIN ${ein}:`, jsonResponse);
+      // console.log(`Data fetched for EIN ${ein}:`, jsonResponse);
       return jsonResponse;
     } catch (error) {
       console.error(`Error fetching data for EIN ${ein}:`, error);
@@ -218,7 +218,7 @@ async function fetchNonprofitData(ein) {
     const rawData = await fetchDataForEINs(eins);
   
     // Log the raw data
-    console.log("Raw data fetched for all EINs:", rawData);
+    // console.log("Raw data fetched for all EINs:", rawData);
   
     // Sum revenue over the last 10 years
     const totalCombinedRevenue = rawData.reduce((sum, org) => {
@@ -245,7 +245,7 @@ async function fetchNonprofitData(ein) {
     }));
   
     // Log processed data
-    console.log("Processed NGO data:", processedData);
+    // console.log("Processed NGO data:", processedData);
   
     return {
       value: totalCombinedRevenue,
