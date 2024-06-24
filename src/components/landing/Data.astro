@@ -1,14 +1,13 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCombinedPrisonerData } from '../../utils/prisoner_data.js';
 import { getNGOTreemapData } from "../../utils/ngo_data.js";
 
 // Fetch and process the data
-const { value: totalCombinedRevenue, children: rawData } = await getNGOTreemapData();
+const { value: totalCombinedRevenue, data: rawData } = await getNGOTreemapData();
 
 // Sort the data to get the top 7 highest totals
 const top7Nonprofits = rawData
-  .sort((a, b) => b.value - a.value) // Sort by value in descending order
+  .sort((a, b) => b.totalRevenue - a.totalRevenue) // Sort by totalRevenue in descending order
   .slice(0, 3); // Take the top 7
 
 // Format total combined revenue to billions
@@ -25,118 +24,119 @@ const lifeImprisonment = combinedData.find(item => item.label === 'Life imprison
 const killedInPrisons = combinedData.find(item => item.label.includes('killed in Israeli political prisons')) || { count: 0 };
 ---
 
-  <section class="md:px-12 sm:px-8">
-    <div class="border-x border-b border-zinc-800">
-      <div class="grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-zinc-800 overflow-hidden">
-        <section class="h-full col-span-full lg:col-span-1 ">
-          <div class="bg-zinc-800 flex flex-col justify-between h-full backdrop-blur-2xl bg-red-700 polka">
+<section class="md:px-12 sm:px-8">
+  <div class="border-x border-b border-zinc-800">
+    <div class="grid grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-zinc-800 overflow-hidden">
+      <section class="h-full col-span-full lg:col-span-1 ">
+        <div class="bg-zinc-800 flex flex-col justify-between h-full backdrop-blur-2xl bg-red-700 polka">
+          <div class="lg:p-10 p-8">
+            <div>
+              <p class="text-2xl tracking-wide text-white">
+                This data is critical for developing advocacy programs that demonstrate how zionism, as a settler-colonial ideology, is enacted through the destruction of Palestinian lives and land.
+              </p>
+            </div>
+          </div>
+          <div class="w-full border-t bg-black border-zinc-800">
             <div class="lg:p-10 p-8">
-              <div>
-                <p class="text-2xl tracking-wide text-white">
-                  This data is critical for developing advocacy programs that demonstrate how zionism, as a settler-colonial ideology, is enacted through the destruction of Palestinian lives and land.
-                </p>
+              <p class="text-xl text-white">⏤ Advocacate</p>
+              <div class="mt-4 flex flex-col">
+                <span class="text-xs text-zinc-400 tracking-wide font-normal">
+                  If your advocacy program needs additional data sets, <span class="italic text-white font-medium">please</span> reach out to us to see if we can be helpful.</span>
               </div>
             </div>
-            <div class="w-full border-t bg-black border-zinc-800">
-              <div class="lg:p-10 p-8">
-                <p class="text-xl text-white">⏤ Advocacate</p>
-                <div class="mt-4 flex flex-col">
-                  <span class="text-xs text-zinc-400 tracking-wide font-normal">
-                    If your advocacy program needs additional data sets, <span class="italic text-white font-medium">please</span> reach out to us to see if we can be helpful.</span>
-                </div>
-              </div>
-              <div class="border-t border-zinc-800">
-                <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-zinc-800 hover:bg-transparent text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-1 ring-zinc-800 w-full" href="#">Contact <span>➜</span></a>
-              </div>
+            <div class="border-t border-zinc-800">
+              <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-zinc-800 hover:bg-transparent text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-1 ring-zinc-800 w-full" href="#">Contact <span>➜</span></a>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <!-- Political Prisoners  -->
-        <section class="flex flex-col h-full justify-between bg-black">
-          <div class="p-8 lg:p-10">
+      <!-- Political Prisoners  -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
             <div class="flex flex-col gap-2">
-              <div class="flex flex-col gap-2">
-                <p class="text-lg text-white mt-4 tracking-wide uppercase">Political Prisoners</p>
-                <div class="order-first flex gap-3">
-                  <img class="size-5" style="filter: invert(1);" src="/images/Imprisoned.svg" width="40" height="40" alt="Political Prisoners" />
-                </div>
-                <p class="text-3xl text-yellow-300 mt-2">{politicalPrisoners.count}<span class="text-sm text-yellow-200">/total</span></p>
-                <p class="text-xs text-zinc-400 mt-1">Languishing in colonial prisons</p>
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Political Prisoners</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5" style="filter: invert(1);" src="/images/Imprisoned.svg" width="40" height="40" alt="Political Prisoners" />
               </div>
-              <p class="text-sm text-white tracking-wide mt-8">It's critical to remember, that within a system of settler-colonialism, every Palestinian in Israeli jails are by definition political prisoners.</p>
+              <p class="text-3xl text-yellow-300 mt-2">{politicalPrisoners.count}<span class="text-sm text-yellow-200">/total</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Languishing in colonial prisons</p>
             </div>
-            <div class="mt-6">
-              <p class="text-sm uppercase text-white font-medium">Behind the numbers</p>
-              <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
-                <li class="flex flex-row items-start gap-2">⏤<span>{politicalPrisoners.count - femalePrisoners.count - minors.count} men</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>{femalePrisoners.count} women</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>{minors.count} children</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>{lifeImprisonment.count} life imprisonment</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>{killedInPrisons.count} killed in Israeli prisons</span></li>
-              </ul>
-            </div>
+            <p class="text-sm text-white tracking-wide mt-8">It's critical to remember, that within a system of settler-colonialism, every Palestinian in Israeli jails are by definition political prisoners.</p>
           </div>
-          <div class="w-full mt-8 border-t border-zinc-800">
-            <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-700 hover:bg-red-700 hover:text-white" href="data/political_prisoners">More info <span>➜</span></a>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Behind the numbers</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              <li class="flex flex-row items-start gap-2">⏤<span>{politicalPrisoners.count - femalePrisoners.count - minors.count} men</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>{femalePrisoners.count} women</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>{minors.count} children</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>{lifeImprisonment.count} life imprisonment</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>{killedInPrisons.count} killed in Israeli prisons</span></li>
+            </ul>
           </div>
-        </section>
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-700 hover:bg-red-700 hover:text-white" href="data/political_prisoners">More info <span>➜</span></a>
+        </div>
+      </section>
 
-        <!-- Nonprofits -->
-        <section class="flex flex-col h-full justify-between bg-black">
-          <div class="p-8 lg:p-10">
+      <!-- Nonprofits -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
             <div class="flex flex-col gap-2">
-              <div class="flex flex-col gap-2">
-                <p class="text-lg text-white mt-4 tracking-wide uppercase">Nonprofit industry</p>
-                <div class="order-first flex gap-3">
-                  <img class="size-5" src="/images/money.svg" width="40" height="40" alt="money" />
-                </div>
-                <p class="text-3xl text-yellow-300 mt-2">{formattedTotalCombinedRevenue}<span class="text-sm text-yellow-300">/last 10 years</span></p>
-                <p class="text-xs text-zinc-400 mt-1">Federal + Local taxes diverted to colonialism</p>
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Nonprofit industry</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5" src="/images/money.svg" width="40" height="40" alt="money" />
               </div>
-              <p class="text-sm text-white tracking-wide mt-8">Historically, international charitable structures have been utilized to finance imperialism and colonalism. </p>
+              <p class="text-3xl text-yellow-300 mt-2">{formattedTotalCombinedRevenue}<span class="text-sm text-yellow-300">/last 10 years</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Federal + Local taxes diverted to colonialism</p>
             </div>
-            <div class="mt-6">
-              <p class="text-sm uppercase text-white font-medium">Top institutions</p>
-              <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
-                {top7Nonprofits.map(nonprofit => (
-                  <li class="flex flex-row items-start gap-2" key={nonprofit.name}>⏤<span>${nonprofit.value.toLocaleString()}<br>{nonprofit.name}</span></li>
-                ))}
-              </ul>
-            </div>
+            <p class="text-sm text-white tracking-wide mt-8">Historically, international charitable structures have been utilized to finance imperialism and colonialism.</p>
           </div>
-          <div class="w-full mt-8 border-t border-zinc-800">
-            <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-blue-400 hover:bg-blue-400 hover:text-white" href="#">More info <span>➜</span></a>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Top institutions</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              {top7Nonprofits.map(nonprofit => (
+                <li class="flex flex-row items-start gap-2" key={nonprofit.name}>⏤<span>${nonprofit.totalRevenue.toLocaleString()}<br>{nonprofit.name}</span></li>
+              ))}
+            </ul>
           </div>
-        </section>
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-blue-400 hover:bg-blue-400 hover:text-white" href="#">More info <span>➜</span></a>
+        </div>
+      </section>
 
-        <!-- Gaza Destruction -->
-        <section class="flex flex-col h-full justify-between bg-black">
-          <div class="p-8 lg:p-10">
+      <!-- Gaza Destruction -->
+      <section class="flex flex-col h-full justify-between bg-black">
+        <div class="p-8 lg:p-10">
+          <div class="flex flex-col gap-2">
             <div class="flex flex-col gap-2">
-              <div class="flex flex-col gap-2">
-                <p class="text-lg text-white mt-4 tracking-wide uppercase">Destruction of Gaza</p>
-                <div class="order-first flex gap-3">
-                  <img class="size-5" src="/images/bomb.svg" width="40" height="40" alt="Figma" />
-                </div>
-                <p class="text-3xl text-white mt-2">300,000<span class="text-sm text-zinc-400">/structures</span></p>
-                <p class="text-xs text-zinc-400 mt-1">Destruction during the genocide</p>
+              <p class="text-lg text-white mt-4 tracking-wide uppercase">Destruction of Gaza</p>
+              <div class="order-first flex gap-3">
+                <img class="size-5" src="/images/bomb.svg" width="40" height="40" alt="Figma" />
               </div>
-              <p class="text-sm text-white tracking-wide mt-8">The dismantling of live-giving infrastructure, such as homes, hospitals, and schools is crucial in enacting genocide across a wide geographic area.</p>
+              <p class="text-3xl text-white mt-2">300,000<span class="text-sm text-zinc-400">/structures</span></p>
+              <p class="text-xs text-zinc-400 mt-1">Destruction during the genocide</p>
             </div>
-            <div class="mt-6">
-              <p class="text-sm uppercase text-white font-medium">Structures destroyed:</p>
-              <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
-                <li class="flex flex-row items-start gap-2">⏤<span>138,300 residential buildings</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>1,500 civic buildings</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>450 educational buildings</span></li>
-                <li class="flex flex-row items-start gap-2">⏤<span>600 mosques destroyed</span></li>
-              </ul>
-            </div>
+            <p class="text-sm text-white tracking-wide mt-8">The dismantling of life-giving infrastructure, such as homes, hospitals, and schools is crucial in enacting genocide across a wide geographic area.</p>
           </div>
-          <div class="w-full mt-8 border-t border-zinc-800">
-            <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-800 hover:bg-red-700 hover:text-white" href="#">More info <span>➜</span></a>
+          <div class="mt-6">
+            <p class="text-sm uppercase text-white font-medium">Structures destroyed:</p>
+            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+              <li class="flex flex-row items-start gap-2">⏤<span>138,300 residential buildings</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>1,500 civic buildings</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>450 educational buildings</span></li>
+              <li class="flex flex-row items-start gap-2">⏤<span>600 mosques destroyed</span></li>
+            </ul>
           </div>
-        </section>
-
-      
+        </div>
+        <div class="w-full mt-8 border-t border-zinc-800">
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-red-800 hover:bg-red-700 hover:text-white" href="#">More info <span>➜</span></a>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

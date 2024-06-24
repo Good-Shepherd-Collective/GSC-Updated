@@ -1,0 +1,309 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getNGOTreemapData } from "src/utils/ngo_data.js";
+
+// Fetch and process NGO data
+const { value: totalCombinedRevenue, data: rawData } = await getNGOTreemapData();
+
+console.log("Total Combined Revenue:", totalCombinedRevenue);
+console.log("Raw Data:", rawData.map(ngo => ({
+  name: ngo.name,
+  ein: ngo.ein,
+  state: ngo.state,
+  filings: ngo.filings // Log full filings
+})));
+
+// Filter NGOs with total revenue less than $1,000
+const filteredData = rawData.filter(ngo => {
+  const totalRevenue = ngo.filings.reduce((sum, filing) => sum + (filing.revenue || 0), 0);
+  return totalRevenue >= 1000;
+});
+
+// Prepare chart data for each NGO
+const chartData = filteredData.map(ngo => {
+  const { name, state, filings } = ngo;
+
+  // Log each filing to ensure correct extraction
+  console.log(`Filings for NGO ${name}:`, filings);
+
+  // Reverse years and revenues to show the most recent year on the far right
+  const years = filings.map(filing => filing.year || 'N/A').reverse();
+  const revenues = filings.map(filing => filing.revenue || 0).reverse();
+
+  return { name, state: state || 'N/A', years, revenues };
+});
+
+console.log("Filtered Chart Data:", chartData);
+---
+<BaseLayout
+  isBlogPost={true}
+  title="NGO Data"
+  description="How charities finance colonialism"
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h2
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          NGO Data Report
+        </h2>
+        <p>
+          This dataset represents the financial data of NGOs. 
+          The total combined revenue over the last 10 years is <span class="highlight-red">${totalCombinedRevenue.toLocaleString()}</span>.
+        </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for All NGOs</h3>
+        
+        <table class="data-table" id="ngo-table">
+          <thead>
+            <tr class="header border-y border-zinc-800">
+              <th data-sort="name" data-order="asc">Name 
+                <span class="sort-indicator text-blue-600 active" data-order="asc" data-column="name">&uarr;</span>
+                <span class="sort-indicator text-zinc-600" data-order="desc" data-column="name">&darr;</span>
+              </th>
+              <th data-sort="state" data-order="asc">State 
+                <span class="sort-indicator text-zinc-600" data-order="asc" data-column="state">&uarr;</span>
+                <span class="sort-indicator text-zinc-600" data-order="desc" data-column="state">&darr;</span>
+              </th>
+              <th data-sort="totalRevenue" data-order="asc">Total 
+                <span class="sort-indicator text-zinc-600" data-order="asc" data-column="totalRevenue">&uarr;</span>
+                <span class="sort-indicator text-zinc-600" data-order="desc" data-column="totalRevenue">&darr;</span>
+              </th>
+              <th style="width: 300px;">Trend</th>
+            </tr>
+          </thead>
+          <tbody id="ngo-table-body">
+            {filteredData.map(({ name, state, totalRevenue }, index) => (
+              <tr key={`ngo-${name}`}>
+                <td class="pr-4" data-cell="Name">{name}</td>
+                <td class={`${state === 'N/A' ? 'text-red' : ''}`} style="min-width: 100px;" data-cell="State">{state || 'N/A'}</td>
+                <td data-cell="Total" class="value">${totalRevenue.toLocaleString()}</td>
+                <td class="chart" data-cell="Trend">
+                  <canvas
+                    class="line-chart-style"
+                    data-ngo-index={index}
+                    height="60"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="pt-8">
+          <a
+            href="/data_sheets/ngo_data_report.csv"
+            download="ngo_data_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/ngo_data_report.xlsx"
+            download="ngo_data_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="/api/ngo_data.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={JSON.stringify(chartData)}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", async () => {
+    console.log("DOM fully loaded and script executed.");
+
+    async function loadChartJsAndInitializeCharts() {
+      console.log("Loading Chart.js...");
+      const chartJsScript = document.createElement("script");
+      chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      document.body.appendChild(chartJsScript);
+
+      await new Promise((resolve, reject) => {
+        chartJsScript.onload = () => {
+          console.log("Chart.js loaded successfully.");
+          resolve();
+        };
+        chartJsScript.onerror = (error) => {
+          console.error("Error loading Chart.js:", error);
+          reject();
+        };
+      });
+
+      initializeCharts();
+    }
+
+    function initializeCharts() {
+      console.log("Initializing charts...");
+      const chartDataDiv = document.getElementById("chartData");
+
+      if (!chartDataDiv) {
+        console.error("chartDataDiv not found!");
+        return;
+      }
+
+      const chartData = chartDataDiv.getAttribute("data-reports");
+      if (!chartData) {
+        console.error("No data-reports attribute found on chartDataDiv!");
+        return;
+      }
+
+      let parsedChartData;
+      try {
+        parsedChartData = JSON.parse(chartData);
+      } catch (error) {
+        console.error("Error parsing chart data:", error);
+        return;
+      }
+      console.log("Parsed chart data:", parsedChartData);
+
+      parsedChartData.forEach((ngo, index) => {
+        console.log(`Setting up chart for NGO ${ngo.name} at index ${index}...`);
+        console.log(`Years: ${ngo.years}`);
+        console.log(`Revenues: ${ngo.revenues}`);
+
+        const canvasElement = document.querySelector(`canvas[data-ngo-index='${index}']`);
+        if (!canvasElement) {
+          console.warn(`Canvas element not found for index ${index}`);
+          return;
+        }
+
+        const ctx = canvasElement.getContext("2d");
+        console.log(`Canvas context for index ${index}:`, ctx);
+
+        // Create the gradient for the chart background
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
+        gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ngo.years,
+            datasets: [
+              {
+                label: ngo.name,
+                data: ngo.revenues,
+                borderColor: "#7f0d15",
+                tension: 0.1,
+                borderJoinStyle: "round",
+                borderWidth: 1,
+                pointRadius: 0.5,
+                backgroundColor: gradient,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  title: function(context) {
+                    return `Year: ${context[0].label}`;
+                  },
+                  label: function(context) {
+                    return `Revenue: $${context.raw.toLocaleString()}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  display: false, // Hide x-axis labels
+                },
+                grid: {
+                  display: false, // Hide x-axis grid
+                },
+              },
+              y: {
+                ticks: {
+                  display: false, // Hide y-axis labels
+                },
+                grid: {
+                  display: false, // Hide y-axis grid
+                },
+              },
+            },
+          },
+        });
+        console.log(`Chart created for NGO ${ngo.name}`);
+      });
+    }
+
+    function sortTable(table, column, type, order) {
+      const rows = Array.from(table.querySelector('tbody').rows);
+      const compareFunction = (a, b) => {
+        const cellA = a.cells[column].textContent.trim();
+        const cellB = b.cells[column].textContent.trim();
+        
+        if (type === 'number') {
+          const numA = parseFloat(cellA.replace(/[$,]/g, ''));
+          const numB = parseFloat(cellB.replace(/[$,]/g, ''));
+          return order === 'asc' ? numA - numB : numB - numA;
+        } else {
+          return order === 'asc' ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        }
+      };
+      
+      const sortedRows = rows.sort(compareFunction);
+      table.querySelector('tbody').append(...sortedRows);
+    }
+
+    function initializeTableSorting() {
+      const table = document.getElementById('ngo-table');
+      const headers = table.querySelectorAll('th[data-sort]');
+      
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const column = Array.from(header.parentNode.children).indexOf(header);
+          const type = header.dataset.sort === 'totalRevenue' ? 'number' : 'text';
+          const currentOrder = header.dataset.order;
+          const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+          header.dataset.order = newOrder;
+
+          // Update sort indicators
+          headers.forEach(h => {
+            h.querySelectorAll('.sort-indicator').forEach(span => {
+              span.classList.remove('active');
+              if (span.dataset.order === newOrder && span.dataset.column === header.dataset.sort) {
+                span.classList.add('active');
+              }
+            });
+          });
+
+          sortTable(table, column, type, newOrder);
+        });
+      });
+    }
+
+    // Initialize table sorting
+    initializeTableSorting();
+    
+    // Directly load Chart.js and initialize charts
+    await loadChartJsAndInitializeCharts();
+  });
+</script>
+
+<style>
+  .sort-indicator {
+    color: var(--color-inactive);
+    margin-left: 5px;
+  }
+  .sort-indicator.active {
+    color: var(--color-active);
+  }
+  th[data-sort] {
+    cursor: pointer;
+  }
+</style>
