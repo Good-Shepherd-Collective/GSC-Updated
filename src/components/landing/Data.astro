@@ -2,6 +2,27 @@
 import { getCombinedPrisonerData } from '../../utils/prisoner_data.js';
 import { getNGOTreemapData } from "../../utils/ngo_data.js";
 
+import { getGazaDestructionData } from "src/utils/gaza-destruction.js";
+
+// Fetch and process Gaza destruction data
+const { latestReport } = await getGazaDestructionData();
+
+// Format date
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
+const formattedMostRecentDate = latestReport ? formatDateMMDDYYYY(latestReport.report_date) : "N/A";
+const totalResidentialDestroyed = latestReport?.residential?.ext_destroyed || 0;
+const totalCivicDestroyed = latestReport?.civic_buildings?.ext_destroyed || 0;
+const totalEducationalDestroyed = latestReport?.educational_buildings?.ext_destroyed || 0;
+const totalMosquesDestroyed = latestReport?.places_of_worship?.ext_mosques_destroyed || 0;
+const totalStructures = totalResidentialDestroyed + totalCivicDestroyed + totalEducationalDestroyed + totalMosquesDestroyed;
+
 // Fetch and process the data
 const { value: totalCombinedRevenue, data: rawData } = await getNGOTreemapData();
 
@@ -105,38 +126,36 @@ const killedInPrisons = combinedData.find(item => item.label.includes('killed in
           </div>
         </div>
         <div class="w-full mt-8 border-t border-zinc-800">
-          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-yellow-700 hover:bg-yellow-700 hover:text-white" href="#">More info <span>➜</span></a>
+          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-yellow-700 hover:bg-yellow-700 hover:text-white" href="/data/ngo_data.astro">More info <span>➜</span></a>
         </div>
       </section>
 
       <!-- Gaza Destruction -->
-      <section class="flex flex-col h-full justify-between bg-black">
-        <div class="p-8 lg:p-10">
-          <div class="flex flex-col gap-2">
-            <div class="flex flex-col gap-2">
-              <p class="text-lg text-white mt-4 tracking-wide uppercase">Destruction of Gaza</p>
-              <div class="order-first flex gap-3">
-                <img class="size-5" src="/images/bomb.svg" width="40" height="40" alt="Figma" />
-              </div>
-              <p class="text-3xl text-white mt-2">300,000<span class="text-sm text-zinc-400">/structures</span></p>
-              <p class="text-xs text-zinc-400 mt-1">Destruction during the genocide</p>
-            </div>
-            <p class="text-sm text-white tracking-wide mt-8">The dismantling of life-giving infrastructure, such as homes, hospitals, and schools is crucial in enacting genocide across a wide geographic area.</p>
-          </div>
-          <div class="mt-6">
-            <p class="text-sm uppercase text-white font-medium">Structures destroyed:</p>
-            <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
-              <li class="flex flex-row items-start gap-2">⏤<span>138,300 residential buildings</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>1,500 civic buildings</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>450 educational buildings</span></li>
-              <li class="flex flex-row items-start gap-2">⏤<span>600 mosques destroyed</span></li>
-            </ul>
-          </div>
+      
+<section class="flex flex-col h-full justify-between bg-black">
+  <div class="p-8 lg:p-10">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2">
+        <p class="text-lg text-white mt-4 tracking-wide uppercase">Destruction of Gaza</p>
+        <div class="order-first flex gap-3">
+          <img class="size-5" src="/images/bomb.svg" width="40" height="40" alt="Figma" />
         </div>
-        <div class="w-full mt-8 border-t border-zinc-800">
-          <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-yellow-700 hover:bg-yellow-700 hover:text-white" href="data/political_prisoners">More info <span>➜</span></a>
-        </div>
-      </section>
+        <p class="text-3xl text-yellow-300 mt-2">{totalStructures.toLocaleString()}<span class="text-sm text-yellow-300">/structures</span></p>
+        <p class="text-xs text-zinc-400 mt-1">Destruction during the genocide</p>
+      </div>
+      <p class="text-sm text-white tracking-wide mt-8">The dismantling of life-giving infrastructure, such as homes, hospitals, and schools is crucial in enacting genocide across a wide geographic area.</p>
     </div>
+    <div class="mt-6">
+      <p class="text-sm uppercase text-white font-medium">Structures destroyed as of {formattedMostRecentDate}:</p>
+      <ul class="flex flex-col mt-4 text-sm text-zinc-400 font-medium gap-y-3" role="list">
+        <li class="flex flex-row items-start gap-2">⏤<span>{totalResidentialDestroyed.toLocaleString()} residential buildings</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{totalCivicDestroyed.toLocaleString()} civic buildings</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{totalEducationalDestroyed.toLocaleString()} educational buildings</span></li>
+        <li class="flex flex-row items-start gap-2">⏤<span>{totalMosquesDestroyed.toLocaleString()} mosques destroyed</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="w-full mt-8 border-t border-zinc-800">
+    <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full ease-in-out transform duration-500 flex w-full items-center ring-inset font-medium justify-between ring-2 text-white ring-yellow-700 hover:bg-yellow-700 hover:text-white" href="data/gaza_destruction">More info <span>➜</span></a>
   </div>
 </section>
