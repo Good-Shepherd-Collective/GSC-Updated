@@ -5,12 +5,17 @@ import { getCombinedPrisonerData } from "@/utils/prisoner_data.js";
 // Fetch the combined prisoner data
 const combinedData = await getCombinedPrisonerData();
 
+// Function to format date as MM-DD-YYYY
+const formatDate = (date) => {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${month}-${day}-${year}`;
+};
+
 // Prepare the formatted date
-const formattedMostRecentDate = new Date().toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedMostRecentDate = formatDate(new Date());
 
 // Extract data for each category
 const politicalPrisoners = combinedData.find(item => item.label === 'Political Prisoners') || { count: 0 };
@@ -18,9 +23,7 @@ const femalePrisoners = combinedData.find(item => item.label === 'Female Politic
 const administrativeDetention = combinedData.find(item => item.label === 'Administrative Detention') || { count: 0 };
 const lifeImprisonment = combinedData.find(item => item.label === 'Life imprisonment') || { count: 0 };
 const minors = combinedData.find(item => item.label === 'Minors') || { count: 0 };
-const sickPrisoners = combinedData.find(item => item.label === 'Sick Prisoners') || { count: 'N/A' };
 const killedInPrisons = combinedData.find(item => item.label.includes('killed in Israeli political prisons')) || { count: 0 };
-const childPoliticalPrisoners = combinedData.find(item => item.label === 'Child Political Prisoners') || { count: 0 };
 
 const serializedReports = JSON.stringify(combinedData);
 ---
@@ -28,7 +31,7 @@ const serializedReports = JSON.stringify(combinedData);
 <BaseLayout
   isBlogPost={true}
   title="Daily Report"
-  description="Daily report of settler-colonial violence in the West Bank and East Jerusalem."
+  description="Daily report of settler-colonial violence of Palestinian imprisonment."
 >
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-200 p-8">
@@ -40,7 +43,7 @@ const serializedReports = JSON.stringify(combinedData);
           Political Prisoners
         </h2>
         <p>
-          This data set represents the political prisoners.
+            Imprisonment of Indigenous peoples by colonial forces, by definition, makes them political prisoners due to the inherently political nature of their capture and incarceration. As such, every Palestinian is a political prisoner detained for their opposition to the violence of zionist structures. In the context of settler colonialism, Indigenous individuals captured and jailed were often engaged in resisting the invasion, displacement, and exploitation brought by colonizers. Palestinians are no different: Their resistance, whether through armed struggle, protest, or other means, represented a direct challenge to the colonial agenda. Consequently, their imprisonment serves not as a measure of justice for actual crimes but as a tool to suppress their political opposition and quell resistance to colonial domination. Using a framework of "criminality" when discussing the imprisonment of Palestinians represents a colonial framework of racism that attempts to legitimize mass incarceration as a means of control. 
         </p>
         <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
 
@@ -80,17 +83,16 @@ const serializedReports = JSON.stringify(combinedData);
         </table>
 
         <p class="pt-8">
-          <a
-            href="/data_sheets/wb_daily_report.csv"
-            download="wb_daily_report.csv">Download as CSV</a
-          >&nbsp;|&nbsp;
-          <a
-            href="/data_sheets/wb_daily_report.xlsx"
-            download="wb_daily_report.xlsx">Download as Excel</a
+          <a href="/data_sheets/prisoner_data.csv"
+          download="prisoner_data.csv" >Download as CSV</a>
+          &nbsp;|&nbsp;
+          <a    
+            href="/data_sheets/prisoner_data.xlsx"
+            download="prisoner_data.xlsx">Download as Excel</a
           >
           &nbsp;|&nbsp;
           <a
-            href="/api/wb_data.json"
+            href="/api/prisoner_data.json"
             >.JSON endpoint</a
           >
         </p>
