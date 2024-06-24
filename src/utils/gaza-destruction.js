@@ -39,7 +39,7 @@ export async function getGazaDestructionData() {
         });
       });
   
-      console.log("Processed Data:", data);
+      // console.log("Processed Data:", data);
   
       return { latestReport: data[data.length - 1], fullData: data };
     } catch (error) {

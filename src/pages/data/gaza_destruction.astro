@@ -16,6 +16,30 @@ const categoryData = [
   { category: "Residential Destroyed", value: latestReport.residential.ext_destroyed, average: latestReport.residential['daily_average_ext_destroyed'], estimatedCost: latestReport.residential['estimated_cost_ext_destroyed'] }
 ];
 
+// Calculate totals for all categories
+const totals = {
+  value: categoryData.reduce((sum, { value }) => sum + (value || 0), 0),
+  average: categoryData.reduce((sum, { average }) => sum + (average || 0), 0),
+  estimatedCost: categoryData.reduce((sum, { estimatedCost }) => sum + (estimatedCost || 0), 0)
+};
+
+// Calculate combined trend data
+const combinedTrend = fullData.map((_, index) => {
+  let dailyTotal = 0;
+  categoryData.forEach(({ category }) => {
+    const field = category.toLowerCase().replace(/\s/g, '_').replace(/\b_destroyed\b|\b_damaged\b/g, '') + '.ext_destroyed';
+    const parts = field.split('.');
+    const value = parts.reduce((obj, part) => obj?.[part], fullData[index]) || 0;
+    dailyTotal += value;
+    // console.log(`Adding value ${value} from field ${field} for index ${index}`);
+  });
+  return dailyTotal;
+});
+
+// console.log("Category Data:", categoryData);
+// console.log("Totals:", totals);
+// console.log("Combined Trend Data:", combinedTrend);
+
 // Format date
 function formatDateMMDDYYYY(dateString) {
   const date = new Date(dateString);
@@ -56,7 +80,7 @@ const serializedReports = JSON.stringify(fullData);
               <tr class="header border-y border-zinc-800">
                 <th>Category</th>
                 <th>Total</th>
-                <th class="average">5-day avg</th>
+                <th class="average">Daily avg</th>
                 <th class="average">Estimated Cost</th>
                 <th style="width: 300px;">Trend</th>
               </tr>
@@ -66,7 +90,7 @@ const serializedReports = JSON.stringify(fullData);
                 <tr key={`report-category-${category}`}>
                   <td data-cell="Category">{category}</td>
                   <td data-cell="Total" class="value">{value}</td>
-                  <td data-cell="5 day avg" class="average">{average?.toFixed(2) || 'N/A'}</td>
+                  <td data-cell="Daily avg" class="average">{average?.toFixed(2) || 'N/A'}</td>
                   <td data-cell="Estimated Cost" class="average">${estimatedCost?.toLocaleString() || 'N/A'}</td>
                   <td class="trend">
                     <div class="canvas-wrapper">
@@ -80,6 +104,22 @@ const serializedReports = JSON.stringify(fullData);
                   </td>
                 </tr>
               ))}
+              <tr class="totals font-semibold">
+                <td data-cell="Category">Totals</td>
+                <td data-cell="Total" class="value">{totals.value}</td>
+                <td data-cell="Daily avg" class="average">{totals.average?.toFixed(2) || 'N/A'}</td>
+                <td data-cell="Estimated Cost" class="average">${totals.estimatedCost?.toLocaleString() || 'N/A'}</td>
+                <td class="trend">
+                  <div class="canvas-wrapper">
+                    <canvas
+                      class="line-chart-style"
+                      data-cell="Trend"
+                      id="chart-latest-totals"
+                      height="60"
+                    />
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         ) : (
@@ -87,12 +127,12 @@ const serializedReports = JSON.stringify(fullData);
         )}
         <p class="pt-8">
           <a
-            href="/data_sheets/wb_daily_report.csv"
-            download="wb_daily_report.csv">Download as CSV</a
+            href="data_sheets/gaza_destruction_report.csv"
+            download="gaza_destruction_report.csv">Download as CSV</a
           >&nbsp;|&nbsp;
           <a
-            href="/data_sheets/wb_daily_report.xlsx"
-            download="wb_daily_report.xlsx">Download as Excel</a
+            href="data_sheets/gaza_destruction_report.xlsx"
+            download="gaza_destruction_report.xlsx">Download as Excel</a
           >
           &nbsp;|&nbsp;
           <a
@@ -115,10 +155,10 @@ const serializedReports = JSON.stringify(fullData);
 <script type="text/javascript">
 
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("DOM fully loaded and parsed.");
+  // console.log("DOM fully loaded and parsed.");
 
   async function loadChartJsAndInitializeCharts() {
-    console.log("Loading Chart.js...");
+    // console.log("Loading Chart.js...");
 
     const chartJsScript = document.createElement("script");
     chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
@@ -126,11 +166,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await new Promise((resolve, reject) => {
       chartJsScript.onload = () => {
-        console.log("Chart.js loaded successfully.");
+        // console.log("Chart.js loaded successfully.");
         resolve();
       };
       chartJsScript.onerror = (error) => {
-        console.error("Error loading Chart.js:", error);
+        // console.error("Error loading Chart.js:", error);
         reject(error);
       };
     });
@@ -146,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       chartData.push(value);
     });
 
-    console.log(`Prepared chart data for ${field}:`, chartData);
+    // console.log(`Prepared chart data for ${field}:`, chartData);
     return { chartData };
   }
 
@@ -156,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function initializeCharts() {
-    console.log("Initializing charts...");
+    // console.log("Initializing charts...");
 
     const chartDataDiv = document.getElementById("chartData");
     if (!chartDataDiv) {
@@ -166,14 +206,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const serializedReports = chartDataDiv.getAttribute("data-reports");
     if (!serializedReports) {
-      console.error("No data-reports attribute found on chartDataDiv!");
+      // console.error("No data-reports attribute found on chartDataDiv!");
       return;
     }
 
     let reports;
     try {
       reports = JSON.parse(serializedReports);
-      console.log("Parsed reports data:", reports);
+      // console.log("Parsed reports data:", reports);
     } catch (error) {
       console.error("Error parsing reports data:", error);
       return;
@@ -189,12 +229,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       "residential.ext_destroyed"
     ];
 
+    // Calculate combined trend data
+    const combinedTrend = reports.map((_, index) => {
+      return categories.reduce((sum, field) => {
+        const value = field.split('.').reduce((obj, part) => obj?.[part], reports[index]) || 0;
+        // console.log(`Adding value ${value} from field ${field} for report index ${index}`);
+        return sum + value;
+      }, 0);
+    });
+
+    // console.log("Combined Trend Data for all categories:", combinedTrend);
+
     categories.forEach((field) => {
       // Process category to match how it's used in the HTML
       let category = field.replace(/\bext\b/g, '').replace(/_/g, ' ').replace(/\./g, ' ').toLowerCase();
       category = category.replace('places of worship ', '');
 
-      console.log(`Processing category: ${category}`);
+      // console.log(`Processing category: ${category}`);
 
       const { chartData } = prepareChartDataForCategory(reports, field);
       const labels = reports.map((report) => report.report_date);
@@ -202,13 +253,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const canvasId = generateCanvasId(category);
       const canvasElement = document.getElementById(canvasId);
       if (!canvasElement) {
-        console.warn(`Canvas element not found for ID: ${canvasId}`);
+        // console.warn(`Canvas element not found for ID: ${canvasId}`);
         return;
       }
-      console.log(`Found canvas for ${category}:`, canvasElement);
+      // console.log(`Found canvas for ${category}:`, canvasElement);
 
       const ctx = canvasElement.getContext("2d");
-      console.log(`Canvas context for ${category}:`, ctx);
+      // console.log(`Canvas context for ${category}:`, ctx);
 
       const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
       gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
@@ -259,12 +310,73 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
       });
     });
+
+    // Create summary chart for totals
+    // console.log("Creating summary chart for totals...");
+    // console.log("Combined trend data:", combinedTrend);
+    const summaryCanvasId = "chart-latest-totals";
+    const summaryCanvasElement = document.getElementById(summaryCanvasId);
+    if (summaryCanvasElement) {
+      const ctx = summaryCanvasElement.getContext("2d");
+      // console.log(`Canvas context for summary chart:`, ctx);
+      const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+      gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
+      gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)");
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: reports.map((report) => report.report_date),
+          datasets: [
+            {
+              label: "Totals",
+              data: combinedTrend,
+              borderColor: "#7f0d15",
+              tension: 0.1,
+              borderJoinStyle: "round",
+              borderWidth: 1,
+              pointRadius: 0.5,
+              backgroundColor: gradient,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: {
+              ticks: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+            y: {
+              ticks: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
+      // console.log("Summary chart created.");
+    } else {
+     //  console.warn(`Summary canvas element not found for ID: ${summaryCanvasId}`);
+    }
   }
 
   function handleIntersection(entries, observer) {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        console.log("Chart container is in view. Loading Chart.js...");
+        // console.log("Chart container is in view. Loading Chart.js...");
         loadChartJsAndInitializeCharts();
         observer.unobserve(entry.target);
       }
@@ -278,7 +390,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const chartContainers = document.querySelectorAll(".data-table");
   chartContainers.forEach((container) => observer.observe(container));
-  console.log("Intersection observers initialized.");
+  // console.log("Intersection observers initialized.");
 });
 
 </script>
