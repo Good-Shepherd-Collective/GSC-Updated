@@ -10,7 +10,7 @@ function formatDateMMDDYYYY(dateString) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const year = date.getFullYear();
-  return `${month}-${day}-${year}`;
+  return `${month}.${day}.${year}`;
 }
 
 const formattedMostRecentDate = latestReport
@@ -32,15 +32,15 @@ const chartData = fullData.map(data => ({
 
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
-    <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10 font-bold">
+    <h2 class="text-5xl md:text-6xl xl:text-8xl text-white p-10">
       Zionism's data points &cudarrr;
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:items-end">
       <!-- Black Box -->
       <div class="p-8 lg:p-10 bg-black h-full gradient-grid">
-        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white font-semibold">
-          The violence of settler-colonailism in numbers
+        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-5xl text-white font-semibold">
+          The violence of<br> <span class="text-yellow-300">settler-colonailism</span><br> in numbers
         </h2>
         <p class="text-base text-white tracking-wide">
           Israel, as a settler-colonial construction, is premised on the
@@ -53,17 +53,21 @@ const chartData = fullData.map(data => ({
 
       <!-- Red Box -->
       <div class="bg-red-700 p-8 lg:p-10 h-full">
-        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white font-semibold">
+        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white">
           West Bank & E. Jerusalem
         </h2>
-        <p>Injuries & Deaths since 10.7.2023</p>
+        <p class="mb-4">Injuries & Deaths since 10.7.2023</p>
         <div class="gradient-grid-bigger"><canvas id="wb-chart"></canvas></div>
         <div id="chart-data" style="display: none;">${JSON.stringify(chartData)}</div>
         {
           latestReport ? (
-            <p class="mt-4 text-sm text-white font-medium">
+            <p class="mt-4 text-white font-medium">
               As of {formattedMostRecentDate}, the Zionist movement has killed {totalKilled.toLocaleString()} Palestinians across the West Bank and East Jerusalem, including {totalKilledChildren.toLocaleString()} children. Israeli military raids and paramilitary operations have injured {totalInjured.toLocaleString()}, including {totalInjuredChildren.toLocaleString()} of those being children. The total number of paramilitary raids as of the most recent report is {totalSettlerAttacks.toLocaleString()}, demonstrating that these paramilitary units operate as an extension of the state.
-            </p>
+            </p><br><a class="inline-flex items-center" href="#">
+  More info
+  <img class="ml-2 copy-icon" src="/images/Arrow.svg" alt="Arrow Icon">
+</a>
+
           ) : (
             <p>No reports available.</p>
           )
