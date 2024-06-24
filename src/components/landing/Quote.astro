@@ -1,22 +1,193 @@
+---
+import { getWestBankDeathsData } from "../../utils/wb_deaths.js";
+
+// Fetch and process West Bank deaths data
+const { latestReport, fullData } = await getWestBankDeathsData();
+
+// Format date
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
+const formattedMostRecentDate = latestReport
+  ? formatDateMMDDYYYY(latestReport.report_date)
+  : "N/A";
+const totalKilled = latestReport?.killed_cum || 0;
+const totalKilledChildren = latestReport?.killed_children_cum || 0;
+const totalKilledMen = latestReport?.killed_men_cum || 0;
+const totalInjured = latestReport?.injured_cum || 0;
+const totalInjuredChildren = latestReport?.injured_children_cum || 0;
+const totalInjuredMen = latestReport?.injured_men_cum || 0;
+const totalSettlerAttacks = latestReport?.settler_attacks_cum || 0;
+const chartData = fullData.map(data => ({
+  date: formatDateMMDDYYYY(data.report_date),
+  killed: data.killed_cum,
+  injured: data.injured_cum
+}));
+---
+
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
-    <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10 font-bold">Zionism's data points &cudarrr;</h2>
+    <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10 font-bold">
+      Zionism's data points &cudarrr;
+    </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-800 lg:items-end">
-      <div class="bg-red-700 p-8 lg:p-10 h-full">
-        <span class="text-white">⏤ Franz Fanon, The Wretched of the Earth</span><h2
-          class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white">
-          Colonialism ‘is the bringer of violence into the home and into the mind of the native’
-        </h2>
-      </div>
+      <!-- Black Box -->
       <div class="p-8 lg:p-10 bg-black h-full gradient-grid">
         <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white font-semibold">
-          The violence of Zionism in numbers</h2>
+          The violence of settler-colonailism in numbers
+        </h2>
         <p class="text-base text-white tracking-wide">
-          Israel, as a settler-colonial construction, is premised on the elimination of the natives. The violence of Indigenous erasure is animated throughout these structures of the state. This data provides a small subset of the violence enacted to maintain and perpetuate zionism. 
-          
+          Israel, as a settler-colonial construction, is premised on the
+          elimination of the natives. The violence of Indigenous erasure is
+          animated throughout these structures of the state. This data provides
+          a small subset of the violence enacted to maintain and perpetuate
+          zionism.
         </p>
+      </div>
+
+      <!-- Red Box -->
+      <div class="bg-red-700 p-8 lg:p-10 h-full">
+        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white font-semibold">
+          West Bank & E. Jerusalem
+        </h2>
+        <p>Injuries & Deaths since 10.7.2023</p>
+        <div class="gradient-grid-bigger"><canvas id="wb-chart"></canvas></div>
+        <div id="chart-data" style="display: none;">${JSON.stringify(chartData)}</div>
+        {
+          latestReport ? (
+            <p class="mt-4 text-sm text-white font-medium">
+              As of {formattedMostRecentDate}, the Zionist movement has killed {totalKilled.toLocaleString()} Palestinians across the West Bank and East Jerusalem, including {totalKilledChildren.toLocaleString()} children. Israeli military raids and paramilitary operations have injured {totalInjured.toLocaleString()}, including {totalInjuredChildren.toLocaleString()} of those being children. The total number of paramilitary raids as of the most recent report is {totalSettlerAttacks.toLocaleString()}, demonstrating that these paramilitary units operate as an extension of the state.
+            </p>
+          ) : (
+            <p>No reports available.</p>
+          )
+        }
       </div>
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      const chartDataElement = document.getElementById('chart-data');
+      if (!chartDataElement) {
+        console.error('Chart data element not found');
+        return;
+      }
+      
+      const chartDataText = chartDataElement.innerText.trim();
+      console.log('Raw chart data text:', chartDataText);
+      
+      if (!chartDataText) {
+        console.error('Chart data is empty');
+        return;
+      }
+
+      let chartData;
+      try {
+        chartData = JSON.parse(chartDataText.replace(/^\$/, ''));
+        console.log('Parsed chart data:', chartData);
+      } catch (parseError) {
+        console.error('Error parsing chart data:', parseError);
+        return;
+      }
+      
+      const canvas = document.getElementById('wb-chart');
+      if (!canvas) {
+        console.error('Canvas element not found');
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Canvas context not found');
+        return;
+      }
+
+      // Create gradient fills
+      const gradientKilled = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradientKilled.addColorStop(0, 'rgba(10, 71, 111, 0.85)'); // Dark blue gradient for deaths
+      gradientKilled.addColorStop(1, 'rgba(10, 71, 111, 0.7)');
+
+      const gradientInjured = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradientInjured.addColorStop(0, 'rgba(186, 229, 252, 0.9)'); // Light blue gradient for injuries
+      gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
+
+      const data = {
+        labels: chartData.map(data => data.date),
+        datasets: [
+          {
+            label: 'Total Killed',
+            data: chartData.map(data => data.killed),
+            borderColor: '#0A476F', // Dark blue line
+            backgroundColor: gradientKilled,
+            fill: true,
+            tension: 0.1
+          },
+          {
+            label: 'Total Injured',
+            data: chartData.map(data => data.injured),
+            borderColor: '#BAE5FC', // Light blue line
+            backgroundColor: gradientInjured,
+            fill: true,
+            tension: 0.1
+          }
+        ]
+      };
+
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+          },
+          scales: {
+            x: {
+              display: false,
+            },
+            y: {
+              display: false,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.2)', // White grid lines
+              },
+              title: {
+                display: true,
+                text: 'Count'
+              }
+            }
+          },
+          elements: {
+            line: {
+              borderWidth: 2
+            },
+            point: {
+              radius: 0
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      };
+
+      new Chart(ctx, config);
+    } catch (error) {
+      console.error('Error loading chart:', error);
+    }
+  });
+</script>

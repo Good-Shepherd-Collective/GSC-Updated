@@ -85,10 +85,9 @@ const demolitionDate = demolitionData ? demolitionData.newestDateofincident : ''
           Gaza Genocide
         </h2>
         <div class="text-white mt-4 text-2xl tracking-wide">
-          From the data accessed on <span class="highlight">{formatDate(summaryData?.gaza?.last_update || '')}</span>, the Israeli regime, backed by the United States, has carried out
-          <span class="highlight">{summaryData?.gaza?.massacres || 0}</span> massacres. As a result, Israeli military forces have killed some <span class="highlight">{summaryData?.gaza?.killed?.total || 0}</span> Palestinians in the Gaza Strip alone. This includes <span class="highlight">{summaryData?.gaza?.killed?.children || 0}</span> children and <span class="highlight">{summaryData?.gaza?.killed?.women || 0}</span> women. The Israeli state has also targeted critical emergency services personnel, such as firefighters and medics. As of now, Israel's assault has claimed the lives of <span class="highlight">{summaryData?.gaza?.killed?.civil_defence || 0}</span> workers from this critical sector and killed another <span class="highlight">{summaryData?.gaza?.killed?.medical || 0}</span> medical personal. Additionally, Israel's longstanding policy to stop independent media from reporting essential facts and visual evidence, the Israeli military has assassinated <span class="highlight">{summaryData?.gaza?.killed?.press || 0}</span> members of the press.  
+          As of <span class="highlight">{formatDate(summaryData?.gaza?.last_update || '')}</span>, the Israeli regime, supported by the United States, has committed <span class="highlight">{summaryData?.gaza?.massacres || 0}</span> massacres in Gaza. This has resulted in <span class="highlight">{summaryData?.gaza?.killed?.total || 0}</span> Palestinian deaths, including <span class="highlight">{summaryData?.gaza?.killed?.children || 0}</span> children and <span class="highlight">{summaryData?.gaza?.killed?.women || 0}</span> women. Critical emergency services have also been targeted, with <span class="highlight">{summaryData?.gaza?.killed?.civil_defence || 0}</span> civil defense workers and <span class="highlight">{summaryData?.gaza?.killed?.medical || 0}</span> medical personnel killed. Additionally, <span class="highlight">{summaryData?.gaza?.killed?.press || 0}</span> journalists have been assassinated to suppress independent reporting.
         </div>
-      </div>
+              </div>
     </div>
     
     <!-- West Bank & East Jerusalem Section -->

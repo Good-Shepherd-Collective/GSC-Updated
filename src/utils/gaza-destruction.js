@@ -1,5 +1,7 @@
 // src/utils/gaza-destruction.js
 
+// https://thedocs.worldbank.org/en/doc/14e309cd34e04e40b90eb19afa7b5d15-0280012024/original/Gaza-Interim-Damage-Assessment-032924-Final.pdf for final analysis 
+// https://www.reuters.com/world/middle-east/gaza-post-war-housing-reconstruction-cost-least-15-bln-fund-2024-01-17/
 export async function getGazaDestructionData() {
     try {
       const response = await fetch("https://data.techforpalestine.org/api/v3/infrastructure-damaged.json");
