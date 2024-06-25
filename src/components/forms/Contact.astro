@@ -1,111 +1,136 @@
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-zinc-800">
     <div class="mx-auto items-start w-full">
-      <div
-        class="grid grid-cols-1 lg:grid-cols-2 items-start bg-zinc-800 gap-px">
+      <div class="grid grid-cols-1 lg:grid-cols-2 items-start bg-zinc-800 gap-px">
         <div class="p-8 lg:px-10 bg-black gradient-grid h-full flex flex-col justify-between">
           <h1 class="text-4xl md:text-6xl xl:text-7xl text-white font-bold">
-            We'd <span class="highlight">Love</span> to Hear from You
+            Staying <span class="highlight text-yellow-400">connected</span> is critical to building a movement
           </h1>
           <p class="mt-8 text-base font-medium text-white tracking-wide">
-            Thank you for your interest in reaching out to us. We value your
-            feedback, inquiries, and suggestions. Our dedicated team is here to
-            assist you and ensure that your experience with our platform is
-            exceptional.
+            The Good Shepherd Collective sends out routine data on home demolitions, updates from Gaza, and analysis and insights from the ground; joining this email list is an <span class="highlight">essential</span> resource for your advocacy efforts.
           </p>
         </div>
-        <form class="bg-zinc-800 space-y-px ">
+        <form id="contact-form" action="https://hello.goodshepherdcollective.org/sendy/subscribe" method="POST" accept-charset="utf-8" class="bg-zinc-800 space-y-px" onsubmit="return handleFormSubmission(event)">
           <div>
-            <label
-              for="name"
-              class="sr-only"
-              >Your name</label
-            >
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autocomplete="name"
-              aria-required="true"
-              placeholder="Your name"
-              required
-              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-blue-600  focus:ring-2 ring-inset"
-            />
+            <label for="name" class="sr-only">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" aria-required="true" placeholder="Your name" required class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-yellow-400 focus:ring-2 ring-inset" />
           </div>
           <div>
-            <label
-              for="companyname"
-              class="sr-only"
-              >Company name</label
-            >
-            <input
-              id="companyname"
-              name="companyname"
-              type="text"
-              aria-required="true"
-              placeholder="Company name"
-              required
-              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-blue-600  focus:ring-2 ring-inset"
-            />
+            <label for="state" class="sr-only">State</label>
+            <input id="state" name="state" type="text" aria-required="true" placeholder="State" required class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-yellow-400 focus:ring-2 ring-inset" />
           </div>
           <div>
-            <label
-              for="phone"
-              class="sr-only"
-              >Phone number</label
-            >
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              aria-required="true"
-              placeholder="Your phone"
-              required
-              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-blue-600  focus:ring-2 ring-inset"
-            />
+            <label for="phone" class="sr-only">Phone number</label>
+            <input id="phone" name="phone" type="tel" aria-required="true" placeholder="Your phone" required class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-yellow-400 focus:ring-2 ring-inset" />
           </div>
           <div>
-            <label
-              for="email-address"
-              class="sr-only"
-              >Email address</label
-            >
-            <input
-              id="email-address"
-              name="email-address"
-              type="email"
-              autocomplete="email"
-              placeholder="Your email"
-              required
-              aria-required="true"
-              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-blue-600  focus:ring-2 ring-inset"
-            />
+            <label for="email-address" class="sr-only">Email address</label>
+            <input id="email-address" name="email" type="email" autocomplete="email" placeholder="Your email" required aria-required="true" class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-yellow-400 focus:ring-2 ring-inset" />
           </div>
-
           <div>
-            <label
-              for="message"
-              class="sr-only"
-              >Your message</label
-            >
-            <textarea
-              id="message"
-              name="message"
-              placeholder="Your message (optional)"
-              rows="8"
-              class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black  placeholder-zinc-500 text-white  focus:outline-none focus:ring-blue-600  focus:ring-2 ring-inset"
-            ></textarea>
+            <label for="gdpr" class="sr-only">Sign me up to the email list!</label>
+            <div class="block w-full appearance-none border border-none p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-yellow-400 focus:ring-2 ring-inset">
+              <input type="checkbox" name="gdpr" id="gdpr" class="mr-2"/>
+              <label for="gdpr" class="text-zinc-500"><span class="text-zinc-200 font-semibold">Sign me up to the email list!</span>: I am happy to join the Good Shepherd Collective mailing list and to be in touch with me via email using the information I have provided in this form for the purpose of news, updates and action items. <span class="highlight text-zinc-200">Make sure to check your inbox for a confirmation email.</span></label>
+            </div>
           </div>
-
           <div class="bg-black">
-            <button
-              type="submit"
-              class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-blue-600 ease-in-out transform duration-500 ring-inset ring-blue-600 inline-flex items-center font-medium     bg-black text-white justify-between ring-2 hover:ring-blue-600 w-full">
-              Contact us <span>➜</span>
+            <button type="submit" class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-yellow-400 ease-in-out transform duration-500 ring-inset ring-yellow-400 inline-flex items-center font-medium bg-black text-white justify-between ring-2 hover:ring-yellow-400 w-full">
+              Subscribe <span>➜</span>
             </button>
           </div>
+          <div style="display:none;">
+            <label for="hp">HP</label>
+            <input type="text" name="hp" id="hp" />
+          </div>
+          <input type="hidden" name="list" value="y89212UBuNheyECx7v9tOdrQ" />
+          <input type="hidden" name="subform" value="yes" />
         </form>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+function validateForm() {
+  const name = (document.getElementById('name') as HTMLInputElement).value;
+  const state = (document.getElementById('state') as HTMLInputElement).value;
+  const phone = (document.getElementById('phone') as HTMLInputElement).value;
+  const email = (document.getElementById('email-address') as HTMLInputElement).value;
+  
+  if (!name || !state || !phone || !email) {
+    alert('Please fill in all required fields.');
+    return false;
+  }
+
+  const phonePattern = /^[0-9\-\+]{9,15}$/;
+  if (!phonePattern.test(phone)) {
+    alert('Please enter a valid phone number.');
+    return false;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    alert('Please enter a valid email address.');
+    return false;
+  }
+
+  return true;
+}
+
+async function sendToSendy(data) {
+  try {
+    const response = await fetch('https://hello.goodshepherdcollective.org/sendy/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('There was a problem with the Sendy subscription:', error);
+    return false;
+  }
+}
+
+function handleFormSubmission(event) {
+  event.preventDefault();
+  
+  if (!validateForm()) {
+    return false;
+  }
+  
+  const gdpr = (document.getElementById('gdpr') as HTMLInputElement).checked;
+  const name = (document.getElementById('name') as HTMLInputElement).value;
+  const state = (document.getElementById('state') as HTMLInputElement).value;
+  const phone = (document.getElementById('phone') as HTMLInputElement).value;
+  const email = (document.getElementById('email-address') as HTMLInputElement).value;
+
+  const data = {
+    name: name,
+    state: state,
+    phone: phone,
+    email: email,
+    list: (document.querySelector('input[name="list"]') as HTMLInputElement).value,
+    subform: 'yes'
+  };
+
+  if (gdpr) {
+    sendToSendy(data).then(success => {
+      if (success) {
+        alert('Subscription successful.');
+      } else {
+        alert('There was an issue with the subscription.');
+      }
+    });
+  } else {
+    alert('Please agree to the marketing permission to subscribe.');
+  }
+}
+</script>

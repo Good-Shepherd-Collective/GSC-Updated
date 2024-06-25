@@ -54,7 +54,6 @@
   }
 }
 
-
 .gradient-grid {
   background-image: radial-gradient(circle at center center, transparent 0%, rgba(255, 255, 255, 0) 99%), repeating-linear-gradient(0deg, rgba(205, 205, 205, 0) 1px, rgba(205, 205, 205, 0.042) 1.5px, transparent 1.5px, transparent 6px), repeating-linear-gradient(90deg, rgba(205, 205, 205, 0) 0px, rgba(205, 205, 205, .2) 1px, transparent 1px, transparent 6px), linear-gradient(90deg, #fff0, #fff0);
 }
@@ -65,13 +64,13 @@
     repeating-linear-gradient(90deg, rgba(185, 185, 185, 0) 10px, rgba(185, 185, 185, 0.25) 11px, transparent 11px, transparent 20px),
     linear-gradient(90deg, #fff0, #fff0);
 
-    box-shadow: inset 0 -10px 0px 0px #ffffff;
+    box-shadow: inset 0px -1.5px 0px 0px #ffffff;
 
 }
 
 .move-down {
   position: relative;
-  top: 1.5rem; /* Adjust this value as needed */
+  top: rem; /* Adjust this value as needed */
 }
 
 .diagonal-stripes {
