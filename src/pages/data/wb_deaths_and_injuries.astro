@@ -1,0 +1,310 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getWestBankDeathsData } from "../../utils/wb_deaths.js";
+
+const { latestReport, fullData } = await getWestBankDeathsData();
+
+// Format date
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
+const formattedMostRecentDate = latestReport
+  ? formatDateMMDDYYYY(latestReport.report_date)
+  : "N/A";
+
+// Calculate daily values from cumulative data
+const calculateDailyValues = (data, key) => {
+  return data.map((report, index) => {
+    if (index === 0) {
+      return report[key]; // First day, just return the cumulative value
+    }
+    return report[key] - data[index - 1][key];
+  });
+};
+
+const dailyKilled = calculateDailyValues(fullData, 'killed_cum');
+const dailyKilledChildren = calculateDailyValues(fullData, 'killed_children_cum');
+const dailyInjured = calculateDailyValues(fullData, 'injured_cum');
+const dailyInjuredChildren = calculateDailyValues(fullData, 'injured_children_cum');
+const dailySettlerAttacks = calculateDailyValues(fullData, 'settler_attacks_cum');
+
+const calculateAverages = (values, days) => {
+  const relevantValues = values.slice(-days);
+  if (relevantValues.length === 0) return 0;
+  return relevantValues.reduce((a, b) => a + b, 0) / relevantValues.length;
+};
+
+const fiveDayAverages = {
+  'Total Killed': calculateAverages(dailyKilled, 5),
+  'Total Children Killed': calculateAverages(dailyKilledChildren, 5),
+  'Total Injured': calculateAverages(dailyInjured, 5),
+  'Total Children Injured': calculateAverages(dailyInjuredChildren, 5),
+  'Total Settler Attacks': calculateAverages(dailySettlerAttacks, 5)
+};
+
+const tenDayAverages = {
+  'Total Killed': calculateAverages(dailyKilled, 10),
+  'Total Children Killed': calculateAverages(dailyKilledChildren, 10),
+  'Total Injured': calculateAverages(dailyInjured, 10),
+  'Total Children Injured': calculateAverages(dailyInjuredChildren, 10),
+  'Total Settler Attacks': calculateAverages(dailySettlerAttacks, 10)
+};
+
+const categoryData = [
+  { category: 'Total Killed', value: latestReport.killed_cum },
+  { category: 'Total Children Killed', value: latestReport.killed_children_cum },
+  { category: 'Total Injured', value: latestReport.injured_cum },
+  { category: 'Total Children Injured', value: latestReport.injured_children_cum },
+  { category: 'Total Settler Attacks', value: latestReport.settler_attacks_cum },
+];
+
+const serializedReports = JSON.stringify(fullData);
+---
+
+<BaseLayout
+  isBlogPost={true}
+  title="Daily Report"
+  description="Daily report of settler-colonial violence in the West Bank and East Jerusalem."
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h1
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          West Bank & East Jerusalem
+        </h1>
+        <h2 class="text-2xl mb-4 highlight-red">Deaths and Injuries</h2>
+        <p>
+            The Good Shepherd Collective leverages the technical infrastructure provided by <a href="https://techforpalestine.org/">Tech for Palestine</a> to construct visualizations based on their data layer. This collaboration enables the effective presentation of data concerning the West Bank, which relies heavily on daily sources from the United Nations Office for the Coordination of Humanitarian Affairs (UN OCHA).<br>
+
+            The data used to build the time series comes from two types of source material. The first type is verified data, independently authenticated by UN OCHA personnel and provided through their casualty database. This data represents confirmed incidents and is a reliable source of historical information. The second type consists of flash updates, incidents reported to the UN but not independently verified. These updates are the basis for the initial root-level values in the report object and are essential for providing timely data, though they may be less reliable once verified.<br>
+            
+            It's important to note that verified values tend to lag behind those from flash updates. This means that verified values might be missing (optional) for more recent report dates as the verification process is ongoing. However, once values are populated, they provide a continuous and reliable historical record.<br>
+            
+            The deaths and injuries reported are a direct result of the systemic issues rooted in settler-colonialism, and its process to eliminate the native population, either physically or by absorption. <br>
+            
+            Despite efforts by the US and Israel to delegitimize UN OCHA, the organization's data remains trustworthy. UN OCHA employs rigorous verification processes and relies on personnel with on-the-ground experience to confirm incidents. This independent verification ensures high accuracy and reliability in their reports. By cross-referencing reports from multiple sources and adhering to international standards, UN OCHA provides a vital, trustworthy record of events, crucial for understanding how zionism works in service of imperialism and, thus, capitalism. <br>
+         
+        </p>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+        
+        {
+          fullData.length > 0 ? (
+            <table class="data-table">
+              <thead>
+                <tr class="header border-y border-zinc-800">
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th class="average">5-day avg</th>
+                  <th class="average">10-day avg</th>
+                  <th style="width: 300px;">Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categoryData.map(({ category, value }) => (
+                  <tr key={`report-category-${category}`}>
+                    <td data-cell="Category">{category}</td>
+                    <td data-cell="Total" class="value">
+                      {value}
+                    </td>
+                    <td data-cell="5 day avg" class="average ">
+                      {fiveDayAverages[category]?.toFixed(2) || 'N/A'}
+                    </td>
+                    <td data-cell="10 day avg" class="average ">
+                      {tenDayAverages[category]?.toFixed(2) || 'N/A'}
+                    </td>
+                    <td class="trend">
+                      <div class="canvas-wrapper">
+                        <canvas
+                          class="line-chart-style"
+                          data-cell="Trend"
+                          id={`chart-latest-${category}`}
+                          height="60"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No reports available.</p>
+          )
+        }
+        <p class="pt-8">
+          <a
+            href="/data_sheets/wb_daily_report.csv"
+            download="wb_daily_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/wb_daily_report.xlsx"
+            download="wb_daily_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="https://data.techforpalestine.org/api/v2/west_bank_daily.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={serializedReports}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("Document is ready");
+
+    async function loadChartJsAndInitializeCharts() {
+      console.log("Loading Chart.js dynamically...");
+
+      const chartJsScript = document.createElement("script");
+      chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      document.body.appendChild(chartJsScript);
+
+      await new Promise((resolve, reject) => {
+        chartJsScript.onload = resolve;
+        chartJsScript.onerror = reject;
+      });
+
+      console.log("Chart.js loaded. Initializing charts...");
+      initializeCharts();
+    }
+
+    function applyConditionalFormatting(element, percentageIncrease) {
+      const transparency = Math.min(1, Math.abs(percentageIncrease) / 100);
+      if (percentageIncrease > 0) {
+        element.style.backgroundColor = `rgba(127, 13, 1, ${transparency})`;
+        element.setAttribute("data-after", "↑");
+      } else if (percentageIncrease < 0) {
+        element.style.backgroundColor = `rgba(40, 169, 224, ${transparency})`;
+        element.setAttribute("data-after", "↓");
+      } else {
+        element.style.backgroundColor = "";
+        element.removeAttribute("data-after");
+      }
+      element.style.fontWeight = transparency >= 0.6 ? "600" : "normal";
+      element.style.color = transparency >= 0.6 ? "white" : "";
+    }
+
+    function initializeCharts() {
+      const chartDataDiv = document.getElementById("chartData");
+      let reports = JSON.parse(chartDataDiv.getAttribute("data-reports"));
+      console.log("Reports data:", reports);
+
+      reports.sort(
+        (a, b) => new Date(a.report_date) - new Date(b.report_date)
+      );
+
+      const calculateDailyValues = (data, key) => {
+        return data.map((report, index) => {
+          if (index === 0) {
+            return report[key]; // First day, just return the cumulative value
+          }
+          return report[key] - data[index - 1][key];
+        });
+      };
+
+      const categories = [
+        { key: 'killed_cum', label: 'Total Killed' },
+        { key: 'killed_children_cum', label: 'Total Children Killed' },
+        { key: 'injured_cum', label: 'Total Injured' },
+        { key: 'injured_children_cum', label: 'Total Children Injured' },
+        { key: 'settler_attacks_cum', label: 'Total Settler Attacks' },
+      ];
+
+      categories.forEach((category) => {
+        const dailyValues = calculateDailyValues(reports, category.key);
+        const labels = reports.map(report => report.report_date);
+
+        const canvasId = `chart-latest-${category.label}`;
+        const canvasElement = document.getElementById(canvasId);
+        if (!canvasElement) {
+          console.error(`Canvas element not found for ID: ${canvasId}`);
+          return;
+        }
+        const ctx = canvasElement.getContext("2d");
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)"); // Slightly transparent red
+        gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)"); // Fully transparent
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: category.label,
+                data: dailyValues,
+                borderColor: "#7f0d15",
+                tension: 0.1,
+                borderJoinStyle: "round",
+                borderWidth: 1,
+                pointRadius: 0.5,
+                backgroundColor: gradient,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+            },
+          },
+        });
+      });
+    }
+
+    function handleIntersection(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log("Chart container is in view. Loading Chart.js...");
+          loadChartJsAndInitializeCharts();
+          observer.unobserve(entry.target);
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      threshold: 0.1,
+    });
+
+    const chartContainers = document.querySelectorAll(".data-table");
+    chartContainers.forEach((container) => observer.observe(container));
+  });
+</script>

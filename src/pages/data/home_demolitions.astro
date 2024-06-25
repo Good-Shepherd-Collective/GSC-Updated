@@ -71,17 +71,21 @@ const endDate = formatDateMMDDYYYY(demolitionData.newestDateofincident);
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-200 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
-        <h2
+        <h1
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Demolition Data Report
-        </h2>
+          Demolition Report
+        </h1>
+        <h2 class="text-2xl mb-4 highlight-red">West Bank & East Jerusalem</h2>
         <p>
-          This dataset represents incidents of demolitions and the number of displaced people in the specified region. 
-          The data reflects the reporting as of <span class="highlight-red">{formattedMostRecentDate}</span>. The <span class="highlight-red">5-day average</span> and 
-          <span class="highlight-red">30-day average</span> provide insights into the trends over recent days. The <span class="highlight-red">Trend</span> 
-          represents the trajectory from {beginningDate} to {endDate}.
+          This dataset represents incidents of demolitions and the number of displaced people in the specified region. The data reflects the reporting as of <span class="highlight-red">{formattedMostRecentDate}</span>. The <span class="highlight-red">5-day average</span> and <span class="highlight-red">30-day average</span> provide insights into the trends over recent days. The <span class="highlight-red">Trend</span> represents the trajectory from {beginningDate} to {endDate}. The demolition of Palestinian homes, like all settler-colonial systems, serves as an essential tool to capture land and resources from the indigenous communities in service of capitalism. Similar practices were employed by settlers on Turtle Island (the United States), where indigenous lands were seized, and communities were displaced to make way for economic development and resource extraction. In South Africa, apartheid policies forcibly removed black South Africans from their land, relegating them to impoverished areas to benefit the white minority's economic interests.
+        </p>
+        <p>
+          This data only represents information from UN OCHA, focusing on the West Bank and East Jerusalem. Despite attempts by the US and Israel to delegitimize UN OCHA, the organization's data remains trustworthy due to its rigorous verification processes. UN OCHA relies on personnel with on-the-ground experience to confirm incidents, ensuring high accuracy and reliability. Their longstanding presence and consistent methodology in conflict zones worldwide bolster the credibility of their data. This dataset provides a crucial understanding of the humanitarian situation in these specific areas.
+        </p>
+        <p>
+          It is important to note that while this dataset focuses on the West Bank and East Jerusalem, there are numerous years where the number of demolitions and evictions of Palestinians residing in historical Palestine, such as the Naqab, surpass those in East Jerusalem and the West Bank. This broader context highlights the extensive and ongoing nature of displacement and demolition affecting Palestinian communities across the region.
         </p>
         <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
         
