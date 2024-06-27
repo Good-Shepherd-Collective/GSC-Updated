@@ -2,13 +2,17 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getGazaDestructionData } from "@/utils/gaza-destruction.js";
 import { processDemolitionData } from "@/utils/home_demolitions.js";
+import fetchDailyReport, { formatDateToString, formatTimestamp } from "@/utils/wb_daily.js";
+import { getCombinedPrisonerData } from "@/utils/prisoner_data.js";
+import { getWestBankDeathsData } from "@/utils/wb_deaths.js";
 
-
+// Fetch Gaza destruction data
 const gazaDestructionData = await getGazaDestructionData();
 const gazaDestructionDate = gazaDestructionData.formattedGazaDestructionDate;
 
+// Fetch demolition data
 const demolitionData = await processDemolitionData();
-console.log("Processed Demolition Data:", demolitionData);
+// console.log("Processed Demolition Data:", demolitionData);
 
 if (!demolitionData || !Array.isArray(demolitionData.chartData)) {
   throw new Error("Home demolitions data is not an array or is invalid");
@@ -16,7 +20,7 @@ if (!demolitionData || !Array.isArray(demolitionData.chartData)) {
 
 const homeDemolitionsData = demolitionData.chartData;
 const newestDemolitionDate = demolitionData.newestDateofincident;
-console.log("Newest Demolition Date:", newestDemolitionDate);
+// console.log("Newest Demolition Date:", newestDemolitionDate);
 
 const formattedNewestDemolitionDate = (() => {
   const date = new Date(newestDemolitionDate);
@@ -26,12 +30,43 @@ const formattedNewestDemolitionDate = (() => {
   return `${month}.${day}.${year}`;
 })();
 
+// Fetch the combined prisoner data
+const combinedData = await getCombinedPrisonerData();
+
+// Function to format date as MM-DD-YYYY
+const formatDate = (date) => {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${month}.${day}.${year}`;
+};
+
+// Prepare the formatted date
+const PrisonerDate = formatDate(new Date());
+
+// Fetch and log the daily report
+const wbDailyReport = await fetchDailyReport();
+console.log("WB reports:", wbDailyReport);
+
+// Extract the most recent date
+const mostRecentDate = wbDailyReport ? wbDailyReport.reduce((latest, report) => {
+  const currentDate = new Date(report.metadata.Date);
+  return currentDate > new Date(latest.metadata.Date) ? report : latest;
+}, wbDailyReport[0]).metadata.Date : null;
+
+const WBDataDate = mostRecentDate ? formatDate(mostRecentDate) : 'N/A';
+
+// Fetch the West Bank deaths data
+const westBankDeathsData = await getWestBankDeathsData();
+const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.latestReport.formattedReportDate : 'N/A';
+
 ---
 
 <BaseLayout
   isBlogPost={true}
-  title="Demolition Data Report"
-  description="Demolition data report for the specified region."
+  title="Data Reports"
+  description="Aggregate data reports on Israel's program of settler-colonial violence."
 >
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-200 p-8">
@@ -40,7 +75,7 @@ const formattedNewestDemolitionDate = (() => {
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Data Sets
+          Data Setss
         </h1>
         <h2 class="text-2xl mb-4 highlight-red">Here are some of the critical data points for your advocacy</h2>
         
@@ -61,7 +96,7 @@ const formattedNewestDemolitionDate = (() => {
             <!-- Gaza Destruction Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">
-                <a href="data/gaza_destruction" class="flex items-center space-x-2">
+                <a href="/data/gaza_destruction" class="flex items-center space-x-2">
                   <p>Gaza Destruction</p>
                   <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
                 </a>
@@ -78,7 +113,7 @@ const formattedNewestDemolitionDate = (() => {
              <!-- Home Demolition Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">
-                <a href="data/home_demolitions" class="flex items-center space-x-2">
+                <a href="/data/home_demolitions" class="flex items-center space-x-2">
                   <p>Home Demolitions</p>
                   <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
                 </a>
@@ -97,20 +132,78 @@ const formattedNewestDemolitionDate = (() => {
 
             <tr>
               <td data-cell="Category" class="py-4">
-                <a href="data/ngo_data" class="flex items-center space-x-2">
+                <a href="/data/ngo_data" class="flex items-center space-x-2">
                   <p>NGO Data</p>
                   <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
                 </a>
               </td>
               
               <td data-cell="Details" class="value py-4">
-                This dataset provides IRS data on charities advancing zionism. 
+                This dataset provides IRS information on US-based charities advancing zionism. This curated dataset is based on 990 filings.
               </td>
               <td data-cell="Updated" class="average py-4">YTD filings</td>
               <td data-cell="CSV" class="average py-4"><a href="/data_sheets/ngo_data_report.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="Excel" class="average py-4"><a href="/data_sheets/ngo_data_report.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="API" class="average py-4 last"><a href="/api/ngo_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
+             <!-- NGO Data Ends -->
+              <!-- Prisoner Data Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/political_prisoners" class="flex items-center space-x-2">
+                  <p>Political Prisoners</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This dataset provides the most recent reporting on Palestinian political prisoners being held captive Israeli prisons.
+              </td>
+              <td data-cell="Updated" class="average py-4">{PrisonerDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/prisoner_data.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/prisoner_data.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="/api/prisoner_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+             <!-- Prisoner Data Ends -->
+              <!-- West Bank Data Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/wb_data" class="flex items-center space-x-2">
+                  <p>E. Jerusalem<br> & West Bank data</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This dataset provides the most reporting on colonial violence in East Jerusalem and the West Bank.
+              </td>
+              <td data-cell="Updated" class="average py-4">{WBDataDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_daily.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_daily.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="/api/wb_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+             <!-- West Bank Data Ends -->
+               <!-- West Bank Deaths Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/wb_deaths_and_injuries" class="flex items-center space-x-2">
+                  <p>E. Jerusalem<br> & West Bank data<br>deaths/injuries</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This is a curated subset of the deaths and injuries from across East Jerusalem and the West Bank only.
+              </td>
+              <td data-cell="Updated" class="average py-4">{WB_Deaths_Date}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v2/west_bank_daily.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+             <!-- West Bank Deaths Ends -->
           </tbody>
         </table>
       </div>

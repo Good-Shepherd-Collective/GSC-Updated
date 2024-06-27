@@ -1,4 +1,4 @@
-// src/utils/wb-deaths.js
+// src/utils/wb_deaths.js
 
 export async function getWestBankDeathsData() {
   try {
