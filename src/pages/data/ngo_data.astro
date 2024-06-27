@@ -34,6 +34,8 @@ const chartData = filteredData.map(ngo => {
 });
 
 // console.log("Filtered Chart Data:", chartData);
+const buildDate = import.meta.env.BUILD_DATE || 'N/A';
+console.log("Build Date:", buildDate);
 ---
 <BaseLayout
   isBlogPost={true}
@@ -47,7 +49,7 @@ const chartData = filteredData.map(ngo => {
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          NGO Data Report
+          Charities and Colonialism
         </h2>
         <p>Understanding the historical context is crucial. Capitalism, in its past, has exploited charitable institutions to advance colonial agendas. Churches, for instance, played a significant role in the colonization of Africa and other regions. European missionaries, funded by churchgoers' donations, established missions that served as colonial outposts. These missions not only spread Christianity but also facilitated European control over indigenous lands and resources. The London Missionary Society's efforts in South Africa, for example, paved the way for British colonization. Similarly, Catholic missions in the Congo were integral to Belgium's brutal colonial regime.</p>
 
@@ -66,7 +68,7 @@ const chartData = filteredData.map(ngo => {
         <p> 
           The total combined revenue over the last 10 years is <span class="highlight-red">${totalCombinedRevenue.toLocaleString()}</span>.
         </p>
-        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for All NGOs</h3>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">{{buildDate}}</h3>
         
         <table class="data-table" id="ngo-table">
           <thead>

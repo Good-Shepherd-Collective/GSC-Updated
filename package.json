@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && echo BUILD_DATE=$(date +\"%m.%d.%Y\") > .env",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -22,6 +22,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "astro": "^4.5.3",
     "astro-devtool-breakpoints": "^0.3.0",
+    "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "json-2-csv": "^5.5.1",
     "preact": "^10.19.6",
