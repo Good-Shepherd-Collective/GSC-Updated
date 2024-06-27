@@ -1,5 +1,5 @@
+import { json2csv } from 'json-2-csv';
 import { processDemolitionData } from '../../utils/home_demolitions.js';
-import { Parser } from 'json2csv';
 import XLSX from 'xlsx';
 import fs from 'fs-extra';
 import path from 'path';
@@ -43,10 +43,7 @@ const testHomeDemolitionsProcessing = async () => {
     }));
 
     // Convert rows to CSV format
-    const json2csvParser = new Parser({
-      fields: ["date", "incidents", "displacedPeople", "structures", "menDisplaced", "womenDisplaced", "childrenDisplaced"]
-    });
-    const csvData = json2csvParser.parse(rows);
+    const csvData = await json2csv(rows);
 
     // Write CSV to file
     const csvFilePath = path.join(outputFolder, 'demolition_data_report.csv');

@@ -31,14 +31,9 @@ const combinedTrend = fullData.map((_, index) => {
     const parts = field.split('.');
     const value = parts.reduce((obj, part) => obj?.[part], fullData[index]) || 0;
     dailyTotal += value;
-    // console.log(`Adding value ${value} from field ${field} for index ${index}`);
   });
   return dailyTotal;
 });
-
-// console.log("Category Data:", categoryData);
-// console.log("Totals:", totals);
-// console.log("Combined Trend Data:", combinedTrend);
 
 // Format date
 function formatDateMMDDYYYY(dateString) {
@@ -46,19 +41,19 @@ function formatDateMMDDYYYY(dateString) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}-${day}-${year}`;
+  return `${month}.${day}.${year}`;
 }
 
 const formattedMostRecentDate = latestReport ? formatDateMMDDYYYY(latestReport.report_date) : "N/A";
 const serializedReports = JSON.stringify(fullData);
+console.log(formattedMostRecentDate, "gaza destuction single page date");
 ---
 
 <BaseLayout
   isBlogPost={true}
-  title="Daily Report"
+  title="Gaza Destruction Report"
   description="Damage as the result of the Israeli genocide of Gaza"
 >
-
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-200 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
@@ -66,14 +61,14 @@ const serializedReports = JSON.stringify(fullData);
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Gaza Damage Report
+          Gaza Damage Reports
         </h1>
         <h2 class="text-2xl mb-4 highlight-red">The ongoing genocide</h2>
         <p>Israel's ongoing genocide in the Gaza Strip has caused unprecedented loss of life, forced displacement, and destruction of infrastructure. By January 2024, some estimated the damage to Gaza's infrastructure had reached $18.5 billion, equating to 97% of the 2022 GDP of the West Bank and Gaza. Most of this destruction was concentrated in residential buildings (72%) and the commerce, industry, and services sectors (9%). Other critical infrastructures such as education, water, sanitation, health, energy, ICT, municipal services, and transport account for the remaining 19%. Most damages occurred in Gaza, North Gaza, and Khan Younis. This, of course, was methodical and intentional.</p>
 
-<p>As of March 14, Israel killed well over 31,000 people with the backing of the US and the broader Democratic Party, 70% of whom are women and children. 1.7 million have been displaced. Engineering food shortages has always been a method of ethnic cleansing. For years, Israel had monitored the literal calories entering Gaza as a result of their land, air, and sea siege. At the time of this writing, in June 2024, more than half of Gaza's population is on the brink of famine, with nearly 80% facing acute food insecurity. Palestinians in Gaza make up 80% of those facing severe hunger worldwide. Water shortages have left them with less than half the daily ration needed for survival. Over 1 million people have lost their homes as a result of Israel's carpet bombings, and 84% of health facilities have been destroyed or damaged, leaving them without access to essential medicines, treatments, electricity, and water. The education system has collapsed, with all children out of school and many schools used as shelters for internally displaced people. Approximately 17,000 children have been separated from their families, increasing their vulnerability to exploitation and abuse. These numbers are likely much higher. The pervasive violence has severely impacted mental health, especially among women, children, older people, and persons with disabilities.</p>
+        <p>As of March 14, Israel killed well over 31,000 people with the backing of the US and the broader Democratic Party, 70% of whom are women and children. 1.7 million have been displaced. Engineering food shortages has always been a method of ethnic cleansing. For years, Israel had monitored the literal calories entering Gaza as a result of their land, air, and sea siege. At the time of this writing, in June 2024, more than half of Gaza's population is on the brink of famine, with nearly 80% facing acute food insecurity. Palestinians in Gaza make up 80% of those facing severe hunger worldwide. Water shortages have left them with less than half the daily ration needed for survival. Over 1 million people have lost their homes as a result of Israel's carpet bombings, and 84% of health facilities have been destroyed or damaged, leaving them without access to essential medicines, treatments, electricity, and water. The education system has collapsed, with all children out of school and many schools used as shelters for internally displaced people. Approximately 17,000 children have been separated from their families, increasing their vulnerability to exploitation and abuse. These numbers are likely much higher. The pervasive violence has severely impacted mental health, especially among women, children, older people, and persons with disabilities.</p>
 
-<p>Our cost estimates are synthesized from multiple sources to understand the financial impact comprehensively. The raw data, excluding financial estimates, comes from Tech for Palestine. We utilize their verified data to build our visualization and advocacy programs. These resources, though still under development, are crucial for advocates and activists to counter the lies of imperialism and highlight the true extent of the humanitarian crisis in Gaza.</p>
+        <p>Our cost estimates are synthesized from multiple sources to understand the financial impact comprehensively. The raw data, excluding financial estimates, comes from Tech for Palestine. We utilize their verified data to build our visualization and advocacy programs. These resources, though still under development, are crucial for advocates and activists to counter the lies of imperialism and highlight the true extent of the humanitarian crisis in Gaza.</p>
 
         <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
         
@@ -154,28 +149,17 @@ const serializedReports = JSON.stringify(fullData);
   </section>
 </BaseLayout>
 
-
 <script type="text/javascript">
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // console.log("DOM fully loaded and parsed.");
-
   async function loadChartJsAndInitializeCharts() {
-    // console.log("Loading Chart.js...");
-
     const chartJsScript = document.createElement("script");
     chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
     document.body.appendChild(chartJsScript);
 
     await new Promise((resolve, reject) => {
-      chartJsScript.onload = () => {
-        // console.log("Chart.js loaded successfully.");
-        resolve();
-      };
-      chartJsScript.onerror = (error) => {
-        // console.error("Error loading Chart.js:", error);
-        reject(error);
-      };
+      chartJsScript.onload = () => resolve();
+      chartJsScript.onerror = (error) => reject(error);
     });
 
     initializeCharts();
@@ -189,34 +173,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       chartData.push(value);
     });
 
-    // console.log(`Prepared chart data for ${field}:`, chartData);
     return { chartData };
   }
 
   function generateCanvasId(category) {
-    // Normalize and remove 'ext' prefix
     return `chart-latest-${category.replace(/\bext\b/g, '').replace(/\s+/g, '-').replace(/^-|-$/g, '').toLowerCase()}`;
   }
 
   function initializeCharts() {
-    // console.log("Initializing charts...");
-
     const chartDataDiv = document.getElementById("chartData");
-    if (!chartDataDiv) {
-      console.error("chartDataDiv not found!");
-      return;
-    }
+    if (!chartDataDiv) return;
 
     const serializedReports = chartDataDiv.getAttribute("data-reports");
-    if (!serializedReports) {
-      // console.error("No data-reports attribute found on chartDataDiv!");
-      return;
-    }
+    if (!serializedReports) return;
 
     let reports;
     try {
       reports = JSON.parse(serializedReports);
-      // console.log("Parsed reports data:", reports);
     } catch (error) {
       console.error("Error parsing reports data:", error);
       return;
@@ -232,37 +205,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       "residential.ext_destroyed"
     ];
 
-    // Calculate combined trend data
     const combinedTrend = reports.map((_, index) => {
       return categories.reduce((sum, field) => {
         const value = field.split('.').reduce((obj, part) => obj?.[part], reports[index]) || 0;
-        // console.log(`Adding value ${value} from field ${field} for report index ${index}`);
         return sum + value;
       }, 0);
     });
 
-    // console.log("Combined Trend Data for all categories:", combinedTrend);
-
     categories.forEach((field) => {
-      // Process category to match how it's used in the HTML
       let category = field.replace(/\bext\b/g, '').replace(/_/g, ' ').replace(/\./g, ' ').toLowerCase();
       category = category.replace('places of worship ', '');
-
-      // console.log(`Processing category: ${category}`);
 
       const { chartData } = prepareChartDataForCategory(reports, field);
       const labels = reports.map((report) => report.report_date);
 
       const canvasId = generateCanvasId(category);
       const canvasElement = document.getElementById(canvasId);
-      if (!canvasElement) {
-        // console.warn(`Canvas element not found for ID: ${canvasId}`);
-        return;
-      }
-      // console.log(`Found canvas for ${category}:`, canvasElement);
+      if (!canvasElement) return;
 
       const ctx = canvasElement.getContext("2d");
-      // console.log(`Canvas context for ${category}:`, ctx);
 
       const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
       gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
@@ -314,14 +275,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
 
-    // Create summary chart for totals
-    // console.log("Creating summary chart for totals...");
-    // console.log("Combined trend data:", combinedTrend);
     const summaryCanvasId = "chart-latest-totals";
     const summaryCanvasElement = document.getElementById(summaryCanvasId);
     if (summaryCanvasElement) {
       const ctx = summaryCanvasElement.getContext("2d");
-      // console.log(`Canvas context for summary chart:`, ctx);
       const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
       gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)");
       gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)");
@@ -370,16 +327,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           },
         },
       });
-      // console.log("Summary chart created.");
-    } else {
-     //  console.warn(`Summary canvas element not found for ID: ${summaryCanvasId}`);
     }
   }
 
   function handleIntersection(entries, observer) {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        // console.log("Chart container is in view. Loading Chart.js...");
         loadChartJsAndInitializeCharts();
         observer.unobserve(entry.target);
       }
@@ -393,7 +346,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const chartContainers = document.querySelectorAll(".data-table");
   chartContainers.forEach((container) => observer.observe(container));
-  // console.log("Intersection observers initialized.");
 });
 
 </script>

@@ -156,6 +156,26 @@ button:hover .copy-icon {
     border-left: 0.75px solid #333;
   }
 
+  .table-title{
+    max-width: 300px;
+}
+.wide-table-columan{
+    min-width: 350px;
+}
+.data-table img{
+    height: 20px;
+    width: 20px;
+    margin: 0 auto;
+}
+
+.table-icon{
+    max-width: 60px;
+}
+
+.mobile-only{
+  display: none;
+}
+
   @media screen and (max-width: 768px) {
     .data__table {
       margin-top: 1rem;
@@ -195,8 +215,7 @@ button:hover .copy-icon {
 
     td::before {
       content: attr(data-cell) ": ";
-      font-weight: 700;
-      
+      font-weight: 700;  
     }
 .trend{
   border-bottom: 2px solid #333;
@@ -226,5 +245,20 @@ button:hover .copy-icon {
       content: "";
       margin-left: 10px;
     }
+.hide-on-mobile{
+  display: none;
+}
+
+.mobile-only{
+  display: block;
+}
+    .data-table img{
+      display: none;
+  }
+  .last{
+    border-bottom: 3px #222 solid;
+    padding-bottom: 1.15rem !important;
+  }
+  
   }
 

@@ -1,6 +1,4 @@
-// src/utils/data-processing/gaza-destruction-convert.js
-
-import { Parser } from 'json2csv';
+import { json2csv } from 'json-2-csv';
 import XLSX from 'xlsx';
 import fs from 'fs-extra';
 import path from 'path';
@@ -12,59 +10,62 @@ const outputFolder = path.resolve('public/data_sheets');
 fs.ensureDirSync(outputFolder);
 
 const processData = async () => {
-  const { fullData } = await getGazaDestructionData();
+  try {
+    const { fullData } = await getGazaDestructionData();
 
-  if (!fullData.length) {
-    console.error('No data fetched. Exiting...');
-    return;
-  }
+    if (!fullData.length) {
+      console.error('No data fetched. Exiting...');
+      return;
+    }
 
-  console.log("Fetched Data:", fullData);
+    console.log("Fetched Data:", fullData);
 
-  // Extract unique keys for headers
-  const uniqueKeys = [
-    ...new Set(fullData.flatMap(report => Object.keys(report.civic_buildings).map(key => `civic_buildings.${key}`)
-      .concat(Object.keys(report.educational_buildings).map(key => `educational_buildings.${key}`))
-      .concat(Object.keys(report.places_of_worship).map(key => `places_of_worship.${key}`))
-      .concat(Object.keys(report.residential).map(key => `residential.${key}`))))
-  ];
+    // Extract unique keys for headers
+    const uniqueKeys = [
+      ...new Set(fullData.flatMap(report => Object.keys(report.civic_buildings).map(key => `civic_buildings.${key}`)
+        .concat(Object.keys(report.educational_buildings).map(key => `educational_buildings.${key}`))
+        .concat(Object.keys(report.places_of_worship).map(key => `places_of_worship.${key}`))
+        .concat(Object.keys(report.residential).map(key => `residential.${key}`))))
+    ];
 
-  console.log("Unique Keys for CSV Headers:", uniqueKeys);
+    console.log("Unique Keys for CSV Headers:", uniqueKeys);
 
-  // Create rows with reportDate and values for each key
-  const rows = fullData.map(report => {
-    const row = {
-      reportDate: report.report_date,
-    };
+    // Create rows with reportDate and values for each key
+    const rows = fullData.map(report => {
+      const row = {
+        reportDate: report.report_date,
+      };
 
-    uniqueKeys.forEach(key => {
-      const pathParts = key.split('.');
-      row[key] = pathParts.reduce((obj, part) => obj?.[part], report) || '0';  // Use '0' if value not present
+      uniqueKeys.forEach(key => {
+        const pathParts = key.split('.');
+        row[key] = pathParts.reduce((obj, part) => obj?.[part], report) || '0';  // Use '0' if value not present
+      });
+
+      return row;
     });
 
-    return row;
-  });
+    console.log("Structured Rows:", rows);
 
-  console.log("Structured Rows:", rows);
+    // Convert rows to CSV format
+    const csvData = await json2csv(rows);
 
-  // Convert rows to CSV format
-  const json2csvParser = new Parser({ fields: ["reportDate", ...uniqueKeys] });
-  const csvData = json2csvParser.parse(rows);
+    // Write CSV to file
+    const csvFilePath = path.join(outputFolder, 'gaza_destruction_report.csv');
+    fs.writeFileSync(csvFilePath, csvData);
+    console.log(`CSV file saved to ${csvFilePath}`);
 
-  // Write CSV to file
-  const csvFilePath = path.join(outputFolder, 'gaza_destruction_report.csv');
-  fs.writeFileSync(csvFilePath, csvData);
-  console.log(`CSV file saved to ${csvFilePath}`);
+    // Convert rows to XLSX format
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Gaza Destruction Report');
 
-  // Convert rows to XLSX format
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(rows);
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Gaza Destruction Report');
-
-  // Write XLSX to file
-  const xlsxFilePath = path.join(outputFolder, 'gaza_destruction_report.xlsx');
-  XLSX.writeFile(workbook, xlsxFilePath);
-  console.log(`XLSX file saved to ${xlsxFilePath}`);
+    // Write XLSX to file
+    const xlsxFilePath = path.join(outputFolder, 'gaza_destruction_report.xlsx');
+    XLSX.writeFile(workbook, xlsxFilePath);
+    console.log(`XLSX file saved to ${xlsxFilePath}`);
+  } catch (error) {
+    console.error('Error processing data:', error);
+  }
 };
 
 processData().catch(error => console.error('Error processing data:', error));

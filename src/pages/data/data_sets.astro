@@ -1,5 +1,10 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getGazaDestructionData } from "@/utils/gaza-destruction.js";
+
+const gazaDestructionData = await getGazaDestructionData();
+const gazaDestructionDate = gazaDestructionData.formattedDate;
+console.log("Gaza Destruction Date:", gazaDestructionDate);
 ---
 
 <BaseLayout
@@ -14,7 +19,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Data Sets
+          Data Setss
         </h1>
         <h2 class="text-2xl mb-4 highlight-red">Here are some of the critical data points for your advocacy</h2>
         
@@ -23,24 +28,24 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <table class="data-table">
           <thead>
             <tr class="header border-y border-zinc-800">
-              <th class="table-title">Category</th>
-              <th class="wide-table-columan">Description</th>
+              <th class="table-title mr-4">Category</th>
+              <th class="wide-table-columan mr-4">Details</th>
               <th class="average">Updated</th>
-              <th class="average table-icon">CSV</th>
-              <th class="average table-icon">Excel</th>
-              <th class="average table-icon">API</th>
+              <th class="average table-icon ">CSV</th>
+              <th class="average table-icon ">Excel</th>
+              <th class="average table-icon ">API</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td data-cell="Category">Gaza Destruction</td>
-              <td data-cell="Description" class="value">
+              <td data-cell="Category" class="py-4">Gaza Destruction</td>
+              <td data-cell="Details" class="value py-4">
                 This dataset provides a broad overview of the structural damage as a result of the ongoing genocide in Gaza.
               </td>
-              <td data-cell="Last updated" class="average" id={`Gaza_destruction`}>12.12.2024</td>
-              <td data-cell="CSV Download" class="average"><a href="#"><img class="download" src="/images/black-download.svg"></a></td>
-              <td data-cell="Excel Download" class="average"><a href="#"><img class="download" src="/images/black-download.svg"></a></td>
-              <td data-cell="JSON API Endpoint" class="average"><a href="#"><img class="download" src="/images/Json.svg"></a></td>
+              <td data-cell="Updated" class="average py-4" id="Gaza_destruction">{gazaDestructionDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="#"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="#"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="#"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
           </tbody>
         </table>
@@ -49,20 +54,3 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   </section>
 </BaseLayout>
 
-<style>
-    .table-title{
-        max-width: 300px;
-    }
-    .wide-table-columan{
-        min-width: 350px;
-    }
-    .download{
-        height: 20px;
-        width: 20px;
-        margin: 0 auto;
-    }
-
-    .table-icon{
-        max-width: 60px;
-    }
-</style>
