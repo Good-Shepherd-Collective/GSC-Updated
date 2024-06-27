@@ -18,19 +18,19 @@ export async function getGazaDestructionData() {
   
       // Start date for calculation
       const startDate = new Date('2023-10-07');
-      console.log("Start Date:", startDate);
+      // console.log("Start Date:", startDate);
   
       const latestReport = data[data.length - 1];
-      console.log("Latest Report:", latestReport);
+      // console.log("Latest Report:", latestReport);
   
       const latestReportDateStr = latestReport.report_date; // Use the exact date string from JSON response
-      console.log("Latest Report Date String:", latestReportDateStr);
+      // console.log("Latest Report Date String:", latestReportDateStr);
   
       const latestReportDate = new Date(latestReportDateStr);
-      console.log("Latest Report Date:", latestReportDate);
+      // console.log("Latest Report Date:", latestReportDate);
   
       const totalDays = (latestReportDate - startDate) / (1000 * 60 * 60 * 24) + 1; // +1 to include both start and end dates
-      console.log("Total Days:", totalDays);
+      // console.log("Total Days:", totalDays);
   
       // Calculate daily averages and estimated costs
       data.forEach(report => {
@@ -54,7 +54,7 @@ export async function getGazaDestructionData() {
       const [year, month, day] = latestReportDateStr.split('-');
       const formattedGazaDestructionDate = `${month}.${day}.${year}`;
   
-      console.log("Formatted Gaza Destruction Date:", formattedGazaDestructionDate);
+     // console.log("Formatted Gaza Destruction Date:", formattedGazaDestructionDate);
   
       return { latestReport, formattedGazaDestructionDate, fullData: data };
     } catch (error) {

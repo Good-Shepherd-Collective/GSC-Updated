@@ -1,19 +1,21 @@
 // utils/home_demolitions.js
 
 async function fetchData() {
-    const url = 'https://us-east-1.aws.data.mongodb-api.com/app/home_demolitions-guyba/endpoint/demolition_data_partial';
-    
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Fetching data failed:", error);
-      return null;
+  const url = 'https://us-east-1.aws.data.mongodb-api.com/app/home_demolitions-guyba/endpoint/demolition_data_partial';
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data = await response.json();
+    return data; // Ensure this returns an array
+  } catch (error) {
+    console.error("Fetching data failed:", error);
+    return []; // Return an empty array on error
   }
+}
+
   
   function processDataForChart(rawData) {
     const dataByDate = rawData.reduce((acc, doc) => {
