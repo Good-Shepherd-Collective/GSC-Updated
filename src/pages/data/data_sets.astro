@@ -44,7 +44,7 @@ const formattedNewestDemolitionDate = (() => {
         </h1>
         <h2 class="text-2xl mb-4 highlight-red">Here are some of the critical data points for your advocacy</h2>
         
-        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for </h3>
+        <p>explain this</p>
         
         <table class="data-table">
           <thead>
@@ -58,6 +58,7 @@ const formattedNewestDemolitionDate = (() => {
             </tr>
           </thead>
           <tbody>
+            <!-- Gaza Destruction Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">
                 <a href="data/gaza_destruction" class="flex items-center space-x-2">
@@ -68,11 +69,13 @@ const formattedNewestDemolitionDate = (() => {
               <td data-cell="Details" class="value py-4">
                 This dataset provides a broad overview of the structural damage as a result of the ongoing genocide in Gaza.
               </td>
-              <td data-cell="Updated" class="average py-4" id="Gaza_destruction">{gazaDestructionDate}</td>
+              <td data-cell="Updated" class="average py-4">{gazaDestructionDate}</td>
               <td data-cell="CSV" class="average py-4"><a href="/data_sheets/gaza_destruction_report.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="Excel" class="average py-4"><a href="/data_sheets/gaza_destruction_report.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v3/infrastructure-damaged.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
+            <!-- Gaza Destruction Data Ends -->
+             <!-- Home Demolition Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">
                 <a href="data/home_demolitions" class="flex items-center space-x-2">
@@ -84,10 +87,29 @@ const formattedNewestDemolitionDate = (() => {
               <td data-cell="Details" class="value py-4">
                 This dataset provides a summary of home demolitions of East Jerusalem and the West Bank.
               </td>
-              <td data-cell="Updated" class="average py-4" id="DemolitionDate">{formattedNewestDemolitionDate}</td>
+              <td data-cell="Updated" class="average py-4">{formattedNewestDemolitionDate}</td>
               <td data-cell="CSV" class="average py-4"><a href="/data_sheets/demolition_data_report.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="Excel" class="average py-4"><a href="/data_sheets/demolition_data_report.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
               <td data-cell="API" class="average py-4 last"><a href="/api/home_demolitions.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+            <!-- Home Demolition Data Ends -->
+             <!-- NGO Data Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="data/ngo_data" class="flex items-center space-x-2">
+                  <p>NGO Data</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This dataset provides IRS data on charities advancing zionism. 
+              </td>
+              <td data-cell="Updated" class="average py-4">YTD filings</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/ngo_data_report.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/ngo_data_report.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="/api/ngo_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
           </tbody>
         </table>
