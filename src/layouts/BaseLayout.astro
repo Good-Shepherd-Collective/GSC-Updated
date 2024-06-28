@@ -6,9 +6,10 @@ import Footer from "@/components/global/Footer.astro";
 
 export interface Props {
   isBlogPost?: boolean;
+  blackNav?: boolean;
 }
 
-const { isBlogPost } = Astro.props;
+const { isBlogPost = false, blackNav = false } = Astro.props;
 ---
 
 <html lang="en" class="selection:text-black selection:bg-white">
@@ -16,7 +17,7 @@ const { isBlogPost } = Astro.props;
     <BaseHead />
   </head>
   <body class={`${isBlogPost ? 'bg-white text-black' : 'bg-black text-white'} 2xl:max-w-7xl mx-auto font-mono`}>
-    <Navigation isBlogPost={isBlogPost} />
+    <Navigation isBlogPost={isBlogPost} blackNav={blackNav} />
     <slot />
     <Footer isBlogPost={isBlogPost} />
   </body>

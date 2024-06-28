@@ -1,5 +1,4 @@
 ---
-// src/layouts/BlogLayout.astro
 import BaseLayout from "./BaseLayout.astro";
 import InlineEmail from "@/components/global/InlineEmail.astro";
 
@@ -17,7 +16,7 @@ export interface Props {
 const { title, date, readingTime, featuredImage, author, excerpt, category, tags } = Astro.props;
 ---
 
-<BaseLayout isBlogPost={true}>
+<BaseLayout isBlogPost={true} blackNav={true}>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800 h-full">
       <div class="grid grid-cols-1 lg:grid-cols-2 h-full">
