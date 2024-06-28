@@ -1,143 +1,148 @@
 <!-- src/components/global/InlineEmail.astro -->
+<!-- src/components/global/InlineEmail.astro -->
 <div class="w-full bg-zinc-50 py-4 px-6 pb-10 border border-zinc-600 rounded-md">
-    <div class="mx-auto max-w-md space-y-2">
-      <div class="space-y-1 text-left">
-        <p class="text-lg font-semibold" style="font-family: sans-serif; margin-bottom: 0;">Critical updates</p>
-        <p class="text-sm" style="font-family: sans-serif">Join our newsletter for time-senstive action items</p>
-      </div>
-      <form 
-        id="newsletterForm" 
-        action="https://hello.goodshepherdcollective.org/sendy/subscribe" 
-        method="POST" 
-        accept-charset="utf-8" 
-        class="space-y-4"
-      >
-        <!-- Hidden inputs for Sendy -->
-        <input type="hidden" name="list" value="y89212UBuNheyECx7v9tOdrQ"/>
-        <input type="hidden" name="subform" value="yes"/>
-        
-        <!-- form steps here -->
-        <div id="step1" class="form-step active">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <label class="sr-only" for="name">Name</label>
-            <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              id="name"
-              name="name"
-              placeholder="Your Name"
-              type="text"
-              required
-            />
-            <div class="flex gap-4">
-              <button
-                class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-                type="button"
-                onclick="nextStep()"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-        <div id="step2" class="form-step">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <label class="sr-only" for="email">Email</label>
-            <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              id="email"
-              name="email"
-              placeholder="m@example.com"
-              type="email"
-              required
-            />
-            <div class="flex gap-4">
-              <button
-                class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-                type="button"
-                onclick="previousStep()"
-              >
-                Previous
-              </button>
-              <button
-                class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-                type="button"
-                onclick="nextStep()"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-        <div id="step3" class="form-step">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <label class="sr-only" for="state">State</label>
-            <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              id="state"
-              name="state"
-              placeholder="Your State"
-              type="text"
-              required
-            />
-            <div class="flex gap-4">
-              <button
-                class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-                type="button"
-                onclick="previousStep()"
-              >
-                Previous
-              </button>
-              <button
-                class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-                type="button"
-                onclick="nextStep()"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-        <div id="step4" class="form-step">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <label class="sr-only" for="gdpr">GDPR Consent</label>
-            <input
-              class="mr-2"
-              type="checkbox"
-              id="gdpr"
-              name="gdpr"
-              required
-            />
-            <span class="text-sm">I give my consent to Good Shepherd Collective to be in touch with me via email using the information I have provided in this form for the purpose of news, updates and marketing.</span>
-          </div>
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+  <div class="mx-auto max-w-md space-y-2">
+    <div class="space-y-1 text-left">
+      <p class="text-lg font-semibold" style="font-family: sans-serif; margin-bottom: 0;">Critical updates</p>
+      <p class="text-sm" style="font-family: sans-serif">Join our newsletter for time-senstive action items</p>
+    </div>
+    <form 
+      id="newsletterForm" 
+      action="https://hello.goodshepherdcollective.org/sendy/subscribe" 
+      method="POST" 
+      accept-charset="utf-8" 
+      class="space-y-4"
+    >
+      <!-- Hidden inputs for Sendy -->
+      <input type="hidden" name="list" value="y89212UBuNheyECx7v9tOdrQ"/>
+      <input type="hidden" name="subform" value="yes"/>
+      
+      <!-- form steps here -->
+      <div id="step1" class="form-step active">
+        <div class="flex flex-col items-center justify-between gap-4">
+          <label class="sr-only" for="name">Name</label>
+          <input
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            id="name"
+            name="name"
+            placeholder="Your Name"
+            type="text"
+            required
+          />
+          <div class="flex justify-start w-full">
             <button
-              class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
+              type="button"
+              onclick="nextStep()"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="step2" class="form-step">
+        <div class="flex flex-col items-center justify-between gap-4">
+          <label class="sr-only" for="email">Email</label>
+          <input
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            id="email"
+            name="email"
+            placeholder="m@example.com"
+            type="email"
+            required
+          />
+          <div class="flex justify-start w-full gap-4">
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
               type="button"
               onclick="previousStep()"
             >
               Previous
             </button>
             <button
-              class="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
-              type="submit"
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
+              type="button"
+              onclick="nextStep()"
             >
-              Submit
+              Next
             </button>
           </div>
         </div>
-        <div id="formError" class="hidden text-red-500 text-center"></div>
-      </form>
-    </div>
+      </div>
+      <div id="step3" class="form-step">
+        <div class="flex flex-col items-center justify-between gap-4">
+          <label class="sr-only" for="state">State</label>
+          <input
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            id="state"
+            name="state"
+            placeholder="Your State"
+            type="text"
+            required
+          />
+          <div class="flex justify-start w-full gap-4">
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
+              type="button"
+              onclick="previousStep()"
+            >
+              Previous
+            </button>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
+              type="button"
+              onclick="nextStep()"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="step4" class="form-step">
+        <div class="flex items-start gap-4">
+          <label class="sr-only" for="gdpr">GDPR Consent</label>
+          <input
+            class="mt-1 h-5 w-5 rounded border border-input bg-background"
+            type="checkbox"
+            id="gdpr"
+            name="gdpr"
+            required
+          />
+          <span class="text-sm flex-1">I give my consent to the Good Shepherd Collective to email me using the information I have provided in this form for the purpose of news, updates and marketing.</span>
+        </div>
+        <div class="flex justify-start w-full gap-4 mt-4">
+          <button
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
+            type="button"
+            onclick="previousStep()"
+          >
+            Previous
+          </button>
+          <button
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-black text-white hover:bg-gray-800 h-10 px-4 py-2 flex-1"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+      <div id="formError" class="hidden text-red-500 text-center"></div>
+    </form>
   </div>
-  
-  <style>
-    .form-step {
-      display: none;
-    }
-    .form-step.active {
-      display: block;
-    }
-  </style>
+</div>
+
+<style>
+  .form-step {
+    display: none;
+  }
+  .form-step.active {
+    display: block;
+  }
+</style>
+
+<!-- Script remains unchanged -->
+
+<!-- Script remains unchanged -->
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
