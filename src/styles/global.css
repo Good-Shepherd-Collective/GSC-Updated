@@ -69,10 +69,31 @@
   background-image: radial-gradient(circle at center center, transparent 0%, rgba(255, 255, 255, 0) 99%),
     repeating-linear-gradient(0deg, rgba(185, 185, 185, 0) 10px, rgba(185, 185, 185, 0.06) 10px, transparent 10px, transparent 20px),
     repeating-linear-gradient(90deg, rgba(185, 185, 185, 0) 10px, rgba(185, 185, 185, 0.25) 11px, transparent 11px, transparent 20px),
-    linear-gradient(90deg, #fff0, #fff0);
+    linear-gradient(50deg, #fff0, #fff0);
 
     box-shadow: inset 0px -1.5px 0px 0px #ffffff;
 
+}
+
+
+
+.link-icon {
+  align-items: left;
+  
+}
+
+.link-icon::after {
+  content: "";
+  background-image: url("/images/Arrow.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: 0.5rem;
+  position: relative;
+  top: 0.3rem;
 }
 
 .move-down {

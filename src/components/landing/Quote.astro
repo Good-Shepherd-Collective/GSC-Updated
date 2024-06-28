@@ -32,7 +32,7 @@ const chartData = fullData.map(data => ({
 
 <section class="md:px-12 sm:px-8">
   <div class="border-x border-b border-zinc-800">
-    <h2 class="text-5xl md:text-6xl xl:text-8xl text-white p-10">
+    <h2 class="text-5xl md:text-6xl xl:text-8xl text-white p-10 border-b border-zinc-800">
       Zionism's data points <span class="move-down">&cudarrr;</span>
     </h2>
 
@@ -52,12 +52,12 @@ const chartData = fullData.map(data => ({
       </div>
 
       <!-- Red Box -->
-      <div class="bg-red-700 p-8 lg:p-10 h-full">
-        <h2 class="text-2xl tracking-wide text-balance mt-6 font-light lg:text-4xl text-white">
-          West Bank & E. Jerusalem
-        </h2>
-        <p class="mb-4">Injuries & Deaths since 10.7.2023</p>
-        <div class="gradient-grid-bigger"><canvas id="wb-chart"></canvas></div>
+      <div class="bg-black p-8 lg:p-10 h-full">
+        
+        <p class="mb-4 tracking-wide">West Bank & E. Jerusalem Injuries & Deaths since 10.7.2023</p>
+        <div class="chart-container" style="position: relative; height:40vh; width:100%">
+          <canvas id="wb-chart"></canvas>
+        </div>
         <div id="chart-data" style="display: none;">${JSON.stringify(chartData)}</div>
         {
           latestReport ? (
@@ -118,12 +118,12 @@ const chartData = fullData.map(data => ({
 
       // Create gradient fills
       const gradientKilled = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradientKilled.addColorStop(0, 'rgba(10, 71, 111, 0.85)'); // Dark blue gradient for deaths
-      gradientKilled.addColorStop(1, 'rgba(10, 71, 111, 0.7)');
+gradientKilled.addColorStop(0, "rgba(127, 13, 21, 1)");
+gradientKilled.addColorStop(1, "rgba(127, 13, 21, 0.8)");
 
-      const gradientInjured = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradientInjured.addColorStop(0, 'rgba(186, 229, 252, 0.9)'); // Light blue gradient for injuries
-      gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
+const gradientInjured = ctx.createLinearGradient(0, 0, 0, canvas.height);
+gradientInjured.addColorStop(0, 'rgba(186, 229, 252, 0.9)');
+gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
 
       const data = {
         labels: chartData.map(data => data.date),
@@ -131,7 +131,7 @@ const chartData = fullData.map(data => ({
           {
             label: 'Total Killed',
             data: chartData.map(data => data.killed),
-            borderColor: '#0A476F', // Dark blue line
+            borderColor: '#930000', // Dark blue line
             backgroundColor: gradientKilled,
             fill: true,
             tension: 0.1
@@ -147,51 +147,101 @@ const chartData = fullData.map(data => ({
         ]
       };
 
-      const config = {
-        type: 'line',
-        data: data,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            },
-          },
-          scales: {
-            x: {
-              display: false,
-            },
-            y: {
-              display: false,
-              grid: {
-                color: 'rgba(255, 255, 255, 0.2)', // White grid lines
-              },
-              title: {
-                display: true,
-                text: 'Count'
-              }
-            }
-          },
-          elements: {
-            line: {
-              borderWidth: 2
-            },
-            point: {
-              radius: 0
-            }
-          },
-          layout: {
-            padding: {
-              top: 10,
-              bottom: 10
-            }
+      const fixedGridPlugin = {
+  id: 'fixedGrid',
+  beforeDraw: (chart, args, options) => {
+    const {ctx, chartArea: {left, top, right, bottom}, width, height} = chart;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    const legendHeight = chart.legend.height;
+    const gridTop = top + legendHeight;
+    
+    // Vertical lines
+    for (let i = left; i <= right; i += 15) {
+      ctx.beginPath();
+      ctx.moveTo(i, gridTop);
+      ctx.lineTo(i, bottom);
+      ctx.stroke();
+    }
+    
+    // Horizontal lines
+    for (let i = gridTop; i <= bottom; i += 15) {
+      ctx.beginPath();
+      ctx.moveTo(left, i);
+      ctx.lineTo(right, i);
+      ctx.stroke();
+    }
+    
+    ctx.restore();
+  }
+};
+
+const config = {
+  type: 'line',
+  data: data,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        align: 'start',
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 20,
+          color: '#ffffff',
+          font: {
+            size: 12
           }
         }
-      };
+      },
+      fixedGrid: {}
+    },
+    scales: {
+      x: {
+        display: false
+      },
+      y: {
+        display: false
+      }
+    },
+    elements: {
+      line: {
+        borderWidth: 2
+      },
+      point: {
+        radius: 0
+      }
+    },
+    layout: {
+      padding: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
+      }
+    }
+  },
+  plugins: [fixedGridPlugin]
+};
 
       new Chart(ctx, config);
     } catch (error) {
       console.error('Error loading chart:', error);
     }
   });
+
+  window.addEventListener('resize', function() {
+  chart.resize();
+});
+
+const chart = new Chart(ctx, config);
+
+window.addEventListener('resize', function() {
+  chart.resize();
+});
 </script>
