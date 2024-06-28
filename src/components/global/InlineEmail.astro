@@ -1,8 +1,8 @@
 <!-- src/components/global/InlineEmail.astro -->
-<div class="w-full bg-gray-100 py-4 pb-10 border border-zinc-600 rounded-md">
+<div class="w-full bg-gray-100 py-4 px-6 pb-10 border border-zinc-600 rounded-md">
     <div class="mx-auto max-w-md space-y-2">
       <div class="space-y-2 text-left">
-        <p class="text-lg mb-10 font-semibold" style="font-family: sans-serif">Join our email list for critical action items.</p>
+        <p class="text-lg mb-10 font-semibold" style="font-family: sans-serif">Critical updates</p>
       </div>
       <form 
         id="newsletterForm" 
@@ -151,10 +151,10 @@
   
       window.nextStep = function() {
         const form = document.getElementById('newsletterForm');
-        const name = form.name.value.trim();
-        const email = form.email.value.trim();
-        const state = form.state.value.trim();
-        const gdpr = form.gdpr.checked;
+        const name = (form.querySelector('#name') as HTMLInputElement).value.trim();
+        const email = (form.querySelector('#email') as HTMLInputElement).value.trim();
+        const state = (form.querySelector('#state') as HTMLInputElement).value.trim();
+        const gdpr = (form.querySelector('#gdpr') as HTMLInputElement).checked;
         const errorDiv = document.getElementById('formError');
   
         if (currentStep === 0 && !name) {
@@ -191,7 +191,7 @@
           showStep(currentStep);
         } else {
           // Allow form submission to Sendy
-          form.submit();
+          (form as HTMLFormElement).submit();
         }
       };
   
