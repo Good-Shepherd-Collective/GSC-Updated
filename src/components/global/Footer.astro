@@ -9,67 +9,69 @@ const { isBlogPost } = Astro.props;
 ---
 
 <footer class="md:px-12 sm:px-8">
-  <div class={`border-x ${isBlogPost ? 'border-zinc-200' : 'border-zinc-800'} border-t`}>
+  <div class={`border ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
     <ul
       role="list"
-      class={`text-base gap-px flex-col grid grid-cols-2 xl:grid-cols-3 text-center ${isBlogPost ? 'text-black bg-white' : 'text-zinc-400 bg-zinc-800'}`}>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
+      class={`text-base flex-col grid grid-cols-2 xl:grid-cols-3 text-center ${isBlogPost ? 'text-black bg-white' : 'text-zinc-400 bg-zinc-800'} border-collapse`}>
+      <li class={`group border-r border-b ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="/"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           About
         </a>
       </li>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
+      <li class={`group border-b md:border-r-0 xl:border-r sm:border-r-0 ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="/system/style-guide"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           Contact
         </a>
       </li>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
+      
+      
+      <li class={`group border-r border-b md:border-r sm:border-r xl:border-r-0 ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="/data/data_sets"
           title="Data sets"
           aria-label="Data sets"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           Data Sets
         </a>
       </li>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'} border-collapse`}>
+      <li class={`group border-b md:border-b sm:border-b md:border-r-0 sm:border-r-0 xl:border-r xl:border-b-0 ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="#"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           Defund Racism
         </a>
       </li>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'}`}>
+      <li class={`group border-r ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="https://x.com/shepherds4good"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           @Twitter
         </a>
       </li>
-      <li class={`group ${isBlogPost ? 'border border-zinc-200 bg-white' : 'border border-zinc-800 bg-black'} border-collapse`}>
+      <li class={`group xl:border-t-0  ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
         <a
           href="https://www.instagram.com/goodshepherdcollective"
           title="link to your page"
           aria-label="your label"
-          class="group-hover:text-red-500 w-full h-full flex justify-center p-8">
+          class={`group-hover:text-red-500 w-full h-full flex justify-center p-8 ${isBlogPost ? 'bg-white' : 'bg-black'}`}>
           @Instagram
         </a>
       </li>
     </ul>
   </div>
-  <div class={`border-x ${isBlogPost ? 'border-zinc-200' : 'border-zinc-800'} border-b`}>
+  <div class={`border-x ${isBlogPost ? 'border-zinc-800' : 'border-zinc-800'}`}>
     <div class="p-8 lg:px-10 flex flex-col gap-6 text-center uppercase">
       <p class={`text-sm ${isBlogPost ? 'text-black' : 'text-white'} tracking-wide`}>
         © <span id="current-year"></span> Good Shepherd Collective. All rights reserved

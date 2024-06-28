@@ -12,7 +12,7 @@ const { isBlogPost } = Astro.props;
   <div class="w-full mx-auto">
     <div
       x-data="{ open: false }"
-      class={`relative flex flex-col w-full px-8 mx-auto border-x border-b md:items-center md:justify-between md:flex-row ${isBlogPost ? 'bg-white border-zinc-200' : 'bg-black border-zinc-800'}`}>
+      class={`relative flex flex-col w-full px-8 mx-auto border-x border-b md:items-center md:justify-between md:flex-row ${isBlogPost ? 'bg-white border-zinc-800' : 'bg-black border-zinc-800'}`}>
       <div class="flex flex-row items-center justify-between md:justify-start">
         <img
           src="/images/gsc_logo.svg"
