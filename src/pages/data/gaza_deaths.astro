@@ -1,0 +1,268 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getGazaDeathsData } from "../../utils/gaza_deaths.js";
+
+const { latestReport, fullData } = await getGazaDeathsData();
+
+// console.log("Latest Report:", latestReport);
+// console.log("Full Data:", fullData);
+
+function formatDateMMDDYYYY(dateString) {
+  const date = new Date(dateString);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}.${day}.${year}`;
+}
+
+const formattedMostRecentDate = latestReport
+  ? formatDateMMDDYYYY(latestReport.report_date)
+  : "N/A";
+
+const categoryData = [
+  { category: 'Total Killed', value: latestReport.killed_cum, dailyAverage: latestReport.daily_average_killed, fourteenDayAverage: latestReport.fourteen_day_average_killed },
+  { category: 'Total Children Killed', value: latestReport.ext_killed_children_cum, dailyAverage: latestReport.daily_average_killed_children, fourteenDayAverage: latestReport.fourteen_day_average_killed_children },
+  { category: 'Total Women Killed', value: latestReport.ext_killed_women_cum, dailyAverage: latestReport.daily_average_killed_women, fourteenDayAverage: latestReport.fourteen_day_average_killed_women },
+  { category: 'Total Men Killed', value: latestReport.ext_killed_men_cum, dailyAverage: latestReport.daily_average_killed_men, fourteenDayAverage: latestReport.fourteen_day_average_killed_men },
+  { category: 'Total Injured', value: latestReport.injured_cum, dailyAverage: latestReport.daily_average_injured, fourteenDayAverage: latestReport.fourteen_day_average_injured },
+  { category: 'Total Civilian Defense Killed', value: latestReport.ext_civdef_killed_cum, dailyAverage: latestReport.daily_average_civdef_killed, fourteenDayAverage: latestReport.fourteen_day_average_civdef_killed },
+  { category: 'Total Medical Personnel Killed', value: latestReport.ext_med_killed_cum, dailyAverage: latestReport.daily_average_med_killed, fourteenDayAverage: latestReport.fourteen_day_average_med_killed },
+  { category: 'Total Press Killed', value: latestReport.ext_press_killed_cum, dailyAverage: latestReport.daily_average_press_killed, fourteenDayAverage: latestReport.fourteen_day_average_press_killed },
+];
+
+const serializedReports = JSON.stringify(fullData);
+---
+
+<BaseLayout
+  isBlogPost={true}
+  title="Daily Report"
+  description="Daily report of casualties in Gaza."
+>
+  <section class="md:px-12 sm:px-8">
+    <div class="border-x border-zinc-200 p-8">
+      <div style="max-width: 55rem; margin: 0 auto;">
+        <h1
+          class="text-4xl md:text-6xl xl:text-7xl font-semibold"
+          style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
+        >
+          Gaza
+        </h1>
+        <h2 class="text-2xl mb-4 highlight-red">Deathss and Injuries</h2>
+        <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
+        
+        {
+          fullData.length > 0 ? (
+            <table class="data-table">
+              <thead>
+                <tr class="header border-y border-zinc-800">
+                  <th>Category</th>
+                  <th>Total</th>
+                  <th class="average">Daily Avg</th>
+                  <th class="average">14-day Avg</th>
+                  <th style="width: 300px;">Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categoryData.map(({ category, value, dailyAverage, fourteenDayAverage }) => (
+                  <tr key={`report-category-${category}`}>
+                    <td data-cell="Category">{category}</td>
+                    <td data-cell="Total" class="value">
+                      {value}
+                    </td>
+                    <td data-cell="Daily Avg" class="average daily-avg">
+                      {dailyAverage?.toFixed(2) || 'N/A'}
+                    </td>
+                    <td data-cell="14-day Avg" class="average fourteen-day-avg">
+                      {fourteenDayAverage?.toFixed(2) || 'N/A'}
+                    </td>
+                    <td class="trend">
+                      <div class="canvas-wrapper">
+                        <canvas
+                          class="line-chart-style"
+                          data-cell="Trend"
+                          id={`chart-latest-${category}`}
+                          height="60"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No reports available.</p>
+          )
+        }
+        <p class="pt-8">
+          <a
+            href="/data_sheets/gaza_daily_report.csv"
+            download="gaza_daily_report.csv">Download as CSV</a
+          >&nbsp;|&nbsp;
+          <a
+            href="/data_sheets/gaza_daily_report.xlsx"
+            download="gaza_daily_report.xlsx">Download as Excel</a
+          >
+          &nbsp;|&nbsp;
+          <a
+            href="https://data.techforpalestine.org/api/v2/casualties_daily.json"
+            >.JSON endpoint</a
+          >
+        </p>
+        <div
+          id="chartData"
+          data-reports={serializedReports}
+          style="display:none;"
+        >
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("Document is ready");
+
+    async function loadChartJsAndInitializeCharts() {
+      console.log("Loading Chart.js dynamically...");
+
+      const chartJsScript = document.createElement("script");
+      chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      document.body.appendChild(chartJsScript);
+
+      await new Promise((resolve, reject) => {
+        chartJsScript.onload = resolve;
+        chartJsScript.onerror = reject;
+      });
+
+      console.log("Chart.js loaded. Initializing charts...");
+      initializeCharts();
+    }
+
+    function applyConditionalFormatting(element, percentageIncrease) {
+      const transparency = Math.min(1, Math.abs(percentageIncrease) / 100);
+      if (percentageIncrease > 0) {
+        element.style.backgroundColor = `rgba(127, 13, 1, ${transparency})`;
+        element.setAttribute("data-after", "↑");
+      } else if (percentageIncrease < 0) {
+        element.style.backgroundColor = `rgba(40, 169, 224, ${transparency})`;
+        element.setAttribute("data-after", "↓");
+      } else {
+        element.style.backgroundColor = "";
+        element.removeAttribute("data-after");
+      }
+      element.style.fontWeight = transparency >= 0.6 ? "600" : "normal";
+      element.style.color = transparency >= 0.6 ? "white" : "";
+    }
+
+    function initializeCharts() {
+      const chartDataDiv = document.getElementById("chartData");
+      let reports = JSON.parse(chartDataDiv.getAttribute("data-reports"));
+      console.log("Reports data:", reports);
+
+      reports.sort(
+        (a, b) => new Date(a.report_date) - new Date(b.report_date)
+      );
+
+      const categories = [
+        { key: 'killed_cum', label: 'Total Killed' },
+        { key: 'ext_killed_children_cum', label: 'Total Children Killed' },
+        { key: 'ext_killed_women_cum', label: 'Total Women Killed' },
+        { key: 'ext_killed_men_cum', label: 'Total Men Killed' },
+        { key: 'injured_cum', label: 'Total Injured' },
+        { key: 'ext_civdef_killed_cum', label: 'Total Civilian Defense Killed' },
+        { key: 'ext_med_killed_cum', label: 'Total Medical Personnel Killed' },
+        { key: 'ext_press_killed_cum', label: 'Total Press Killed' },
+      ];
+
+      categories.forEach((category) => {
+        const labels = reports.map(report => report.report_date);
+        const dataValues = reports.map(report => report[category.key]);
+
+        const canvasId = `chart-latest-${category.label}`;
+        const canvasElement = document.getElementById(canvasId);
+        if (!canvasElement) {
+          console.error(`Canvas element not found for ID: ${canvasId}`);
+          return;
+        }
+        const ctx = canvasElement.getContext("2d");
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, "rgba(127, 13, 21, 0.8)"); // Slightly transparent red
+        gradient.addColorStop(1, "rgba(127, 13, 21, 0.2)"); // Fully transparent
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: category.label,
+                data: dataValues,
+                borderColor: "#7f0d15",
+                tension: 0.1,
+                borderJoinStyle: "round",
+                borderWidth: 1,
+                pointRadius: 0.5,
+                backgroundColor: gradient,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
+                ticks: {
+                  display: false,
+                },
+                grid: {
+                  display: false,
+                },
+              },
+            },
+          },
+        });
+      });
+
+      // Apply conditional formatting
+      const rows = document.querySelectorAll(".data-table tbody tr");
+      rows.forEach((row) => {
+        const dailyAvg = parseFloat(row.querySelector(".daily-avg").innerText);
+        const fourteenDayAvg = parseFloat(row.querySelector(".fourteen-day-avg").innerText);
+        const percentageIncrease = ((dailyAvg - fourteenDayAvg) / fourteenDayAvg) * 100;
+        applyConditionalFormatting(row.querySelector(".daily-avg"), percentageIncrease);
+      });
+    }
+
+    function handleIntersection(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log("Chart container is in view. Loading Chart.js...");
+          loadChartJsAndInitializeCharts();
+          observer.unobserve(entry.target);
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      threshold: 0.1,
+    });
+
+    const chartContainers = document.querySelectorAll(".data-table");
+    chartContainers.forEach((container) => observer.observe(container));
+  });
+</script>

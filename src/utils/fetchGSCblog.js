@@ -1,5 +1,5 @@
 // src/utils/fetchGSCblog.js
-const API_URL = "https://login.goodshepherdcollective.org/wp-json/wp/v2/posts?per_page=4&_embed";
+const API_URL = "https://login.goodshepherdcollective.org/wp-json/wp/v2/posts?_embed";
 
 function calculateReadingTime(text) {
   const wordsPerMinute = 200;
@@ -21,13 +21,28 @@ function decodeHtml(html) {
     .replace(/&#038;/g, "&");
 }
 
-export async function fetchGSCblog() {
+async function fetchAllPosts(page = 1, allPosts = []) {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}&page=${page}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const posts = await response.json();
+    if (posts.length > 0) {
+      allPosts = allPosts.concat(posts);
+      return fetchAllPosts(page + 1, allPosts);
+    } else {
+      return allPosts;
+    }
+  } catch (error) {
+    console.error("Fetch error from posts:", error);
+    return allPosts;
+  }
+}
+
+export async function fetchGSCblog() {
+  try {
+    const posts = await fetchAllPosts();
     return posts.map((post) => {
       const readingTime = calculateReadingTime(post.content.rendered || "");
       const postDate = new Date(post.date);
@@ -42,7 +57,7 @@ export async function fetchGSCblog() {
 
       return {
         id: post.id,
-        link: post.link,
+        link: `/posts/${post.slug}`, // Relative link using slug
         title: decodeHtml(post.title.rendered),
         content: post.content.rendered,
         formattedDate,

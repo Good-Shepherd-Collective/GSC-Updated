@@ -1,7 +1,14 @@
+
+/* In your global CSS file */
+@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+
+
 /* src/styles/global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 
 :root {
   --astro-code-color-text: theme(textColor.zinc.400);

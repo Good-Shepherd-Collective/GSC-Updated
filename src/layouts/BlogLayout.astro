@@ -1,5 +1,7 @@
 ---
+// src/layouts/BlogLayout.astro
 import BaseLayout from "./BaseLayout.astro";
+import InlineEmail from "@/components/global/InlineEmail.astro";
 
 export interface Props {
   title: string;
@@ -14,6 +16,7 @@ export interface Props {
 
 const { title, date, readingTime, featuredImage, author, excerpt, category, tags } = Astro.props;
 ---
+
 <BaseLayout isBlogPost={true}>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-200">
@@ -36,8 +39,6 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
             {author && `By ${author}`}
           </p>
         </div>
-        
-        
         {featuredImage && (
           <img
             class="h-full w-full object-cover object-center"
@@ -50,14 +51,31 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
   </section>
 
   <section class="md:px-12 sm:px-8">
-    <div class="border-x grid grid-cols-1 lg:grid-cols-1 border-t border-zinc-200 gap-px ">
+    <div class="border-x grid grid-cols-1 lg:grid-cols-1 border-t border-zinc-200 gap-px">
       <div class="lg:col-start-1 lg:col-span-1 p-8 lg:px-10">
         <div class="blog-styles mx-auto" style="max-width: 50rem; margin: 0 auto;">
-          
           <slot></slot>
-          
         </div>
       </div>
     </div>
   </section>
+
+  <!-- InlineEmail component to be inserted dynamically -->
+  <div id="inline-email-placeholder" class="hidden">
+    <InlineEmail />
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const blogContent = document.querySelector('.blog-styles');
+      const paragraphs = blogContent.querySelectorAll('p');
+      const emailPlaceholder = document.getElementById('inline-email-placeholder').innerHTML;
+
+      if (paragraphs.length > 3) {
+        const inlineEmail = document.createElement('div');
+        inlineEmail.innerHTML = emailPlaceholder;
+        paragraphs[2].insertAdjacentElement('afterend', inlineEmail);
+      }
+    });
+  </script>
 </BaseLayout>
