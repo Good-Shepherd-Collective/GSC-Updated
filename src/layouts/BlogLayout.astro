@@ -20,27 +20,29 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
 <BaseLayout isBlogPost={true}>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800 h-full">
-      <div class="grid grid-cols-1 lg:grid-cols-2">
-        <div class="border-r border-zinc-800">
+      <div class="grid grid-cols-1 lg:grid-cols-2 h-full">
+        <div class="border-r border-zinc-800 flex flex-col h-full">
           <div class="bg-black border-b border-zinc-800">
             <p class="text-zinc-600 text-sm flex items-center pl-1 p-4 lg:px-10">
-              {category && <span>Category: {category}</span>}
-              {tags && <span> | Tags: {tags}</span>}
+              {category && <span class="px-2 py-1 bg-zinc-800 rounded text-white mr-2">{category}</span>}
+              {tags && <span class="px-2 py-1 bg-zinc-800 rounded text-blue-200">{tags}</span>}
             </p>
           </div>
-          <div class="p-8 lg:px-10 bg-black">
-            <h1 class="text-4xl md:text-6xl xl:text-7xl text-zinc-200 mt-12 font-semibold">
-              {title}
-            </h1>
-            <h3 class="text-xl md:text-2xl xl:text-3xl text-zinc-200 mt-4">
-              {excerpt}
-            </h3>
-            <p class="text-white mt-4">
-              {date} · {readingTime} min read
-            </p>
-            <p class="text-white mt-2">
-              {author && `By ${author}`}
-            </p>
+          <div class="p-8 lg:px-10 bg-black flex-grow flex flex-col justify-between">
+            <div>
+              <h1 class="text-4xl md:text-6xl xl:text-7xl text-zinc-200 mt-12 font-semibold">
+                {title}
+              </h1>
+              <h3 class="text-xl md:text-2xl xl:text-3xl text-zinc-200 mt-4">
+                {excerpt}
+              </h3>
+              <p class="text-white mt-4">
+                {date} · {readingTime} min read
+              </p>
+              <p class="text-white mt-2">
+                {author && `By ${author}`}
+              </p>
+            </div>
           </div>
         </div>
         {featuredImage && (
@@ -53,6 +55,7 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
       </div>
     </div>
   </section>
+  
   
   <section class="md:px-12 sm:px-8">
     <div class="border-x grid grid-cols-1 lg:grid-cols-1 border-t border-zinc-800 gap-px">
