@@ -1,0 +1,35 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import Navigation from "@/components/global/Navigation.astro";
+import Footer from "@/components/global/Footer.astro";
+
+export interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en" class="selection:text-black selection:bg-white">
+  <head>
+    <BaseHead />
+  </head>
+  <body class="bg-white text-black 2xl:max-w-7xl mx-auto font-mono">
+    <Navigation class="bg-white text-black" />
+    <main class="bg-white text-black">
+      <section class="md:px-12 sm:px-8">
+        <div class="border-x border-zinc-200 p-8">
+          <div style="max-width: 55rem; margin: 0 auto;">
+            <h1 class="text-4xl md:text-6xl xl:text-7xl font-semibold" style="margin-bottom: 2.5rem; margin-top: 4.5rem;">
+              {title}
+            </h1>
+            <h2 class="text-2xl mb-4 highlight-red">{description}</h2>
+            <slot />
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer class="bg-white text-black" />
+  </body>
+</html>
