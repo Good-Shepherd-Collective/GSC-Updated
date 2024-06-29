@@ -5,6 +5,7 @@ import { processDemolitionData } from "@/utils/home_demolitions.js";
 import fetchDailyReport, { formatDateToString, formatTimestamp } from "@/utils/wb_daily.js";
 import { getCombinedPrisonerData } from "@/utils/prisoner_data.js";
 import { getWestBankDeathsData } from "@/utils/wb_deaths.js";
+import { fetchHealthAttackData } from "@/utils/health_care.js";
 
 // Fetch Gaza destruction data
 const gazaDestructionData = await getGazaDestructionData();
@@ -12,7 +13,6 @@ const gazaDestructionDate = gazaDestructionData.formattedGazaDestructionDate;
 
 // Fetch demolition data
 const demolitionData = await processDemolitionData();
-// console.log("Processed Demolition Data:", demolitionData);
 
 if (!demolitionData || !Array.isArray(demolitionData.chartData)) {
   throw new Error("Home demolitions data is not an array or is invalid");
@@ -20,7 +20,6 @@ if (!demolitionData || !Array.isArray(demolitionData.chartData)) {
 
 const homeDemolitionsData = demolitionData.chartData;
 const newestDemolitionDate = demolitionData.newestDateofincident;
-// console.log("Newest Demolition Date:", newestDemolitionDate);
 
 const formattedNewestDemolitionDate = (() => {
   const date = new Date(newestDemolitionDate);
@@ -61,6 +60,12 @@ const WBDataDate = mostRecentDate ? formatDate(mostRecentDate) : 'N/A';
 const westBankDeathsData = await getWestBankDeathsData();
 const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.latestReport.formattedReportDate : 'N/A';
 
+// Fetch healthcare attack data and get the most recent date
+const healthcareAttackData = await fetchHealthAttackData();
+const healthcareAttackDate = healthcareAttackData.length > 0
+  ? formatDate(new Date(Math.max(...healthcareAttackData.map(item => new Date(item.Date)))))
+  : 'N/A';
+
 ---
 
 <BaseLayout
@@ -75,7 +80,7 @@ const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.late
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
           style="margin-bottom: 2.5rem; margin-top: 4.5rem;"
         >
-          Data Setss
+          Data Sets
         </h1>
         <h2 class="text-2xl mb-4 highlight-red">Here are some of the critical data points for your advocacy</h2>
         
@@ -165,6 +170,24 @@ const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.late
               <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v3/infrastructure-damaged.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
             <!-- Gaza Destruction Data Ends -->
+              <!-- Healthcare Attacks Data Begins -->
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/home_demolitions" class="flex items-center space-x-2">
+                  <p>Healthcare Attacks</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This provides data on attacks on healthcare facilities and workers perpetuated by the Israeli military.
+              </td>
+              <td data-cell="Updated" class="average py-4">{healthcareAttackDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/healthcare_attacks.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/healthcare_attacks.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="/api/home_demolitions.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+            <!-- Healthcare Attacks Data Ends -->
              <!-- Home Demolition Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">

@@ -29,7 +29,6 @@ function convertToGeoJSON(healthAttackData) {
     features: healthAttackData
       .filter(item => item['Geo Precision'] !== '(6) Country')
       .filter(item => !(parseFloat(item.Latitude) === 15.6279522000 && parseFloat(item.Longitude) === 32.5521521508))
-      .filter(item => item['Reported Perpetrator'] !== 'Foreign Forces: Military')
       .map(item => ({
         type: 'Feature',
         geometry: {
@@ -180,45 +179,59 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
               });
   
               healthMap.on('click', 'health-attack-layer', (e) => {
-                console.log('Health Map: Layer clicked', e.features[0]);
-                if (e.features.length > 0) {
-                  const feature = e.features[0];
-                  const coordinates = feature.geometry.coordinates.slice();
-                  const properties = feature.properties;
-  
-                  let content = '';
-                  for (const [key, value] of Object.entries(properties)) {
-                    if (value !== null && value !== '0' && value !== 0 && !key.startsWith('#')) {
-                      if (key === 'Geo Precision') {
-                        content += `<div class="tracking-wide"><strong>Location Accuracy:</strong> ${value}</div>`;
-                      } else {
-                        content += `<div class="tracking-wide"><strong>${key}:</strong> ${value}</div>`;
-                      }
-                    }
-                  }
-  
-                  document.querySelector('#health-map-text h1').textContent = properties['Location of Incident'] || 'Health Attack Incident';
-                  document.querySelector('#health-map-text .event__data').innerHTML = content;
-  
-                  healthMap.flyTo({
-                    center: coordinates,
-                    zoom: 14,
-                    essential: true,
-                  });
-                }
-              });
+  console.log('Health Map: Layer clicked', e.features[0]);
+  if (e.features.length > 0) {
+    const feature = e.features[0];
+    const coordinates = feature.geometry.coordinates.slice();
+    const properties = feature.properties;
+
+    let content = '';
+    
+    // Format the date
+    const date = new Date(properties['Date']);
+    const formattedDate = `${date.getMonth() + 1}.${date.getDate().toString().padStart(2, '0')}.${date.getFullYear()}`;
+    
+    // Set the title (date)
+    document.querySelector('#health-map-text h1').textContent = formattedDate;
+    
+    // Add the description
+    content += `<div class="tracking-wide"><strong>Description</strong> ${properties['Event Description']}</div><br>`;
+
+    // Add other properties
+    for (const [key, value] of Object.entries(properties)) {
+      if (value !== null && value !== '0' && value !== 0 && !key.startsWith('#') && 
+          key !== 'Date' && key !== 'Event Description' && key !== 'Reported Perpetrator') {
+        if (key === 'Reported Perpetrator Name') {
+          content += `<div class="tracking-wide"><strong>Perpetrator:</strong> ${value}</div>`;
+        } else if (key === 'Geo Precision') {
+          content += `<div class="tracking-wide"><strong>Location Accuracy:</strong> ${value}</div>`;
+        } else {
+          content += `<div class="tracking-wide"><strong>${key}:</strong> ${value}</div>`;
+        }
+      }
+    }
+
+    document.querySelector('#health-map-text .event__data').innerHTML = content;
+
+    healthMap.flyTo({
+      center: coordinates,
+      zoom: 14,
+      essential: true,
+    });
+  }
+});
   
             } catch (error) {
-              console.error('Health Map: Error setting up map data:', error);
+             // console.error('Health Map: Error setting up map data:', error);
             }
           });
   
           healthMap.on('error', (error) => {
-            console.error('Health Map: Mapbox error:', error);
+            // console.error('Health Map: Mapbox error:', error);
           });
   
         } catch (error) {
-          console.error('Health Map: Error creating Mapbox instance:', error);
+         // console.error('Health Map: Error creating Mapbox instance:', error);
         }
       };
   
