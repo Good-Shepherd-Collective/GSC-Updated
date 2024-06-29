@@ -4,9 +4,6 @@ import { getGazaDeathsData } from "../../utils/gaza_deaths.js";
 
 const { latestReport, fullData } = await getGazaDeathsData();
 
-// console.log("Latest Report:", latestReport);
-// console.log("Full Data:", fullData);
-
 function formatDateMMDDYYYY(dateString) {
   const date = new Date(dateString);
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -20,14 +17,14 @@ const formattedMostRecentDate = latestReport
   : "N/A";
 
 const categoryData = [
-  { category: 'Total Killed', value: latestReport.killed_cum, dailyAverage: latestReport.daily_average_killed, fourteenDayAverage: latestReport.fourteen_day_average_killed },
-  { category: 'Total Children Killed', value: latestReport.ext_killed_children_cum, dailyAverage: latestReport.daily_average_killed_children, fourteenDayAverage: latestReport.fourteen_day_average_killed_children },
-  { category: 'Total Women Killed', value: latestReport.ext_killed_women_cum, dailyAverage: latestReport.daily_average_killed_women, fourteenDayAverage: latestReport.fourteen_day_average_killed_women },
-  { category: 'Total Men Killed', value: latestReport.ext_killed_men_cum, dailyAverage: latestReport.daily_average_killed_men, fourteenDayAverage: latestReport.fourteen_day_average_killed_men },
-  { category: 'Total Injured', value: latestReport.injured_cum, dailyAverage: latestReport.daily_average_injured, fourteenDayAverage: latestReport.fourteen_day_average_injured },
-  { category: 'Total Civilian Defense Killed', value: latestReport.ext_civdef_killed_cum, dailyAverage: latestReport.daily_average_civdef_killed, fourteenDayAverage: latestReport.fourteen_day_average_civdef_killed },
-  { category: 'Total Medical Personnel Killed', value: latestReport.ext_med_killed_cum, dailyAverage: latestReport.daily_average_med_killed, fourteenDayAverage: latestReport.fourteen_day_average_med_killed },
-  { category: 'Total Press Killed', value: latestReport.ext_press_killed_cum, dailyAverage: latestReport.daily_average_press_killed, fourteenDayAverage: latestReport.fourteen_day_average_press_killed },
+  { category: 'Total Killed', value: latestReport.ext_killed_cum, dailyAverage: latestReport.daily_average_killed, fiveDayAverage: latestReport.five_day_average_killed },
+  { category: 'Total Children Killed', value: latestReport.ext_killed_children_cum, dailyAverage: latestReport.daily_average_killed_children, fiveDayAverage: latestReport.five_day_average_killed_children },
+  { category: 'Total Women Killed', value: latestReport.ext_killed_women_cum, dailyAverage: latestReport.daily_average_killed_women, fiveDayAverage: latestReport.five_day_average_killed_women },
+  { category: 'Total Men Killed', value: latestReport.ext_killed_men_cum, dailyAverage: latestReport.daily_average_killed_men, fiveDayAverage: latestReport.five_day_average_killed_men },
+  { category: 'Total Injured', value: latestReport.ext_injured_cum, dailyAverage: latestReport.daily_average_injured, fiveDayAverage: latestReport.five_day_average_injured },
+  { category: 'Total Civilian Defense Killed', value: latestReport.ext_civdef_killed_cum, dailyAverage: latestReport.daily_average_civdef_killed, fiveDayAverage: latestReport.five_day_average_civdef_killed },
+  { category: 'Total Medical Personnel Killed', value: latestReport.ext_med_killed_cum, dailyAverage: latestReport.daily_average_med_killed, fiveDayAverage: latestReport.five_day_average_med_killed },
+  { category: 'Total Press Killed', value: latestReport.ext_press_killed_cum, dailyAverage: latestReport.daily_average_press_killed, fiveDayAverage: latestReport.five_day_average_press_killed },
 ];
 
 const serializedReports = JSON.stringify(fullData);
@@ -39,7 +36,7 @@ const serializedReports = JSON.stringify(fullData);
   description="Daily report of casualties in Gaza."
 >
   <section class="md:px-12 sm:px-8">
-    <div class="border-x border-zinc-200 p-8">
+    <div class="border-x border-zinc-800 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
         <h1
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
@@ -47,7 +44,7 @@ const serializedReports = JSON.stringify(fullData);
         >
           Gaza
         </h1>
-        <h2 class="text-2xl mb-4 highlight-red">Deathss and Injuries</h2>
+        <h2 class="text-2xl mb-4 highlight-red">Deaths and Injuries</h2>
         <h3 class="text-2xl font-semibold mt-8 text-zinc-800">Data for {formattedMostRecentDate}</h3>
         
         {
@@ -58,12 +55,12 @@ const serializedReports = JSON.stringify(fullData);
                   <th>Category</th>
                   <th>Total</th>
                   <th class="average">Daily Avg</th>
-                  <th class="average">14-day Avg</th>
+                  <th class="average">5-day Avg</th>
                   <th style="width: 300px;">Trend</th>
                 </tr>
               </thead>
               <tbody>
-                {categoryData.map(({ category, value, dailyAverage, fourteenDayAverage }) => (
+                {categoryData.map(({ category, value, dailyAverage, fiveDayAverage }) => (
                   <tr key={`report-category-${category}`}>
                     <td data-cell="Category">{category}</td>
                     <td data-cell="Total" class="value">
@@ -72,8 +69,8 @@ const serializedReports = JSON.stringify(fullData);
                     <td data-cell="Daily Avg" class="average daily-avg">
                       {dailyAverage?.toFixed(2) || 'N/A'}
                     </td>
-                    <td data-cell="14-day Avg" class="average fourteen-day-avg">
-                      {fourteenDayAverage?.toFixed(2) || 'N/A'}
+                    <td data-cell="5-day Avg" class="average five-day-avg">
+                      {fiveDayAverage?.toFixed(2) || 'N/A'}
                     </td>
                     <td class="trend">
                       <div class="canvas-wrapper">
@@ -105,7 +102,7 @@ const serializedReports = JSON.stringify(fullData);
           &nbsp;|&nbsp;
           <a
             href="https://data.techforpalestine.org/api/v2/casualties_daily.json"
-            >.JSON endpoint</a
+            >.JSON endpoints</a
           >
         </p>
         <div
@@ -139,21 +136,23 @@ const serializedReports = JSON.stringify(fullData);
       initializeCharts();
     }
 
-    function applyConditionalFormatting(element, percentageIncrease) {
-      const transparency = Math.min(1, Math.abs(percentageIncrease) / 100);
-      if (percentageIncrease > 0) {
-        element.style.backgroundColor = `rgba(127, 13, 1, ${transparency})`;
-        element.setAttribute("data-after", "↑");
-      } else if (percentageIncrease < 0) {
-        element.style.backgroundColor = `rgba(40, 169, 224, ${transparency})`;
-        element.setAttribute("data-after", "↓");
-      } else {
-        element.style.backgroundColor = "";
-        element.removeAttribute("data-after");
-      }
-      element.style.fontWeight = transparency >= 0.6 ? "600" : "normal";
-      element.style.color = transparency >= 0.6 ? "white" : "";
-    }
+    function applyConditionalFormatting(element, dailyAvg, fiveDayAvg) {
+  const percentageDifference = ((fiveDayAvg - dailyAvg) / dailyAvg) * 100;
+  const transparency = Math.min(1, Math.abs(percentageDifference) / 100);
+  
+  if (fiveDayAvg < dailyAvg) {
+    element.style.backgroundColor = `rgba(40, 169, 224, ${transparency})`;
+    element.setAttribute("data-after", "↓");
+  } else if (fiveDayAvg > dailyAvg) {
+    element.style.backgroundColor = `rgba(127, 13, 1, ${transparency})`;
+    element.setAttribute("data-after", "↑");
+  } else {
+    element.style.backgroundColor = "";
+    element.removeAttribute("data-after");
+  }
+  element.style.fontWeight = transparency >= 0.6 ? "600" : "normal";
+  element.style.color = transparency >= 0.6 ? "white" : "";
+}
 
     function initializeCharts() {
       const chartDataDiv = document.getElementById("chartData");
@@ -165,11 +164,11 @@ const serializedReports = JSON.stringify(fullData);
       );
 
       const categories = [
-        { key: 'killed_cum', label: 'Total Killed' },
+        { key: 'ext_killed_cum', label: 'Total Killed' },
         { key: 'ext_killed_children_cum', label: 'Total Children Killed' },
         { key: 'ext_killed_women_cum', label: 'Total Women Killed' },
         { key: 'ext_killed_men_cum', label: 'Total Men Killed' },
-        { key: 'injured_cum', label: 'Total Injured' },
+        { key: 'ext_injured_cum', label: 'Total Injured' },
         { key: 'ext_civdef_killed_cum', label: 'Total Civilian Defense Killed' },
         { key: 'ext_med_killed_cum', label: 'Total Medical Personnel Killed' },
         { key: 'ext_press_killed_cum', label: 'Total Press Killed' },
@@ -200,10 +199,10 @@ const serializedReports = JSON.stringify(fullData);
                 label: category.label,
                 data: dataValues,
                 borderColor: "#7f0d15",
-                tension: 0.1,
+                tension: 0.4, // Increased tension for smoother lines
                 borderJoinStyle: "round",
-                borderWidth: 1,
-                pointRadius: 0.5,
+                borderWidth: 2, // Slightly thicker line
+                pointRadius: 0, // Remove points for smoother appearance
                 backgroundColor: gradient,
                 fill: true,
               },
@@ -239,12 +238,11 @@ const serializedReports = JSON.stringify(fullData);
 
       // Apply conditional formatting
       const rows = document.querySelectorAll(".data-table tbody tr");
-      rows.forEach((row) => {
-        const dailyAvg = parseFloat(row.querySelector(".daily-avg").innerText);
-        const fourteenDayAvg = parseFloat(row.querySelector(".fourteen-day-avg").innerText);
-        const percentageIncrease = ((dailyAvg - fourteenDayAvg) / fourteenDayAvg) * 100;
-        applyConditionalFormatting(row.querySelector(".daily-avg"), percentageIncrease);
-      });
+rows.forEach((row) => {
+  const dailyAvg = parseFloat(row.querySelector(".daily-avg").innerText);
+  const fiveDayAvg = parseFloat(row.querySelector(".five-day-avg").innerText);
+  applyConditionalFormatting(row.querySelector(".five-day-avg"), dailyAvg, fiveDayAvg);
+});
     }
 
     function handleIntersection(entries, observer) {

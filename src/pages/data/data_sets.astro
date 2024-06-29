@@ -69,7 +69,7 @@ const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.late
   description="Aggregate data reports on Israel's program of settler-colonial violence."
 >
   <section class="md:px-12 sm:px-8">
-    <div class="border-x border-zinc-200 p-8">
+    <div class="border-x border-zinc-800 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
         <h1
           class="text-4xl md:text-6xl xl:text-7xl font-semibold"
@@ -93,6 +93,61 @@ const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.late
             </tr>
           </thead>
           <tbody>
+            <!-- West Bank Data Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/wb_data" class="flex items-center space-x-2">
+                  <p>E. Jerusalem<br> & West Bank data</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This dataset provides the most reporting on colonial violence in East Jerusalem and the West Bank.
+              </td>
+              <td data-cell="Updated" class="average py-4">{WBDataDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_daily.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_daily.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="/api/wb_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+             <!-- West Bank Data Ends -->
+               <!-- West Bank Deaths Begins -->
+
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/wb_deaths_and_injuries" class="flex items-center space-x-2">
+                  <p>E. Jerusalem<br> & West Bank data<br>deaths/injuries</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              
+              <td data-cell="Details" class="value py-4">
+                This is a curated subset of the deaths and injuries from across East Jerusalem and the West Bank only.
+              </td>
+              <td data-cell="Updated" class="average py-4">{WB_Deaths_Date}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v2/west_bank_daily.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+             <!-- West Bank Deaths Ends -->
+            <!-- Gaza Destruction Data Begins -->
+            <tr>
+              <td data-cell="Category" class="py-4">
+                <a href="/data/gaza_deaths" class="flex items-center space-x-2">
+                  <p>Gaza Deaths & Injuries</p>
+                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
+                </a>
+              </td>
+              <td data-cell="Details" class="value py-4">
+                This dataset provides a overview as well as trends of the deaths and injuries as a result of the on-going genocide of Gaza.
+              </td>
+              <td data-cell="Updated" class="average py-4">{gazaDestructionDate}</td>
+              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/gaza_deaths_and_injuries.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/gaza_deaths_and_injuries.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
+              <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v2/casualties_daily.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
+            </tr>
+            <!-- Gaza Destruction Data Ends -->
             <!-- Gaza Destruction Data Begins -->
             <tr>
               <td data-cell="Category" class="py-4">
@@ -166,44 +221,7 @@ const WB_Deaths_Date = westBankDeathsData.latestReport ? westBankDeathsData.late
               <td data-cell="API" class="average py-4 last"><a href="/api/prisoner_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
             </tr>
              <!-- Prisoner Data Ends -->
-              <!-- West Bank Data Begins -->
-
-            <tr>
-              <td data-cell="Category" class="py-4">
-                <a href="/data/wb_data" class="flex items-center space-x-2">
-                  <p>E. Jerusalem<br> & West Bank data</p>
-                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
-                </a>
-              </td>
               
-              <td data-cell="Details" class="value py-4">
-                This dataset provides the most reporting on colonial violence in East Jerusalem and the West Bank.
-              </td>
-              <td data-cell="Updated" class="average py-4">{WBDataDate}</td>
-              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_daily.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
-              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_daily.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
-              <td data-cell="API" class="average py-4 last"><a href="/api/wb_data.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
-            </tr>
-             <!-- West Bank Data Ends -->
-               <!-- West Bank Deaths Begins -->
-
-            <tr>
-              <td data-cell="Category" class="py-4">
-                <a href="/data/wb_deaths_and_injuries" class="flex items-center space-x-2">
-                  <p>E. Jerusalem<br> & West Bank data<br>deaths/injuries</p>
-                  <img class="copy-icon" style="filter:invert(1)" src="/images/Arrow.svg" alt="Arrow Icon">
-                </a>
-              </td>
-              
-              <td data-cell="Details" class="value py-4">
-                This is a curated subset of the deaths and injuries from across East Jerusalem and the West Bank only.
-              </td>
-              <td data-cell="Updated" class="average py-4">{WB_Deaths_Date}</td>
-              <td data-cell="CSV" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.csv"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
-              <td data-cell="Excel" class="average py-4"><a href="/data_sheets/wb_deaths_and_injuries.xlsx"><img class="hide-on-mobile" src="/images/black-download.svg"><p class="mobile-only">Download</p></a></td>
-              <td data-cell="API" class="average py-4 last"><a href="https://data.techforpalestine.org/api/v2/west_bank_daily.json"><img class="hide-on-mobile" src="/images/Json.svg"><p class="mobile-only">Link</p></a></td>
-            </tr>
-             <!-- West Bank Deaths Ends -->
           </tbody>
         </table>
       </div>

@@ -16,7 +16,7 @@ export async function getGazaDeathsData() {
       // Calculate the number of men killed
       report.ext_killed_men_cum = report.ext_killed_cum - (report.ext_killed_children_cum + report.ext_killed_women_cum);
 
-      // Calculate daily averages
+      // Calculate daily averages using extrapolated data
       report.daily_average_killed = report.ext_killed_cum / totalDays;
       report.daily_average_injured = report.ext_injured_cum / totalDays;
       report.daily_average_killed_children = report.ext_killed_children_cum / totalDays;
@@ -27,36 +27,48 @@ export async function getGazaDeathsData() {
       report.daily_average_press_killed = report.ext_press_killed_cum / totalDays;
     });
 
-    // Calculate 5-day averages
-    const calculate5DayAverage = (data, key, extKey) => {
+    // Calculate 5-day averages and totals
+    const calculate5DayStats = (data, key) => {
       const last5Days = data.slice(-5);
-      const validValues = last5Days.map(report => report[key] !== undefined ? report[key] : report[extKey] || 0);
-      const sum = validValues.reduce((total, value) => total + value, 0);
-      return sum / 5;
+      const dailyChanges = last5Days.map((report, index) => {
+        if (index === 0) {
+          return report[key] - (data[data.length - 6] ? data[data.length - 6][key] : report[key]);
+        } else {
+          return report[key] - last5Days[index - 1][key];
+        }
+      });
+      const total = dailyChanges.reduce((sum, value) => sum + value, 0);
+      return {
+        average: total / 5,
+        total: total
+      };
     };
 
-    // Adding 5-day averages to the latest report
+    // Adding 5-day averages and totals to the latest report
     const latestReport = data[data.length - 1];
-    latestReport.five_day_average_killed = calculate5DayAverage(data, 'killed', 'ext_killed');
-    latestReport.five_day_average_injured = calculate5DayAverage(data, 'injured', 'ext_injured');
-    latestReport.five_day_average_killed_children = calculate5DayAverage(data, 'killed_children_cum', 'ext_killed_children_cum');
-    latestReport.five_day_average_killed_women = calculate5DayAverage(data, 'killed_women_cum', 'ext_killed_women_cum');
-    latestReport.five_day_average_killed_men = calculate5DayAverage(data, 'killed_men_cum', 'ext_killed_men_cum');
-    latestReport.five_day_average_civdef_killed = calculate5DayAverage(data, 'civdef_killed_cum', 'ext_civdef_killed_cum');
-    latestReport.five_day_average_med_killed = calculate5DayAverage(data, 'med_killed_cum', 'ext_med_killed_cum');
-    latestReport.five_day_average_press_killed = calculate5DayAverage(data, 'press_killed_cum', 'ext_press_killed_cum');
+    const fiveDayStats = {
+      killed: calculate5DayStats(data, 'ext_killed_cum'),
+      injured: calculate5DayStats(data, 'ext_injured_cum'),
+      killed_children: calculate5DayStats(data, 'ext_killed_children_cum'),
+      killed_women: calculate5DayStats(data, 'ext_killed_women_cum'),
+      killed_men: calculate5DayStats(data, 'ext_killed_men_cum'),
+      civdef_killed: calculate5DayStats(data, 'ext_civdef_killed_cum'),
+      med_killed: calculate5DayStats(data, 'ext_med_killed_cum'),
+      press_killed: calculate5DayStats(data, 'ext_press_killed_cum')
+    };
 
-    // Log the specific report date
-    const specificReport = data.find(report => report.report_date === '2024-06-26');
-    if (specificReport) {
-      console.log("Report for 2024-06-26:", specificReport);
-    } else {
-      console.log("No report found for 2024-06-26.");
-    }
+    Object.keys(fiveDayStats).forEach(key => {
+      latestReport[`five_day_average_${key}`] = fiveDayStats[key].average;
+      latestReport[`five_day_total_${key}`] = fiveDayStats[key].total;
+    });
 
-    return { latestReport, fullData: data };
+    // Log out only the 7 most recent report dates with all the data
+    const recentReports = data.slice(-7);
+    console.log("Recent Reports:", recentReports);
+
+    return { latestReport, fullData: data, recentReports };
   } catch (error) {
     console.error("Failed to fetch Gaza deaths data:", error);
-    return { latestReport: null, fullData: [] };
+    return { latestReport: null, fullData: [], recentReports: [] };
   }
 }
