@@ -78,7 +78,10 @@ const chartData = fullData.map(data => ({
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+  let chart; // Declare chart variable in the global scope
+
   document.addEventListener('DOMContentLoaded', function () {
     try {
       const chartDataElement = document.getElementById('chart-data');
@@ -88,7 +91,6 @@ const chartData = fullData.map(data => ({
       }
       
       const chartDataText = chartDataElement.innerText.trim();
-      console.log('Raw chart data text:', chartDataText);
       
       if (!chartDataText) {
         console.error('Chart data is empty');
@@ -98,7 +100,6 @@ const chartData = fullData.map(data => ({
       let chartData;
       try {
         chartData = JSON.parse(chartDataText.replace(/^\$/, ''));
-        console.log('Parsed chart data:', chartData);
       } catch (parseError) {
         console.error('Error parsing chart data:', parseError);
         return;
@@ -118,12 +119,12 @@ const chartData = fullData.map(data => ({
 
       // Create gradient fills
       const gradientKilled = ctx.createLinearGradient(0, 0, 0, canvas.height);
-gradientKilled.addColorStop(0, "rgba(127, 13, 21, 1)");
-gradientKilled.addColorStop(1, "rgba(127, 13, 21, 0.8)");
+      gradientKilled.addColorStop(0, "rgba(127, 13, 21, 1)");
+      gradientKilled.addColorStop(1, "rgba(127, 13, 21, 0.8)");
 
-const gradientInjured = ctx.createLinearGradient(0, 0, 0, canvas.height);
-gradientInjured.addColorStop(0, 'rgba(186, 229, 252, 0.9)');
-gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
+      const gradientInjured = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradientInjured.addColorStop(0, 'rgba(186, 229, 252, 0.9)');
+      gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
 
       const data = {
         labels: chartData.map(data => data.date),
@@ -131,7 +132,7 @@ gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
           {
             label: 'Total Killed',
             data: chartData.map(data => data.killed),
-            borderColor: '#930000', // Dark blue line
+            borderColor: '#930000',
             backgroundColor: gradientKilled,
             fill: true,
             tension: 0.1
@@ -139,7 +140,7 @@ gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
           {
             label: 'Total Injured',
             data: chartData.map(data => data.injured),
-            borderColor: '#BAE5FC', // Light blue line
+            borderColor: '#BAE5FC',
             backgroundColor: gradientInjured,
             fill: true,
             tension: 0.1
@@ -148,100 +149,99 @@ gradientInjured.addColorStop(1, 'rgba(186, 229, 252, 0.5)');
       };
 
       const fixedGridPlugin = {
-  id: 'fixedGrid',
-  beforeDraw: (chart, args, options) => {
-    const {ctx, chartArea: {left, top, right, bottom}, width, height} = chart;
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
-    
-    const legendHeight = chart.legend.height;
-    const gridTop = top + legendHeight;
-    
-    // Vertical lines
-    for (let i = left; i <= right; i += 15) {
-      ctx.beginPath();
-      ctx.moveTo(i, gridTop);
-      ctx.lineTo(i, bottom);
-      ctx.stroke();
-    }
-    
-    // Horizontal lines
-    for (let i = gridTop; i <= bottom; i += 15) {
-      ctx.beginPath();
-      ctx.moveTo(left, i);
-      ctx.lineTo(right, i);
-      ctx.stroke();
-    }
-    
-    ctx.restore();
-  }
-};
-
-const config = {
-  type: 'line',
-  data: data,
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        align: 'start',
-        labels: {
-          usePointStyle: true,
-          pointStyle: 'circle',
-          padding: 20,
-          color: '#ffffff',
-          font: {
-            size: 12
+        id: 'fixedGrid',
+        beforeDraw: (chart, args, options) => {
+          const {ctx, chartArea: {left, top, right, bottom}, width, height} = chart;
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+          ctx.lineWidth = 1;
+          
+          const legendHeight = chart.legend.height;
+          const gridTop = top + legendHeight;
+          
+          // Vertical lines
+          for (let i = left; i <= right; i += 15) {
+            ctx.beginPath();
+            ctx.moveTo(i, gridTop);
+            ctx.lineTo(i, bottom);
+            ctx.stroke();
           }
+          
+          // Horizontal lines
+          for (let i = gridTop; i <= bottom; i += 15) {
+            ctx.beginPath();
+            ctx.moveTo(left, i);
+            ctx.lineTo(right, i);
+            ctx.stroke();
+          }
+          
+          ctx.restore();
         }
-      },
-      fixedGrid: {}
-    },
-    scales: {
-      x: {
-        display: false
-      },
-      y: {
-        display: false
-      }
-    },
-    elements: {
-      line: {
-        borderWidth: 2
-      },
-      point: {
-        radius: 0
-      }
-    },
-    layout: {
-      padding: {
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10
-      }
-    }
-  },
-  plugins: [fixedGridPlugin]
-};
+      };
 
-      new Chart(ctx, config);
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              align: 'start',
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 20,
+                color: '#ffffff',
+                font: {
+                  size: 12
+                }
+              }
+            },
+            fixedGrid: {}
+          },
+          scales: {
+            x: {
+              display: false
+            },
+            y: {
+              display: false
+            }
+          },
+          elements: {
+            line: {
+              borderWidth: 2
+            },
+            point: {
+              radius: 0
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10,
+              left: 10,
+              right: 10
+            }
+          }
+        },
+        plugins: [fixedGridPlugin]
+      };
+
+      // Create the chart and assign it to the global chart variable
+      chart = new Chart(ctx, config);
+
     } catch (error) {
       console.error('Error loading chart:', error);
     }
   });
 
+  // Add resize event listener
   window.addEventListener('resize', function() {
-  chart.resize();
-});
-
-const chart = new Chart(ctx, config);
-
-window.addEventListener('resize', function() {
-  chart.resize();
-});
+    if (chart) {
+      chart.resize();
+    }
+  });
 </script>

@@ -46,8 +46,8 @@ export async function getWestBankDeathsData() {
   
       const formattedLatestReportDate = formatDateMMDDYYYY(latestReportDate);
   
-      console.log("Most recent report date:", formattedLatestReportDate);
-      console.log("Data for the most recent report date:", data[data.length - 1]);
+      // console.log("Most recent report date:", formattedLatestReportDate);
+      // console.log("Data for the most recent report date:", data[data.length - 1]);
   
       return { latestReport: { ...data[data.length - 1], formattedReportDate: formattedLatestReportDate }, fullData: data };
     } catch (error) {

@@ -64,7 +64,7 @@ export async function getGazaDeathsData() {
 
     // Log out only the 7 most recent report dates with all the data
     const recentReports = data.slice(-7);
-    console.log("Recent Reports:", recentReports);
+    // console.log("Recent Reports:", recentReports);
 
     return { latestReport, fullData: data, recentReports };
   } catch (error) {
