@@ -16,18 +16,30 @@ async function fetchData() {
 }
 
 function convertToGeoJSON(healthAttackData) {
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}.${day}.${year}`;
+  }
+
   return {
     type: 'FeatureCollection',
     features: healthAttackData
       .filter(item => item['Geo Precision'] !== '(6) Country')
       .filter(item => !(parseFloat(item.Latitude) === 15.6279522000 && parseFloat(item.Longitude) === 32.5521521508))
+      .filter(item => item['Reported Perpetrator'] !== 'Foreign Forces: Military')
       .map(item => ({
         type: 'Feature',
         geometry: {
           type: 'Point',
           coordinates: [parseFloat(item.Longitude), parseFloat(item.Latitude)]
         },
-        properties: item
+        properties: {
+          ...item,
+          Date: item.Date ? formatDate(item.Date) : item.Date
+        }
       }))
   };
 }
@@ -43,20 +55,20 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
     <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10">Mapping Health Attacks</h2>
 
     <div class="map-container border-t border-zinc-800">
-        <div id="map"><Image class="map-placeholder border-zinc-800"
-        src={map}
-        alt="A map placeholder"
-        width="900"
-        height="900"
-        loading="lazy"
-        decoding="async"
-        /> </div>
-        <div id="text">
-        <h1 class="text-3xl tracking-wide text-balance md:text-4xl text-white">About this map</h1>
-        <p class="event__data tracking-wide">Click on the red dot to zoom and view the data.<br><br>This map displays reported attacks on healthcare facilities and workers. The data is sourced from various reports and may not be exhaustive. Each point represents an incident, and clicking on it will provide more details about the event.</p>
-        <div class="map__info">
-        </div>
-        </div>
+        <div id="health-map"><Image class="health-map-placeholder border-zinc-800"
+            src={map}
+            alt="A map placeholder"
+            width="900"
+            height="900"
+            loading="lazy"
+            decoding="async"
+          /></div>
+          <div id="health-map-text">
+            <h1 class="text-3xl tracking-wide text-balance md:text-4xl text-white">About this map</h1>
+            <p class="event__data tracking-wide">Click on the red dot to zoom and view the data.<br><br>This map displays reported attacks on healthcare facilities and workers. The data is sourced from various reports and may not be exhaustive. Each point represents an incident, and clicking on it will provide more details about the event.</p>
+            <div class="map__info">
+            </div>
+          </div>
     </div>
     </div>
 </section>
@@ -64,80 +76,74 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
 
 <script define:vars={{ geojsonDataSerialized }}>
-    console.log('Client-side script starting');
+    console.log('Health Map: Client-side script starting');
   
     if (typeof window !== 'undefined') {
-      console.log('Window is defined, script is running');
+      console.log('Health Map: Window is defined, script is running');
   
-      const loadMapboxScript = () => {
-        console.log('Loading Mapbox script');
+      const loadHealthMapboxScript = () => {
+        console.log('Health Map: Loading Mapbox script');
         const script = document.createElement('script');
         script.src = "https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js";
         script.onload = () => {
-          console.log('Mapbox script loaded successfully');
-          initializeMapbox();
+          console.log('Health Map: Mapbox script loaded successfully');
+          initializeHealthMapbox();
         };
         script.onerror = (error) => {
-          console.error('Error loading Mapbox script:', error);
+          console.error('Health Map: Error loading Mapbox script:', error);
         };
         document.head.appendChild(script);
       };
   
-      const initializeMapbox = () => {
-        console.log('Initializing Mapbox');
+      const initializeHealthMapbox = () => {
+        console.log('Health Map: Initializing Mapbox');
         if (typeof mapboxgl === 'undefined') {
-          console.error('mapboxgl is not defined');
+          console.error('Health Map: mapboxgl is not defined');
           return;
         }
         mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vZC1zaGVwaGVyZC1jb2xsZWN0aXZlIiwiYSI6ImNsaDUwdXY0ZDIzNnUzZG9nZ3BhYXhuaTQifQ.FX0JA3BbKdy5-IJ5gkDpKw';
   
         try {
-          console.log('Creating Mapbox instance');
-          const mapContainer = document.getElementById('map');
+          console.log('Health Map: Creating Mapbox instance');
+          const mapContainer = document.getElementById('health-map');
           if (!mapContainer) {
-            console.error('Map container not found');
+            console.error('Health Map: Map container not found');
             return;
           }
-          const map = new mapboxgl.Map({
-            container: 'map',
+          const healthMap = new mapboxgl.Map({
+            container: 'health-map',
             style: 'mapbox://styles/good-shepherd-collective/cly02wxxk002z01nw32eb5xqz',
             center: [34.4668, 31.5017], // Center on Gaza
             zoom: 9, // Initial zoom level
             attributionControl: false,
           });
   
-          map.on('load', () => {
-            console.log('Map loaded');
-            const placeholder = document.querySelector('.map-placeholder');
+          healthMap.on('load', () => {
+            console.log('Health Map: Map loaded');
+            const placeholder = document.querySelector('.health-map-placeholder');
             if (placeholder && placeholder.parentNode) {
               placeholder.parentNode.removeChild(placeholder);
-              console.log('Placeholder removed');
+              console.log('Health Map: Placeholder removed');
             }
   
             try {
-              console.log('Parsing GeoJSON data');
+              console.log('Health Map: Parsing GeoJSON data');
               const geojsonData = JSON.parse(geojsonDataSerialized);
-              console.log(`GeoJSON data parsed, number of features: ${geojsonData.features.length}`);
+              console.log(`Health Map: GeoJSON data parsed, number of features: ${geojsonData.features.length}`);
   
               if (!geojsonData || !geojsonData.features || geojsonData.features.length === 0) {
-                console.error('GeoJSON data is empty or invalid');
+                console.error('Health Map: GeoJSON data is empty or invalid');
                 return;
               }
   
-              // Filter out features with 'Geo Precision' of 'Country'
-              geojsonData.features = geojsonData.features.filter(feature => 
-                feature.properties['Geo Precision'] !== 'Country'
-              );
-              console.log(`After filtering, number of features: ${geojsonData.features.length}`);
-  
-              console.log('Adding source to map');
-              map.addSource('health-attack-data', {
+              console.log('Health Map: Adding source to map');
+              healthMap.addSource('health-attack-data', {
                 type: 'geojson',
                 data: geojsonData,
               });
   
-              console.log('Adding layer to map');
-              map.addLayer({
+              console.log('Health Map: Adding layer to map');
+              healthMap.addLayer({
                 id: 'health-attack-layer',
                 type: 'circle',
                 source: 'health-attack-data',
@@ -157,24 +163,24 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
               });
   
               if (!bounds.isEmpty()) {
-                map.fitBounds(bounds, { padding: 50 });
+                healthMap.fitBounds(bounds, { padding: 50 });
               } else {
-                console.log('No valid coordinates found, setting view to Gaza City');
-                map.setCenter([34.4668, 31.5017]); // Gaza City coordinates
-                map.setZoom(10);
+                console.log('Health Map: No valid coordinates found, setting view to Gaza City');
+                healthMap.setCenter([34.4668, 31.5017]); // Gaza City coordinates
+                healthMap.setZoom(10);
               }
   
-              console.log('Setting up event listeners');
-              map.on('mouseenter', 'health-attack-layer', () => {
-                map.getCanvas().style.cursor = 'pointer';
+              console.log('Health Map: Setting up event listeners');
+              healthMap.on('mouseenter', 'health-attack-layer', () => {
+                healthMap.getCanvas().style.cursor = 'pointer';
               });
   
-              map.on('mouseleave', 'health-attack-layer', () => {
-                map.getCanvas().style.cursor = '';
+              healthMap.on('mouseleave', 'health-attack-layer', () => {
+                healthMap.getCanvas().style.cursor = '';
               });
   
-              map.on('click', 'health-attack-layer', (e) => {
-                console.log('Layer clicked', e.features[0]);
+              healthMap.on('click', 'health-attack-layer', (e) => {
+                console.log('Health Map: Layer clicked', e.features[0]);
                 if (e.features.length > 0) {
                   const feature = e.features[0];
                   const coordinates = feature.geometry.coordinates.slice();
@@ -191,10 +197,10 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
                     }
                   }
   
-                  document.querySelector('#text h1').textContent = properties['Location of Incident'] || 'Health Attack Incident';
-                  document.querySelector('.event__data').innerHTML = content;
+                  document.querySelector('#health-map-text h1').textContent = properties['Location of Incident'] || 'Health Attack Incident';
+                  document.querySelector('#health-map-text .event__data').innerHTML = content;
   
-                  map.flyTo({
+                  healthMap.flyTo({
                     center: coordinates,
                     zoom: 14,
                     essential: true,
@@ -203,27 +209,27 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
               });
   
             } catch (error) {
-              console.error('Error setting up map data:', error);
+              console.error('Health Map: Error setting up map data:', error);
             }
           });
   
-          map.on('error', (error) => {
-            console.error('Mapbox error:', error);
+          healthMap.on('error', (error) => {
+            console.error('Health Map: Mapbox error:', error);
           });
   
         } catch (error) {
-          console.error('Error creating Mapbox instance:', error);
+          console.error('Health Map: Error creating Mapbox instance:', error);
         }
       };
   
-      console.log('Setting up Intersection Observer');
-      const mapContainer = document.getElementById('map');
+      console.log('Health Map: Setting up Intersection Observer');
+      const mapContainer = document.getElementById('health-map');
       if (mapContainer) {
         const observer = new IntersectionObserver((entries, observer) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              console.log('Map container is visible, loading Mapbox');
-              loadMapboxScript();
+              console.log('Health Map: Map container is visible, loading Mapbox');
+              loadHealthMapboxScript();
               observer.unobserve(entry.target);
             }
           });
@@ -231,19 +237,19 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
   
         observer.observe(mapContainer);
       } else {
-        console.error('Map container not found');
+        console.error('Health Map: Map container not found');
       }
     } else {
-      console.log('Window is not defined, script not running');
+      console.log('Health Map: Window is not defined, script not running');
     }
   </script>
 
 <style>
-  .map-placeholder{
-    object-fit: cover;
-  }
-
-    .map__info{
+    .health-map-placeholder {
+      object-fit: cover;
+    }
+  
+    .map__info {
       margin-top: auto;
       margin-bottom: 0;
     }
@@ -253,49 +259,39 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
       display: block;
     }
   
-    
-  
-     .map-container{
+    .map-container {
       width: 100%;
       display: grid;
       grid-template-areas: "map text";
       grid-template-columns: 1fr 1fr;
       z-index: 0 !important; 
-     }
+    }
   
-      #map{
-        grid-area: map;
-        width: 100%;
-        height: 600px;
-        z-index: 0;
-        
-      }
+    #health-map {
+      grid-area: map;
+      width: 100%;
+      height: 600px;
+      z-index: 0;
+    }
   
-      #text{
-        
-        display: grid;
-        height: 100%;
-        position: relative;
-        grid-area: text;
-        
-        padding: 2rem;
-        
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-      }
-       
-
+    #health-map-text {
+      display: grid;
+      height: 100%;
+      position: relative;
+      grid-area: text;
+      padding: 2rem;
+      background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+    }
   
-  
-    @media (max-width: 900px){
-      .map-container{
+    @media (max-width: 900px) {
+      .map-container {
         grid-template-areas: "map map" "text text";
         grid-template-columns: 1fr 1fr;
       }
-      #map{
+      #health-map {
         grid-area: map;
         width: 100%;
         height: 50vh;
       }
     }
-
   </style>
