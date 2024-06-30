@@ -1,15 +1,16 @@
 // src/utils/wb_daily.js
 
+import EleventyFetch from "@11ty/eleventy-fetch";
+
 const fetchDailyReport = async () => {
   const endpoint = 'https://us-east-1.aws.data.mongodb-api.com/app/daily_reports-qqsah/endpoint/daily_report';
 
   try {
-    const response = await fetch(endpoint);
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.statusText}`);
-    }
-
-    const result = await response.json();
+    // Fetch and cache the data using EleventyFetch
+    const result = await EleventyFetch(endpoint, {
+      duration: "1d", // cache the response for 1 day
+      type: "json", // parse JSON response
+    });
 
     // Parse the JSON string in the `body` field
     const data = JSON.parse(result.body);

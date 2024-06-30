@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import UnosatMap from "@/components/landing/Unosat.astro";
 import { getGazaDestructionData } from "src/utils/gaza-destruction.js";
 
 // Fetch and process Gaza destruction data
@@ -55,7 +54,6 @@ console.log(formattedMostRecentDate, "gaza destuction single page date");
   title="Gaza Destruction Report"
   description="Damage as the result of the Israeli genocide of Gaza"
 >
-<UnosatMap />
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800 p-8">
       <div style="max-width: 55rem; margin: 0 auto;">
