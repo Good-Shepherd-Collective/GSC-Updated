@@ -49,10 +49,10 @@ const formattedGrandTotal = grandTotal.toFixed(2);
 const unosatDataSerialized = JSON.stringify(unosatData);
 ---
 
-<section class="md:px-12 sm:px-8 text-white border-zinc-800">
+<section class="md:px-12 sm:px-6 text-white border-zinc-800">
     <div class="border-x border border-zinc-800">
         <h2 class="text-4xl md:text-6xl xl:text-7xl text-white p-10">Gaza Strip Road Assessment</h2>
-        <p class="text-lg md:text-xl p-10">As of {formattedMostRecentSensorDate} the Israeli state has either destroyed, severely affected, and partially damaged {formattedGrandTotal} kilometers of roads.</p>
+        <p class="text-lg md:text-xl p-10">As of {formattedMostRecentSensorDate} the Israeli state has either destroyed, severely affected, and partially damaged <span style="text-decoration: underline; text-decoration-color: #FFA500; text-underline-offset: 6px;">{formattedGrandTotal}</span> kilometers of roads.</p>
 
         <div class="unosat-map-container border-t border-zinc-800">
             <div id="unosatMap" class="map-area">
@@ -67,14 +67,14 @@ const unosatDataSerialized = JSON.stringify(unosatData);
             </div>
             <div class="info-area border-zinc-800">
                 <div id="map-legend" class="map-legend text-white">
-                  <table>
+                  <table class="unosat">
                     <thead>
                         <tr>
                             <th>Region</th>
-                            <th style="border-bottom: 5px solid #FF0000;">Destroyed (km)</th>
-                            <th style="border-bottom: 5px solid #FFA500;">Severely affected (km)</th>
-                            <th style="border-bottom: 5px solid #FFFF00;">Moderately affected (km)</th>
-                            <th>Total (km)</th>
+                            <th style="border-bottom: 5px solid #FF0000;">Destroyed</th>
+                            <th style="border-bottom: 5px solid #FFA500;">Severe<br>damage (km)</th>
+                            <th style="border-bottom: 5px solid #FFFF00;">Moderate<br>damage (km)</th>
+                            <th>Total<br>(km)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,6 +124,20 @@ const unosatDataSerialized = JSON.stringify(unosatData);
                 </table>
                 </div>
                 <div id="unosatText" class="text-info">
+                  <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color red"></div>
+                        <div class="legend-label">Destroyed</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color orange"></div>
+                        <div class="legend-label">Severe damage</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color yellow"></div>
+                        <div class="legend-label">Moderate damage</div>
+                    </div>
+                </div>
                     <h1 class="text-3xl tracking-wide text-balance md:text-4xl text-white">About this map</h1>
                     <p class="unosat-event-data tracking-wide text-white">This map shows the road assessment data for the Gaza Strip, based on UNOSAT analysis. Click on a road segment to view details.</p>
                     <div class="unosat-map-info"></div>
@@ -373,69 +387,156 @@ const unosatDataSerialized = JSON.stringify(unosatData);
   </script>
 
 <style>
-    .unosat-map-container {
-        width: 100%;
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 0;
-    }
+  .unosat-map-container {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 0;
+  }
 
-    .map-area {
-        height: 700px;
-    }
+  .map-area {
+      height: 700px;
+  }
 
-    .info-area {
-        display: flex;
-        flex-direction: column;
-    }
+  .info-area {
+      display: flex;
+      flex-direction: column;
+      max-height: 700px;
+      overflow: hidden;
+  }
 
-    .map-legend {
-        width: 100%;
-    }
+  .map-legend {
+      width: 100%;
+      overflow: auto;
+      max-height: 50%;
+      order: 1; 
+  }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: black;
-    }
-
-    td, th {
-        border: 1px solid #171717;
-        padding: 0.5rem;
-        text-align: left;
-        font-size: 0.8rem;
-    }
-
-    .text-info {
-        padding: 2rem;
-        background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .unosat-map-placeholder {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-    }
-
-    .unosat-map-info {
-        margin-top: auto;
-    }
-
-    .unosat-event-data {
-        margin-bottom: 1.5rem;
-        display: block;
-    }
-
-    @media (max-width: 900px) {
-        .unosat-map-container {
-            grid-template-columns: 1fr;
+  .legend {
+            display: none;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
-        .map-area {
-            height: 50vh;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
         }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: .2rem;
+        }
+
+        .legend-label {
+            color: white;
+            font-size: 14px;
+        }
+
+        .red {
+            background-color: #FF0000;
+        }
+
+        .orange {
+            background-color: #FFA500;
+        }
+
+        .yellow {
+            background-color: #FFFF00;
+        }
+
+  .map-legend table.unosat {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: black;
+      white-space: nowrap;
+  }
+
+  .map-legend table.unosat td,
+  .map-legend table.unosat th {
+      border: 1px solid #171717;
+      padding: 0.5rem;
+      text-align: left;
+      font-size: 0.8rem;
+      display: table-cell !important;
+      max-width: 7ch;
+  }
+
+  .text-info {
+      padding: 2rem;
+      background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b0b0b0' fill-opacity='0.28' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      order: 2; 
+  }
+
+  .unosat-map-placeholder {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+  }
+
+  .unosat-map-info {
+      margin-top: auto;
+  }
+
+  .unosat-event-data {
+      margin-bottom: 1.5rem;
+      display: block;
+  }
+
+  @media screen and (max-width: 900px) {
+      .unosat-map-container {
+          grid-template-columns: 1fr;
+      }
+
+      .map-area {
+          height: 50vh;
+      }
+
+      .info-area {
+          max-height: none;
+      }
+
+      .map-legend {
+          max-height: none;
+          overflow-x: auto;
+          order: 2;
+      }
+
+      .text-info{
+        order: 1; 
+      }
+
+      .map-legend table.unosat {
+          min-width: 500px;
+      }
+
+      .legend {
+            display: flex;
+        }
+  }
+
+  @media screen and (max-width: 768px) {
+      td:not(.map-legend table.unosat td) {
+          display: grid !important;
+          grid-template-columns: 9ch auto;
+      }
+
+      .map-legend table.unosat td,
+      .map-legend table.unosat th {
+          font-size: 0.7rem;
+          padding: 0.3rem;
+      }
+
+      td::before {
+      content: attr(data-cell) "";
+      font-weight: 700;  
     }
+  }
 </style>
