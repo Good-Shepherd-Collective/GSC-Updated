@@ -1,17 +1,21 @@
 ---
-// src/pages/tags/[tag].astro
-
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import TagEntries from "@/components/blog/TagEntries.astro";
 import { fetchGSCblog } from "@/utils/fetchGSCblog";
 
 export async function getStaticPaths() {
   const allPosts = await fetchGSCblog();
-  
+
   // Collect all tags from all posts
   const allTags = allPosts.flatMap(post => {
-    // Ensure post.tags is always an array
-    return Array.isArray(post.tags) ? post.tags : post.tags.split(',').map(tag => tag.trim());
+    if (Array.isArray(post.tags)) {
+      return post.tags;
+    } else if (typeof post.tags === 'string') {
+      return post.tags.split(',').map(tag => tag.trim());
+    } else {
+      console.warn(`Unexpected tags format for post: ${post.title || 'Unknown title'}`);
+      return [];
+    }
   });
 
   // Create a set of unique tags
@@ -21,7 +25,14 @@ export async function getStaticPaths() {
 
   return uniqueTags.map((tag) => {
     const filteredPosts = allPosts.filter((post) => {
-      const postTags = Array.isArray(post.tags) ? post.tags : post.tags.split(',').map(t => t.trim());
+      let postTags = [];
+      if (Array.isArray(post.tags)) {
+        postTags = post.tags;
+      } else if (typeof post.tags === 'string') {
+        postTags = post.tags.split(',').map(t => t.trim());
+      } else {
+        console.warn(`Unexpected tags format for post: ${post.title || 'Unknown title'}`);
+      }
       return postTags.includes(tag);
     });
     return {

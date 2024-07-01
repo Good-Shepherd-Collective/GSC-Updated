@@ -3,10 +3,21 @@ import { fetchGSCblog } from "@/utils/fetchGSCblog";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const allPosts = await fetchGSCblog();
-const tags = [...new Set(allPosts.flatMap(post => post.tags.split(', ')))];
+const tags = [...new Set(allPosts.flatMap(post => {
+  if (Array.isArray(post.tags)) {
+    return post.tags;
+  }
+  if (typeof post.tags === 'string') {
+    return post.tags.split(',').map(tag => tag.trim());
+  }
+  console.warn(`Unexpected tags format for post: ${post.title || 'Unknown title'}. Tags:`, post.tags);
+  return []; // in case post.tags is undefined or another type
+}))].sort();
+
 const pageTitle = "Tag Index";
 
 console.log("All tags:", tags); // For debugging
+console.log(`Total unique tags found: ${tags.length}`);
 ---
 
 <BaseLayout pageTitle={pageTitle}>
