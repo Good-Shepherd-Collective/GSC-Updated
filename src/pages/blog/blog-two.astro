@@ -23,7 +23,6 @@ const tags = [
 console.log(`Total unique tags found: ${tags.length}`);
 ---
 
-
 <BaseLayout>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800">
@@ -33,7 +32,7 @@ console.log(`Total unique tags found: ${tags.length}`);
         </h2>
       </div>
       <ol role="list" class="flex flex-wrap gap-4 p-8 lg:px-10">
-        {tags.map((tag) => (
+        {tags.sort().map((tag) => (
           <li class="text-zinc-400 text-sm hover:text-white">
             <a href={`/tags/${tag}`}>
               {tag}
@@ -42,54 +41,129 @@ console.log(`Total unique tags found: ${tags.length}`);
         ))}
       </ol>
       <form
-        class="bg-zinc-800 flex flex-col lg:flex-row w-full border-t border-zinc-800">
-        <div class="w-full">
-          <label
-            for="email-address"
-            class="sr-only"
-            >Email address</label
-          >
-          <input
-            id="email-address"
-            name="email-address"
-            type="email"
-            autocomplete="email"
-            placeholder="Your email"
-            required
-            aria-required="true"
-            class="block w-full appearance-none border border-none h-full autofill:bg-zinc-800 p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-blue-400 focus:ring-2 ring-inset"
-          />
-        </div>
-        <div class="bg-black">
-          <button
-            type="submit"
-            class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full">
-            Subscribe <span>➜</span>
-          </button>
-        </div>
-      </form>
+  id="multi-step-form"
+  action="https://hello.goodshepherdcollective.org/sendy/subscribe"
+  method="POST"
+  accept-charset="utf-8"
+  class="bg-black flex flex-col lg:flex-row w-full border-t border-zinc-800"
+>
+  <div class="w-full lg:flex-grow">
+    <div id="step1" class="w-full">
+      <label for="name" class="sr-only">Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        placeholder="Your name"
+        required
+        aria-required="true"
+        class="block w-full appearance-none border border-none h-full lg:h-32 autofill:bg-zinc-800 p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-blue-400 focus:ring-2 ring-inset"
+      />
+    </div>
+    <div id="step2" class="w-full hidden">
+      <label for="email" class="sr-only">Email address</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        placeholder="Your email"
+        required
+        aria-required="true"
+        class="block w-full appearance-none border border-none h-full lg:h-32 autofill:bg-zinc-800 p-8 lg:px-10 bg-black placeholder-zinc-500 text-white focus:outline-none focus:ring-blue-400 focus:ring-2 ring-inset"
+      />
+    </div>
+    <div id="step3" class="w-full hidden p-8 lg:px-10 bg-black text-white">
+      <input type="checkbox" name="gdpr" id="gdpr" required class="mr-2"/>
+      <label for="gdpr">
+        <strong>Marketing permission</strong>: I give my consent for GSC to be in touch with me via email using the information I have provided in this form.
+      </label>
+    </div>
+  </div>
+  <div class="hidden">
+    <label for="hp">HP</label>
+    <input type="text" name="hp" id="hp"/>
+  </div>
+  <input type="hidden" name="list" value="y89212UBuNheyECx7v9tOdrQ"/>
+  <input type="hidden" name="subform" value="yes"/>
+  <div class="bg-black lg:w-auto flex">
+    <button
+      type="button"
+      id="back-button"
+      class="hidden text-2xl h-24 px-8 lg:h-32 lg:px-10 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full back-button-icon"
+    >
+      Back
+    </button>
+    <button
+      type="button"
+      id="next-button"
+      class="text-2xl h-24 px-8 lg:h-32 lg:px-10 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full next-button-icon"
+    >
+      Next</span>
+    </button>
+  </div>
+</form>
     </div>
   </section>
-  <section class="md:px-12 sm:px-8">
-    <div class="border-x border-zinc-800">
-      <ul
-        class="grid grid-cols-1 gap-px bg-zinc-700 lg:grid-cols-4 sm:grid-cols-2">
-        {
-          allPosts.slice(0, 4).map((post) => (
-            <EntriesTwo
-              url={post.link}
-              title={post.title}
-              description={post.excerpt}
-              alt={post.title}
-              pubDate={post.formattedDate}
-              author={post.author}
-              image={post.featuredImage}
-              readingTime={post.readingTime}
-            />
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <!-- Rest of your component -->
 </BaseLayout>
+
+<script>
+  const form = document.getElementById('multi-step-form');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const backButton = document.getElementById('back-button');
+  const nextButton = document.getElementById('next-button');
+  let currentStep = 1;
+
+  function updateButtons() {
+    if (currentStep === 1) {
+      backButton.classList.add('hidden');
+      nextButton.textContent = 'Subscribe ';
+    } else if (currentStep === 2) {
+      backButton.classList.remove('hidden');
+      nextButton.textContent = 'Next';
+    } else if (currentStep === 3) {
+      backButton.classList.remove('hidden');
+      nextButton.textContent = 'Submit';
+    }
+  }
+
+  nextButton.addEventListener('click', () => {
+    if (currentStep === 1) {
+      if (form.name.value.trim() !== '') {
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+        currentStep = 2;
+      }
+    } else if (currentStep === 2) {
+      if (form.email.value.trim() !== '' && form.email.checkValidity()) {
+        step2.classList.add('hidden');
+        step3.classList.remove('hidden');
+        currentStep = 3;
+      }
+    } else if (currentStep === 3) {
+      if (form.gdpr.checked) {
+        form.submit();
+      }
+    }
+    updateButtons();
+  });
+
+  backButton.addEventListener('click', () => {
+    if (currentStep === 2) {
+      step2.classList.add('hidden');
+      step1.classList.remove('hidden');
+      currentStep = 1;
+    } else if (currentStep === 3) {
+      step3.classList.add('hidden');
+      step2.classList.remove('hidden');
+      currentStep = 2;
+    }
+    updateButtons();
+  });
+
+  updateButtons(); // Initial button state
+</script>
 
