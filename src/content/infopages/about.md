@@ -2,21 +2,6 @@
 page: About
 pubDate: 2024-01-01
 ---
-Founders turn to StudioMax when success is non-negotiable. Our
-reputation for design expertise and swift execution precedes us,
-drawing clients who prioritize excellence. Yet, more often than
-not, it's the word-of-mouth referrals from trusted sources – be it
-an investor, a friend, or a connection on Twitter/X – that bring
-clients to StudioMax. With over a decade of experience and the
-launch of numerous successful projects, our work is likely
-familiar to you. Startups, enterprises, conglomerates, and
-government entities alike have engaged StudioMax to chart their
-strategic next steps. Throughout our journey, we've honed a
-distinctive work approach that prioritizes agility, allowing us to
-navigate projects at an unparalleled pace. It's our secret sauce,
-but you can experience it firsthand by partnering with us.
+Formed in response to the restrictive NGO system in 2017, the Good Shepherd Collective is an anti-Zionist, anti-colonial - and by definition, anti-capitalist organization. We work alongside our partners on the ground to openly discuss and address the violent and unjust structures operating in Palestine and provide educational resources and action items to bring us closer to justice. GSC understands oppression to be rooted in the systems and laws that guide civil formation and order. As such, we reject the binary discourse of “Israelis vs. Palestinians” and instead focus our energy on addressing settler-colonialism and other forms of violence by targeting the structures that facilitate these regimes. GSC advocates for structural change, directing our collective energy at policies and laws that underpin these structures through grassroots campaigns. In this way, advocacy campaigns reflect the immediate needs of Palestinians on the the ground while linking grassroots in a transnational call for the rights of all people, building broad coalitions across movements. 
 
-
-Our pricing structure begins at $50,000/month.
-
-Contact us: Email: [hello@studiomax.com](#_)
+Contact us: Email: [info@goodshepherdcollective.org](#_)
