@@ -1,11 +1,13 @@
 ---
+import { Image } from 'astro:assets';
+
 export interface Props {
   title: string;
   url: string;
   description: string;
   pubDate: string;
   author: string;
-  image: string;
+  image: ImageMetadata;
   readingTime: number;
 }
 
@@ -16,11 +18,16 @@ const { title, url, description, pubDate, author, image, readingTime } = Astro.p
   <a href={url} title={title} class="group">
     <article class="flex-1 h-full flex flex-col bg-black">
       <div class="block w-full lg:col-span-2">
-        <img
-          class="aspect-[384/246] object-cover bg-center h-full max-w-full"
-          src={image}
-          alt={title}
-        />
+        <div class="aspect-square md:aspect-[384/246] relative overflow-hidden">
+          <Image
+            src={image}
+            alt={title}
+            width={384}
+            height={246}
+            class="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
       </div>
       <div class="flex flex-col items-start justify-between flex-1 w-full p-8">
         <div class="w-full">
@@ -47,7 +54,6 @@ const { title, url, description, pubDate, author, image, readingTime } = Astro.p
             </div>
           </div>
         </footer>
-        
       </div>
     </article>
   </a>
