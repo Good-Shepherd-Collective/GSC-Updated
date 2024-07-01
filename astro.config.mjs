@@ -17,4 +17,7 @@ export default defineConfig({
   site: 'https://goodshepherdcollective.org',
   integrations: [tailwind(), sitemap(), mdx(), devtoolBreakpoints()],
   output: 'static', // For static site generation
+  vite: {
+    assetsInclude: ['**/*.geojson'], // Add this line to handle .geojson files
+  },
 });

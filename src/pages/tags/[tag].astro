@@ -1,17 +1,29 @@
 ---
+// src/pages/tags/[tag].astro
+
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import TagEntries from "@/components/blog/TagEntries.astro";
-import { getCollection } from "astro:content";
+import { fetchGSCblog } from "@/utils/fetchGSCblog";
+
 export async function getStaticPaths() {
-  const allPosts = await getCollection("posts");
-  const uniqueTags = [
-    ...new Set(allPosts.map((post) => post.data.tags).flat()),
-  ];
+  const allPosts = await fetchGSCblog();
+  
+  // Collect all tags from all posts
+  const allTags = allPosts.flatMap(post => {
+    // Ensure post.tags is always an array
+    return Array.isArray(post.tags) ? post.tags : post.tags.split(',').map(tag => tag.trim());
+  });
+
+  // Create a set of unique tags
+  const uniqueTags = [...new Set(allTags)];
+
+  console.log("All unique tags:", uniqueTags);
 
   return uniqueTags.map((tag) => {
-    const filteredPosts = allPosts.filter((post) =>
-      post.data.tags.includes(tag)
-    );
+    const filteredPosts = allPosts.filter((post) => {
+      const postTags = Array.isArray(post.tags) ? post.tags : post.tags.split(',').map(t => t.trim());
+      return postTags.includes(tag);
+    });
     return {
       params: { tag },
       props: { posts: filteredPosts },
@@ -21,6 +33,8 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const { posts } = Astro.props;
+
+console.log(`Posts for tag "${tag}":`, posts.map(post => post.title));
 ---
 
 <BaseLayout pageTitle={tag}>
@@ -29,41 +43,34 @@ const { posts } = Astro.props;
       <div class="h-full flex flex-col">
         <div class="p-8 lg:px-10 bg-black h-full">
           <h2 class="text-4xl md:text-6xl xl:text-7xl text-white">
-            Blog posts tagged with <span class="text-green-600 block"
-              >{tag}</span
-            >
+            Blog posts tagged with <span class="text-yellow-300 block font-bold">{tag}</span>
           </h2>
           <p class="mt-4 text-zinc-400 tracking-wide">
-            Tips and trickd about this and that all day everyday.
+            We hope you find what you're looking for!
           </p>
         </div>
         <div class="h-full flex w-full bg-black border-t border-zinc-800">
-          <a
-            href="/blog/blog-one"
+          <a href="/blog/blog-one"
             class="flex mx-auto p-8 lg:px-20 w-full justify-between h-full focus:ring-2 bg-zinc-800 rounded-full text-white ease-in-out transform duration-500 ring-inset ring-zinc-800 hover:bg-black text-2xl items-center ring-2"
-            >Read all our posts <span>➜</span></a
-          >
+          >Read all our posts <span>➜</span></a>
         </div>
       </div>
     </div>
   </section>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-t border-zinc-800">
-      <ul
-        class="grid grid-cols-1 gap-px bg-zinc-700 ">
-        {
-          posts.map((post) => (
-            <TagEntries
-              url={"/posts/" + post.slug}
-              title={post.data.title}
-              description={post.data.description}
-              alt={post.data.title}
-              pubDate={post.data.pubDate.toString().slice(0, 10)}
-              author={post.data.author}
-              image={post.data.image.url}
-            />
-          ))
-        }
+      <ul class="grid grid-cols-1 gap-px bg-zinc-700">
+        {posts.map((post) => (
+          <TagEntries
+            url={post.link}
+            title={post.title}
+            description={post.excerpt}
+            alt={post.title}
+            pubDate={post.formattedDate}
+            author={post.author}
+            image={post.featuredImage}
+          />
+        ))}
       </ul>
     </div>
   </section>

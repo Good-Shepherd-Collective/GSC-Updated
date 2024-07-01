@@ -46,7 +46,7 @@ const PrisonerDate = formatDate(new Date());
 
 // Fetch and log the daily report
 const wbDailyReport = await fetchDailyReport();
-console.log("WB reports:", wbDailyReport);
+// console.log("WB reports:", wbDailyReport);
 
 // Extract the most recent date
 const mostRecentDate = wbDailyReport ? wbDailyReport.reduce((latest, report) => {

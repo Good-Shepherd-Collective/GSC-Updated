@@ -1,33 +1,38 @@
 ---
-import { getCollection } from "astro:content";
+import { fetchGSCblog } from "@/utils/fetchGSCblog";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-const allPosts = await getCollection("posts");
-const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+
+const allPosts = await fetchGSCblog();
+const tags = [...new Set(allPosts.flatMap(post => post.tags.split(', ')))];
 const pageTitle = "Tag Index";
+
+console.log("All tags:", tags); // For debugging
 ---
+
 <BaseLayout pageTitle={pageTitle}>
   <section class="md:px-12 sm:px-8">
     <div class="border-x border-zinc-800">
       <div class="p-8 lg:px-10">
         <h2
-          class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12">
+          class="text-5xl tracking-tighter font-normal md:text-6xl text-white mt-12"
+        >
           Tag index
         </h2>
       </div>
       <ol
         role="list"
-        class="flex flex-col gap-px border-t border-zinc-800">
-        {
-          tags.map((tag) => (
-            <li>
-              <a
-                class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-black hover:bg-zinc-800  text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-2 ring-zinc-800 w-full"
-                href={`/tags/${tag}`}>
-                {tag} <span>➜</span>
-              </a>
-            </li>
-          ))
-        }
+        class="flex flex-col gap-px border-t border-zinc-800"
+      >
+        {tags.map((tag) => (
+          <li>
+            
+              <a class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-black hover:bg-zinc-800 text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-2 ring-zinc-800 w-full"
+              href={`/tags/${tag}`}
+            >
+              {tag} <span>➜</span>
+            </a>
+          </li>
+        ))}
       </ol>
     </div>
   </section>

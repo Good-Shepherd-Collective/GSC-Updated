@@ -22,10 +22,15 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
       <div class="grid grid-cols-1 lg:grid-cols-2 h-full">
         <div class="border-r border-zinc-800 flex flex-col h-full">
           <div class="bg-black border-b border-zinc-800">
-            <p class="text-zinc-600 text-sm flex items-center pl-1 p-4 lg:px-10">
-              {category && <span class="px-2 py-1 bg-zinc-800 rounded text-white mr-2">{category}</span>}
-              {tags && <span class="px-2 py-1 bg-zinc-800 rounded text-blue-200">{tags}</span>}
+            <p class="text-zinc-600 text-sm flex items-center flex-wrap pl-1 p-4 lg:px-10">
+              {category && <span class="px-2 py-1 bg-zinc-800 rounded text-white mr-2 mb-2">{category}</span>}
+              {tags.map((tag) => (
+                <a href={`/tags/${tag}`} class="px-2 py-1 bg-zinc-800 rounded text-blue-200 hover:bg-zinc-700 transition-colors mr-2 mb-2">
+                  {tag}
+                </a>
+              ))}
             </p>
+        
           </div>
           <div class="p-8 lg:px-10 bg-black flex-grow flex flex-col justify-between">
             <div>
@@ -54,8 +59,7 @@ const { title, date, readingTime, featuredImage, author, excerpt, category, tags
       </div>
     </div>
   </section>
-  
-  
+
   <section class="md:px-12 sm:px-8">
     <div class="border-x grid grid-cols-1 lg:grid-cols-1 border-t border-zinc-800 gap-px">
       <div class="lg:col-start-1 lg:col-span-1 p-8 lg:px-10">

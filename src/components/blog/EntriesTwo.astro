@@ -1,5 +1,15 @@
 ---
-const { title, url, description, pubDate, author, image } = Astro.props;
+export interface Props {
+  title: string;
+  url: string;
+  description: string;
+  pubDate: string;
+  author: string;
+  image: string;
+  readingTime: number;
+}
+
+const { title, url, description, pubDate, author, image, readingTime } = Astro.props;
 ---
 
 <li>
@@ -22,16 +32,22 @@ const { title, url, description, pubDate, author, image } = Astro.props;
           </p>
         </div>
         <footer>
-          <div class="inline-flex space-x-1 items-center mt-6">
-            <p class="text-xs font-medium text-white">
-              {author}
-            </p>
-            <span aria-hidden="true">&middot;</span>
-            <div class="flex text-xs text-zinc-500">
-              <time datetime="2020-03-16"> {pubDate}</time>
+          <div class="inline-flex flex-col mt-6 space-y-1">
+            <div class="inline-flex space-x-1 items-center">
+              <p class="text-xs font-medium text-white">
+                {author}
+              </p>
+              <span aria-hidden="true">&middot;</span>
+              <div class="flex text-xs text-zinc-500">
+                <time datetime={pubDate}>{pubDate}</time>
+              </div>
+            </div>
+            <div class="text-xs text-zinc-500 block">
+              {readingTime} min read
             </div>
           </div>
         </footer>
+        
       </div>
     </article>
   </a>

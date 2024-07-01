@@ -21,19 +21,33 @@ async function fetchUnosatData() {
 
 const unosatData = await fetchUnosatData();
 
-// Calculate grand total and find most recent sensor date
-let grandTotal = 0;
+// Calculate totals by damage level and find most recent sensor date
+let destroyedTotal = 0;
+let severelyAffectedTotal = 0;
+let moderatelyAffectedTotal = 0;
 let mostRecentSensorDate = new Date(0);
 
 if (unosatData && unosatData.features) {
   unosatData.features.forEach(feature => {
-    grandTotal += feature.properties.Length_km;
+    const length = feature.properties.Length_km;
+    const damageLevel = feature.properties.UNHabitat_DL;
+    
+    if (damageLevel === 'Destroyed') {
+      destroyedTotal += length;
+    } else if (damageLevel === 'Severely affected') {
+      severelyAffectedTotal += length;
+    } else if (damageLevel === 'Moderately affected') {
+      moderatelyAffectedTotal += length;
+    }
+
     const sensorDate = new Date(feature.properties.SensorDate);
     if (sensorDate > mostRecentSensorDate) {
       mostRecentSensorDate = sensorDate;
     }
   });
 }
+
+const grandTotal = destroyedTotal + severelyAffectedTotal + moderatelyAffectedTotal;
 
 // Format the date
 const formatDate = (date) => {
@@ -45,6 +59,9 @@ const formatDate = (date) => {
 
 const formattedMostRecentSensorDate = formatDate(mostRecentSensorDate);
 const formattedGrandTotal = grandTotal.toFixed(2);
+const formattedDestroyedTotal = destroyedTotal.toFixed(2);
+const formattedSeverelyAffectedTotal = severelyAffectedTotal.toFixed(2);
+const formattedModeratelyAffectedTotal = moderatelyAffectedTotal.toFixed(2);
 
 const unosatDataSerialized = JSON.stringify(unosatData);
 ---
@@ -183,8 +200,8 @@ const unosatDataSerialized = JSON.stringify(unosatData);
       }
   
       function updateTable(data) {
-  console.log('Starting updateTable function');
-  console.log('Total features:', data.features.length);
+  // console.log('Starting updateTable function');
+  // console.log('Total features:', data.features.length);
 
   const governorates = {
     'North Gaza': { destroyed: 0, severe: 0, moderate: 0, total: 0 },
@@ -194,18 +211,12 @@ const unosatDataSerialized = JSON.stringify(unosatData);
     'Rafah': { destroyed: 0, severe: 0, moderate: 0, total: 0 }
   };
 
-  const uniqueGovernorates = new Set();
-  const damageTypes = new Set();
+  const grandTotal = { destroyed: 0, severe: 0, moderate: 0, total: 0 };
 
-  data.features.forEach((feature, index) => {
+  data.features.forEach((feature) => {
     let gov = feature.properties.Governorate;
     const damage = feature.properties.UNHabitat_DL;
     const length = feature.properties.Length_km;
-
-    console.log(`Feature ${index}:`, { gov, damage, length });
-
-    uniqueGovernorates.add(gov);
-    damageTypes.add(damage);
 
     // Normalize governorate names
     gov = gov.replace(/\s+/g, ' ').trim();
@@ -217,56 +228,41 @@ const unosatDataSerialized = JSON.stringify(unosatData);
       if (damage === 'Destroyed') governorates[gov].destroyed += length;
       else if (damage === 'Severely affected') governorates[gov].severe += length;
       else if (damage === 'Moderately affected') governorates[gov].moderate += length;
-      governorates[gov].total += length;
+      
+      governorates[gov].total = governorates[gov].destroyed + governorates[gov].severe + governorates[gov].moderate;
     } else {
       console.warn(`Unknown governorate: ${gov}`);
     }
   });
 
-  console.log('Unique governorates:', Array.from(uniqueGovernorates));
-  console.log('Damage types:', Array.from(damageTypes));
-  console.log('Calculated governorate data:', governorates);
+  // Calculate grand totals
+  for (const gov of Object.values(governorates)) {
+    grandTotal.destroyed += gov.destroyed;
+    grandTotal.severe += gov.severe;
+    grandTotal.moderate += gov.moderate;
+  }
+  grandTotal.total = grandTotal.destroyed + grandTotal.severe + grandTotal.moderate;
 
-  const grandTotal = {
-    destroyed: 0,
-    severe: 0,
-    moderate: 0,
-    total: 0
-  };
-
+  // Update table cells
   for (const [gov, values] of Object.entries(governorates)) {
     const prefix = gov.toLowerCase().replace(/\s+/g, '-');
-    console.log(`Looking for elements with prefix: ${prefix}`);
-    const destroyedEl = document.getElementById(`${prefix}-destroyed`);
-    const severeEl = document.getElementById(`${prefix}-severe`);
-    const moderateEl = document.getElementById(`${prefix}-moderate`);
-    const totalEl = document.getElementById(`${prefix}-total`);
-
-    console.log(`Updating ${gov}:`, values);
-    console.log(`Elements: destroyed=${destroyedEl}, severe=${severeEl}, moderate=${moderateEl}, total=${totalEl}`);
-
-    if (destroyedEl) destroyedEl.textContent = values.destroyed.toFixed(2);
-    if (severeEl) severeEl.textContent = values.severe.toFixed(2);
-    if (moderateEl) moderateEl.textContent = values.moderate.toFixed(2);
-    if (totalEl) totalEl.textContent = values.total.toFixed(2);
-
-    // Accumulate grand totals
-    grandTotal.destroyed += values.destroyed;
-    grandTotal.severe += values.severe;
-    grandTotal.moderate += values.moderate;
-    grandTotal.total += values.total;
+    document.getElementById(`${prefix}-destroyed`).textContent = values.destroyed.toFixed(2);
+    document.getElementById(`${prefix}-severe`).textContent = values.severe.toFixed(2);
+    document.getElementById(`${prefix}-moderate`).textContent = values.moderate.toFixed(2);
+    document.getElementById(`${prefix}-total`).textContent = values.total.toFixed(2);
   }
 
+  // Update grand total row
   document.getElementById('grand-total-destroyed').textContent = grandTotal.destroyed.toFixed(2);
   document.getElementById('grand-total-severe').textContent = grandTotal.severe.toFixed(2);
   document.getElementById('grand-total-moderate').textContent = grandTotal.moderate.toFixed(2);
   document.getElementById('grand-total-total').textContent = grandTotal.total.toFixed(2);
 
-  console.log('Finished updateTable function');
+  // console.log('Finished updateTable function');
 }
   
       map.on('load', () => {
-        console.log('Map loaded');
+        // console.log('Map loaded');
         const placeholder = document.querySelector('.unosat-map-placeholder');
         if (placeholder && placeholder.parentNode) {
           placeholder.parentNode.removeChild(placeholder);
@@ -274,7 +270,7 @@ const unosatDataSerialized = JSON.stringify(unosatData);
   
         try {
           const unosatData = JSON.parse(unosatDataSerialized);
-          console.log('Parsed UNOSAT data:', unosatData);
+          // console.log('Parsed UNOSAT data:', unosatData);
   
           if (!unosatData || !unosatData.features || unosatData.features.length === 0) {
             console.error('No features found in UNOSAT data');
@@ -314,7 +310,7 @@ const unosatDataSerialized = JSON.stringify(unosatData);
             },
           });
   
-          console.log('Layer added');
+          // console.log('Layer added');
   
           // Fit the map to the data bounds
           const bounds = new mapboxgl.LngLatBounds();

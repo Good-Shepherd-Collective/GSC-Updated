@@ -118,10 +118,10 @@ const serializedReports = JSON.stringify(fullData);
 
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", () => {
-    console.log("Document is ready");
+    // console.log("Document is ready");
 
     async function loadChartJsAndInitializeCharts() {
-      console.log("Loading Chart.js dynamically...");
+      // console.log("Loading Chart.js dynamically...");
 
       const chartJsScript = document.createElement("script");
       chartJsScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
@@ -132,7 +132,7 @@ const serializedReports = JSON.stringify(fullData);
         chartJsScript.onerror = reject;
       });
 
-      console.log("Chart.js loaded. Initializing charts...");
+      // console.log("Chart.js loaded. Initializing charts...");
       initializeCharts();
     }
 
@@ -157,7 +157,7 @@ const serializedReports = JSON.stringify(fullData);
     function initializeCharts() {
       const chartDataDiv = document.getElementById("chartData");
       let reports = JSON.parse(chartDataDiv.getAttribute("data-reports"));
-      console.log("Reports data:", reports);
+      // console.log("Reports data:", reports);
 
       reports.sort(
         (a, b) => new Date(a.report_date) - new Date(b.report_date)
@@ -248,7 +248,7 @@ rows.forEach((row) => {
     function handleIntersection(entries, observer) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          console.log("Chart container is in view. Loading Chart.js...");
+          // console.log("Chart container is in view. Loading Chart.js...");
           loadChartJsAndInitializeCharts();
           observer.unobserve(entry.target);
         }

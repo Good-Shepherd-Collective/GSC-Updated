@@ -75,17 +75,17 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
 <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
 
 <script define:vars={{ geojsonDataSerialized }}>
-    console.log('Health Map: Client-side script starting');
+    // console.log('Health Map: Client-side script starting');
   
     if (typeof window !== 'undefined') {
-      console.log('Health Map: Window is defined, script is running');
+      // console.log('Health Map: Window is defined, script is running');
   
       const loadHealthMapboxScript = () => {
-        console.log('Health Map: Loading Mapbox script');
+        // console.log('Health Map: Loading Mapbox script');
         const script = document.createElement('script');
         script.src = "https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js";
         script.onload = () => {
-          console.log('Health Map: Mapbox script loaded successfully');
+          // console.log('Health Map: Mapbox script loaded successfully');
           initializeHealthMapbox();
         };
         script.onerror = (error) => {
@@ -95,7 +95,7 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
       };
   
       const initializeHealthMapbox = () => {
-        console.log('Health Map: Initializing Mapbox');
+        // console.log('Health Map: Initializing Mapbox');
         if (typeof mapboxgl === 'undefined') {
           console.error('Health Map: mapboxgl is not defined');
           return;
@@ -103,7 +103,7 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
         mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vZC1zaGVwaGVyZC1jb2xsZWN0aXZlIiwiYSI6ImNsaDUwdXY0ZDIzNnUzZG9nZ3BhYXhuaTQifQ.FX0JA3BbKdy5-IJ5gkDpKw';
   
         try {
-          console.log('Health Map: Creating Mapbox instance');
+          // console.log('Health Map: Creating Mapbox instance');
           const mapContainer = document.getElementById('health-map');
           if (!mapContainer) {
             console.error('Health Map: Map container not found');
@@ -118,30 +118,30 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
           });
   
           healthMap.on('load', () => {
-            console.log('Health Map: Map loaded');
+            // console.log('Health Map: Map loaded');
             const placeholder = document.querySelector('.health-map-placeholder');
             if (placeholder && placeholder.parentNode) {
               placeholder.parentNode.removeChild(placeholder);
-              console.log('Health Map: Placeholder removed');
+              // console.log('Health Map: Placeholder removed');
             }
   
             try {
-              console.log('Health Map: Parsing GeoJSON data');
+              // console.log('Health Map: Parsing GeoJSON data');
               const geojsonData = JSON.parse(geojsonDataSerialized);
-              console.log(`Health Map: GeoJSON data parsed, number of features: ${geojsonData.features.length}`);
+              // console.log(`Health Map: GeoJSON data parsed, number of features: ${geojsonData.features.length}`);
   
               if (!geojsonData || !geojsonData.features || geojsonData.features.length === 0) {
                 console.error('Health Map: GeoJSON data is empty or invalid');
                 return;
               }
   
-              console.log('Health Map: Adding source to map');
+              // console.log('Health Map: Adding source to map');
               healthMap.addSource('health-attack-data', {
                 type: 'geojson',
                 data: geojsonData,
               });
   
-              console.log('Health Map: Adding layer to map');
+              // console.log('Health Map: Adding layer to map');
               healthMap.addLayer({
                 id: 'health-attack-layer',
                 type: 'circle',
@@ -164,12 +164,12 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
               if (!bounds.isEmpty()) {
                 healthMap.fitBounds(bounds, { padding: 50 });
               } else {
-                console.log('Health Map: No valid coordinates found, setting view to Gaza City');
+                // console.log('Health Map: No valid coordinates found, setting view to Gaza City');
                 healthMap.setCenter([34.4668, 31.5017]); // Gaza City coordinates
                 healthMap.setZoom(10);
               }
   
-              console.log('Health Map: Setting up event listeners');
+              // console.log('Health Map: Setting up event listeners');
               healthMap.on('mouseenter', 'health-attack-layer', () => {
                 healthMap.getCanvas().style.cursor = 'pointer';
               });
@@ -179,7 +179,7 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
               });
   
               healthMap.on('click', 'health-attack-layer', (e) => {
-  console.log('Health Map: Layer clicked', e.features[0]);
+  // console.log('Health Map: Layer clicked', e.features[0]);
   if (e.features.length > 0) {
     const feature = e.features[0];
     const coordinates = feature.geometry.coordinates.slice();
@@ -235,13 +235,13 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
         }
       };
   
-      console.log('Health Map: Setting up Intersection Observer');
+      // console.log('Health Map: Setting up Intersection Observer');
       const mapContainer = document.getElementById('health-map');
       if (mapContainer) {
         const observer = new IntersectionObserver((entries, observer) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              console.log('Health Map: Map container is visible, loading Mapbox');
+              // console.log('Health Map: Map container is visible, loading Mapbox');
               loadHealthMapboxScript();
               observer.unobserve(entry.target);
             }
@@ -253,7 +253,7 @@ const geojsonDataSerialized = JSON.stringify(geojsonData);
         console.error('Health Map: Map container not found');
       }
     } else {
-      console.log('Health Map: Window is not defined, script not running');
+      // console.log('Health Map: Window is not defined, script not running');
     }
   </script>
 

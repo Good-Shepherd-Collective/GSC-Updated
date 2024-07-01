@@ -1,9 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import EntriesTwo from "@/components/blog/EntriesTwo.astro";
-const allPosts = await getCollection("posts");
-const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+import { fetchGSCblog } from "@/utils/fetchGSCblog";
+
+const allPosts = await fetchGSCblog();
+const tags = [...new Set(allPosts.flatMap(post => Array.isArray(post.tags) ? post.tags : post.tags.split(',').map(tag => tag.trim())))];
 ---
 
 <BaseLayout>
@@ -11,23 +12,17 @@ const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
     <div class="border-x border-zinc-800">
       <div class="p-8 lg:px-10">
         <h2 class="text-4xl md:text-6xl xl:text-7xl text-white">
-          Writings from StudioMax
+          Updates & Analysis
         </h2>
       </div>
-      <ol
-        role="list"
-        class="flex flex-wrap gap-4 p-8 lg:px-10">
-        {
-          tags.map((tag) => (
-            <li>
-              <a
-                class=" text-white"
-                href={`/tags/${tag}`}>
-                {tag}
-              </a>
-            </li>
-          ))
-        }
+      <ol role="list" class="flex flex-wrap gap-4 p-8 lg:px-10">
+        {tags.map((tag) => (
+          <li class="text-zinc-400 text-sm hover:text-white">
+            <a href={`/tags/${tag}`}>
+              {tag}
+            </a>
+          </li>
+        ))}
       </ol>
       <form
         class="bg-zinc-800 flex flex-col lg:flex-row w-full border-t border-zinc-800">
@@ -51,7 +46,7 @@ const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
         <div class="bg-black">
           <button
             type="submit"
-            class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium     bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full">
+            class="text-2xl h-24 px-8 lg:h-32 lg:px-20 focus:ring-2 rounded-full hover:bg-blue-400 ease-in-out transform duration-500 ring-inset ring-blue-400 inline-flex items-center font-medium bg-black text-white justify-between ring-2 hover:ring-blue-400 w-full">
             Subscribe <span>➜</span>
           </button>
         </div>
@@ -65,13 +60,14 @@ const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
         {
           allPosts.slice(0, 4).map((post) => (
             <EntriesTwo
-              url={"/posts/" + post.slug}
-              title={post.data.title}
-              description={post.data.description}
-              alt={post.data.title}
-              pubDate={post.data.pubDate.toString().slice(0, 10)}
-              author={post.data.author}
-              image={post.data.image.url}
+              url={post.link}
+              title={post.title}
+              description={post.excerpt}
+              alt={post.title}
+              pubDate={post.formattedDate}
+              author={post.author}
+              image={post.featuredImage}
+              readingTime={post.readingTime}
             />
           ))
         }
@@ -79,3 +75,4 @@ const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
     </div>
   </section>
 </BaseLayout>
+
