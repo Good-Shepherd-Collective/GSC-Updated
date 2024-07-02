@@ -1,10 +1,10 @@
 ---
-const { service, url } = Astro.props;
+const { program, url } = Astro.props;
 ---
 
 <a
   href={url}
-  title={service}
+  title={program}
   class="text-sm py-2 h-16 px-10 focus:ring-2 rounded-full bg-black hover:bg-zinc-800 text-white ease-in-out transform duration-500 ring-inset inline-flex items-center font-medium justify-between ring-2 ring-zinc-800 w-full"
-  ><p>{service}</p>
+  ><p>{program}</p>
 </a>

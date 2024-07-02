@@ -1,9 +1,11 @@
 ---
+// src/pages/programs/[...slug].astro
+
 import { getCollection } from "astro:content";
-import ServicesLayout from "../../layouts/ServicesLayout.astro";
+import ProgramsLayout from "../../layouts/ProgramsLayout.astro";
 export async function getStaticPaths() {
-  const services = await getCollection("services");
-  const paths = services.map((page) => {
+  const programs = await getCollection("programs");
+  const paths = programs.map((page) => {
     return {
       params: { slug: page.slug },
       props: { page },
@@ -17,6 +19,6 @@ const { page } = Astro.props;
 const { Content } = await page.render();
 ---
 
-<ServicesLayout frontmatter={page.data}>
+<ProgramsLayout frontmatter={page.data}>
   <Content />
-</ServicesLayout>
+</ProgramsLayout>
